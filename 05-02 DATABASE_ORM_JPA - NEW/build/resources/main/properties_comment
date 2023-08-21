@@ -1,0 +1,22 @@
+
+server.port=8080  # 서버가 사용할 포트 번호 설정
+
+# DataSource 설정
+spring.datasource.url=jdbc:mysql://localhost:3306/testdb  # 데이터베이스 URL
+spring.datasource.username=root  # 데이터베이스 접속에 사용할 사용자 이름
+spring.datasource.password=1234  # 데이터베이스 접속에 사용할 비밀번호
+
+# JPA 설정
+spring.jpa.show-sql=true  # JPA가 생성하는 SQL 쿼리를 콘솔에 출력할지 여부
+spring.jpa.hibernate.ddl-auto=update  # Hibernate가 데이터베이스 스키마를 자동으로 생성 또는 수정할지 여부
+spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.MySQL5Dialect  # Hibernate가 사용할 데이터베이스 방언
+spring.jpa.properties.hibernate.format_sql=true  # 생성된 SQL 쿼리를 읽기 쉽게 포맷할지 여부
+spring.jpa.properties.hibernate.jdbc.batch_size=1000  # 배치 작업 시 JDBC 배치 크기 설정
+spring.jpa.properties.hibernate.order_inserts=true  # INSERT 문을 배치 순서에 따라 실행할지 여부
+spring.jpa.properties.hibernate.order_updates=true  # UPDATE 문을 배치 순서에 따라 실행할지 여부
+spring.jpa.properties.hibernate.jdbc.batch_versioned_data=true  # 버전 관리 데이터에 대한 배치 작업 사용 여부
+
+spring.sql.init.mode=always  # SQL 초기화 모드 설정
+
+# SQL 설정
+spring.datasource.initialization-mode=init  # 데이터베이스 초기화 모드 설정
