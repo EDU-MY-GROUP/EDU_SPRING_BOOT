@@ -1,0 +1,70 @@
+@charset "UTF-8";
+.container{width : 400px; margin:100px auto; text-align:center; position:relative;}
+.container *{margin-bottom:0px;
+	border-radius:0px;
+}
+.container a{
+	text-decoration:none;
+	color:black;
+}
+.container .loginheader{
+	text-align:center;
+	margin-bottom : 10px;
+}
+.container .btn{
+	height : 60px;
+}
+.container .msg{ 
+	font-size:0.5rem;
+	color:red;
+	text-align:left;
+	margin-bottom:0px;"
+	}
+
+.container input{
+	margin-bottom:10px;
+}
+.container .login_menu{
+	display:flex;
+	justify-content:space-between;
+	align-items:center;
+	font-size:0.8rem;
+	margin-bottom:5px;
+	height : 30px;
+}
+.container .login_menu>*:nth-child(1)
+{
+	font-size:0.8rem;
+	text-align:left;
+	display:flex;
+	margin-bottom:-5px;
+}
+
+.container .login_menu>*:nth-child(2)
+{
+	font-size:0.7rem;
+	text-align:right;
+}
+
+#sns_login{
+
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    text-align:center;
+
+}
+
+#sns_login>*{
+    margin : 20px;
+}
+#sns_login img{
+	width : 50px; height : 50px;
+	border-radius : 50%;
+	margin-bottom:10px;
+
+}
+
+#sns_login label{
+	font-size : 0.5rem;
+}

@@ -1,0 +1,47 @@
+@charset "UTF-8";
+
+.container{
+	width : 400px; margin:25px auto; text-align:center; position:relative;
+	padding : 20px;
+	
+}
+
+.container *{
+	margin-bottom:0px;
+	padding : 0px;
+	}
+
+.container h1{
+	margin-left : -10px;
+	margin-bottom : 30px;
+}
+
+.container .msg{ position:absolute;left:0px;right:0px;top:-15px; margin:auto; font-size:0.5rem; color:red; padding-left:15px;}
+
+.container .smsheader{
+	margin-bottom : 20px;	
+	text-align:left;
+}
+
+.container input
+{
+	border-radius:0px;
+	width : 250px;
+	height : 35px;
+	margin-bottom : 10px;
+	
+	 
+}
+.container .btn{
+	border-radius:0px;
+	width : 120px;
+	height : 35px;
+	margin-bottom : 0px;
+	padding : 0px;
+ 
+}
+
+.container .btn-group>*{
+	margin : 0 10px;
+}
+
