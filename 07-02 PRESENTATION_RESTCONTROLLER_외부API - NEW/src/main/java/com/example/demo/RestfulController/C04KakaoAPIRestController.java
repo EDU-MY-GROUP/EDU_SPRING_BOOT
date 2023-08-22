@@ -23,7 +23,7 @@ import java.io.IOException;
 @Slf4j
 public class C04KakaoAPIRestController {
 
-    private static final String CLIENT_ID = "APPLICATION_KEY_INSERT";
+    private static final String CLIENT_ID = "4c1e6a5f1add5934699b2afe0edf30a2";
     private static final String REDIRECT_URI = "http://localhost:8080/auth/kakao/callback";
     private static final String AUTHORIZATION_CODE_URL = "https://kauth.kakao.com/oauth/authorize";
     private static final String TOKEN_URL = "https://kauth.kakao.com/oauth/token";
@@ -207,8 +207,28 @@ public class C04KakaoAPIRestController {
     //    }'
 
 
-    //친구목록 가져오기
 
+
+    //친구목록 가져오기
+    @GetMapping("/auth/kakao/MyFriends")
+    public Object My_Friends_List() {
+        String FRIENDS_LIST_SERVICE_URL = "https://kapi.kakao.com/v1/api/talk/friends";
+        RestTemplate restTemplate = new RestTemplate();
+
+        HttpHeaders header = new HttpHeaders();
+        header.set("Authorization", "Bearer " + access_token);
+
+
+        HttpEntity<String> entity = new HttpEntity<>(header);
+
+        ResponseEntity<String> response = restTemplate.exchange(FRIENDS_LIST_SERVICE_URL, HttpMethod.GET, entity, String.class);
+
+
+
+        System.out.println(response);
+        return response;
+
+    }
     //친구한테 메시지 보내보기
 
 

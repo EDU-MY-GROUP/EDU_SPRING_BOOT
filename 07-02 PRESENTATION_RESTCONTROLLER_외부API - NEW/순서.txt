@@ -1,4 +1,14 @@
+
+메일 보내기 API - Google , Naver
+문자 보내기 API - Naver Cloud Platform - SMS
+회원가입 페이지 에서 인증처리를 SMS
+
+로그인 패스워드 찾기 , 아이디 찾기를 - 메일보내기로 해결해보기
+
+
+
 01 OpenData API _ by JAVA
+
 
 02 Spotify API(유료결제 기능 제외..) _BY JAVA
 
