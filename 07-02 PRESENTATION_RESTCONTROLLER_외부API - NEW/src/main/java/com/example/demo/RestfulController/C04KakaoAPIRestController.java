@@ -209,19 +209,38 @@ public class C04KakaoAPIRestController {
 
 
 
-    //친구목록 가져오기
+    //추가항목 동의 받기 : https://developers.kakao.com/docs/latest/ko/kakaologin/rest-api#request-code-additional-consent
+    //다른 학생이 접속해서 최소 1번이상의 정보제공 동의를 해야지 친구목록 확인이 가능함
+
+
+
+    //오류 https://devtalk.kakao.com/t/topic/126276
+    //참고 https://cocoabba.tistory.com/16
+    //기술문서 https://developers.kakao.com/docs/latest/ko/kakaotalk-social/rest-api#get-friends
+
+    //추가항목 동의받기를 통해서 동의항목 추가
+    //https://kauth.kakao.com/oauth/authorize
+    //URL 요청하기
+    //https://kauth.kakao.com/oauth/authorize?client_id=4c1e6a5f1add5934699b2afe0edf30a2&redirect_uri=http://localhost:8080/auth/kakao/callback&response_type=code&scope=friends
     @GetMapping("/auth/kakao/MyFriends")
     public Object My_Friends_List() {
-        String FRIENDS_LIST_SERVICE_URL = "https://kapi.kakao.com/v1/api/talk/friends";
+
         RestTemplate restTemplate = new RestTemplate();
 
+        //URL
+        String FRIENDS_LIST_SERVICE_URL = "https://kapi.kakao.com/v1/api/talk/friends";
+
+        //HEADER
+        System.out.println("access-token : " + access_token);
         HttpHeaders header = new HttpHeaders();
         header.set("Authorization", "Bearer " + access_token);
-
-
+        //header.setBearerAuth(access_token);
         HttpEntity<String> entity = new HttpEntity<>(header);
 
+
+        //GET
         ResponseEntity<String> response = restTemplate.exchange(FRIENDS_LIST_SERVICE_URL, HttpMethod.GET, entity, String.class);
+
 
 
 
