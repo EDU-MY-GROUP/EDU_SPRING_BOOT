@@ -34,6 +34,12 @@ dependencies {
 	//Thymeleaf
 	implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
 
+	//Naver GeoCoding
+	// 네이버 지도 API 의존성
+	implementation 'com.squareup.okhttp3:okhttp:4.9.0'
+
+
+
 }
 
 tasks.named('test') {

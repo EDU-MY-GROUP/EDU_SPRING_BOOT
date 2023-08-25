@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+
+    <style>
+        .moveMapBtn{
+            position:fixed;
+            z-index:10;
+        }
+
+    </style>
+</head>
+<body>
+
+<div id="map" style="width:100vw;height:90vh; position:relative;"></div>
+
+<button  class="moveMapBtn"onclick="moveMap(10,10)"> 이동 </button>
+
+<script type="text/javascript" src="https://oapi.map.naver.com/openapi/v3/maps.js?ncpClientId=s0femem0gn&callback=initMap"></script>
+<script type="text/javascript">
+
+        //지도 초기화
+        var map = null;
+
+       const initMap = ()=> {
+            map = new naver.maps.Map('map', {
+                center: new naver.maps.LatLng(37.3595704, 127.105399),
+                zoom: 10
+            });
+        }
+       initMap();   //초기화
+
+       //지도 이동
+       const moveMap = (lat,lang)=>{
+            console.log("moveMap",lat," ",lang);
+            new naver.maps.LatLng(lat, lang);
+            map.setCenter(jeju); // 중심 좌표 이동
+            map.setZoom(10);     // 줌 레벨 변경
+       }
+
+
+    </script>
+
+
+</body>
+</html>
