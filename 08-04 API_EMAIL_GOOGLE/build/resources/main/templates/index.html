@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+ <!-- bs -->
+ <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
+ integrity="sh384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
+ integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
+ crossorigin="anonymous"></script>
+
+     <!-- daum addr cdn  -->
+     <script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
+     <!--  -->
+     <script defer src="js/daum.js"></script>
+
+     <!-- kakao map -->
+     <script type="text/javascript"
+     src="//dapi.kakao.com/v2/maps/sdk.js?appkey=823e6296f29c70cb7913c86a770bdcfb&libraries=services"></script>
+     <!--  -->
+     <script defer src="js/kakaomap.js"></script>
+
+         <!-- kakao SDK lib cdn연결   -->
+    <script src="https://developers.kakao.com/sdk/js/kakao.js"></script>
+    <script defer src="js/kakao_auth.js"></script>
+
+</head>
+<body>
+    <style>
+        .wrapper{
+            width : 400px;
+            /* height : 500px; */
+            border : 1px solid rgb(222, 217, 217);
+            margin : 150px auto;
+            padding : 15px;
+            border-radius: 10px;
+
+        }
+        .wrapper>.header{
+            text-align:center;
+        }
+        .wrapper>.body{
+
+        }   
+        .wrapper>.body>form>*{
+            margin :15px 5px;
+            
+        }   
+    </style>
+    <div class="wrapper">
+        <div class="header">
+            <h2>LOGIN</h2>
+        </div>
+        <div class="body">
+
+            <form onsubmit="return false">
+                <div>
+                    <input class="form-control" placeholder="Enter Email">
+                </div>
+                <div>
+                    <input class="form-control" placeholder="Enter Password">
+                </div>
+                <div>
+                    <button class="btn btn-primary w-100">로그인</button>
+                </div>
+                <div>
+                    <button class="btn btn-warning w-100" onclick="kakaoLogin()">카카오 로그인</button>
+                </div>
+                <div>
+                    <button class="btn btn-success w-100" type="button"  data-bs-toggle="modal" data-bs-target="#staticBackdrop" onclick="">이메일 인증</button>
+                </div>
+            </form>
+        </div>
+
+    </div>
+
+    <!-- 모달창    -->
+
+
+    <!-- Modal -->
+    <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="staticBackdropLabel">이메일 인증</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form method="get" action="/reqmailSend"  name="emailform">
+                        <input type="text" name="email" class="form-control m-2" placeholder="Insert Email">
+                        <input type="submit" value="임시패스워드 요청" class="btn btn-secondary m-2">
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary">Understood</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+</body>
+</html>
