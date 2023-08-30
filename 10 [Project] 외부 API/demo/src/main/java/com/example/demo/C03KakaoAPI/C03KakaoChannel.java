@@ -1,4 +1,4 @@
-package com.example.demo.C03Kakao;
+package com.example.demo.C03KakaoAPI;
 
 
 import lombok.extern.slf4j.Slf4j;
