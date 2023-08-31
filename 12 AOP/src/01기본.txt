@@ -1,0 +1,14 @@
+01 build.gradle
+- implementation 'org.springframework.boot:spring-boot-starter-aop'
+
+02 config/RootConfig
+@EnableAspectJAutoProxy 추가
+
+
+03 File가져오기
+- SimpleController
+- SimpleService
+- LogAdvice
+
+04 LogAdvice에서 경로 수정
+com.test.app -> com.example.demo

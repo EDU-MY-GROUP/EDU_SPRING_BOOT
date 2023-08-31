@@ -1,0 +1,27 @@
+01 build.gradle
+- x
+
+02 application.properties
+주석 처리
+##JSP Path
+#spring.mvc.view.prefix: /WEB-INF/views/
+#spring.mvc.view.suffix: .jsp
+##JSP
+#server.servlet.jsp.init-parameters.development=true
+
+##UTF-8 Setting
+#spring.servlet.filter.encoding.filter-name=encodingFilter
+#spring.servlet.filter.encoding.filter-class=org.springframework.web.filter.CharacterEncodingFilter
+#spring.servlet.filter.encoding.init-param.encoding=UTF-8
+#spring.servlet.filter.encoding.init-param.forceEncoding=true
+#spring.servlet.filter.encoding.url-pattern=/*
+
+
+03 파일 가져오기
+filter 폴더 가져오기 -> @Component 추가
+interceptor 폴더 가져오기
+WebMvcConfig 파일 복사
+
+
+04 확인
+
