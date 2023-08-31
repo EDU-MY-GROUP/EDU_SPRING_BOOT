@@ -1,7 +1,0 @@
-package com.example.demo.Service;
-
-import org.springframework.mail.javamail.JavaMailSender;
-
-public interface MailSenderFactory {
-    JavaMailSender getSender(String email, String password);
-}

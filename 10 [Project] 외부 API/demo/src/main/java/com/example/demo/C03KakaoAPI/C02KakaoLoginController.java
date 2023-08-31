@@ -2,6 +2,7 @@ package com.example.demo.C03KakaoAPI;
 
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.google.gson.JsonObject;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -17,23 +18,22 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.client.RestTemplate;
 
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
+import java.io.IOException;
 
 @Controller
 @Slf4j
 @RequestMapping("/th/kakao")
 public class C02KakaoLoginController {
 
-//    private final String ADMIN_KEY = "APP_ADMIN_KEY";
-    private final String CLIENT_ID = "746b917a629e6c3271acfaa6542552d5";
-
+    private final String CLIENT_ID = "APP_REST_API_KEY";
     private final String REDIRECT_URI = "http://localhost:8080/th/kakao/callback";
 
     private final String LOGOUT_REDIRECT_URI = "http://localhost:8080/th/kakao/login";
 
+
+
     //access-token/refresh-token/expires-in...
     private KakaoTokenResponse kakaoTokenResponse;
-
     private KakaoProfile kakaoProfile;
 
     // 인가코드 요청 URL
@@ -42,9 +42,6 @@ public class C02KakaoLoginController {
     @GetMapping("/getCode")
     public void authorize(HttpServletResponse response) throws Exception {
         String url = "https://kauth.kakao.com/oauth/authorize?response_type=code&client_id="+CLIENT_ID+"&redirect_uri="+REDIRECT_URI;
-        if(kakaoTokenResponse == null)
-            url += "&prompt=login";
-
         response.sendRedirect(url);
     }
 
@@ -118,13 +115,12 @@ public class C02KakaoLoginController {
         RestTemplate rt = new RestTemplate();
         KakaoProfile response =  rt.postForObject(url,entity,KakaoProfile.class);
         System.out.println(response);
-
         this.kakaoProfile = response;
         return response;
     }
-    
-    
-    
+
+
+
     // 나에게 메시지 보내기 기능 구현
     //01 scope=talk_message 권한 받기
     @GetMapping("/getCodeMsg")
@@ -132,7 +128,7 @@ public class C02KakaoLoginController {
         String url = "https://kauth.kakao.com/oauth/authorize?response_type=code&client_id="+CLIENT_ID+"&redirect_uri="+REDIRECT_URI+"&scope=talk_message";
         response.sendRedirect(url);
     }
-    
+
     @GetMapping("/message/me/{message}")
     public Object sendMessageMe(@PathVariable("message") String message) {
 
@@ -159,41 +155,32 @@ public class C02KakaoLoginController {
         HttpEntity<MultiValueMap<String, String>> entity = new HttpEntity<>(params,headers);
 
         //Request_Case1
-      RestTemplate rt = new RestTemplate();
-      ResponseEntity<String> response =  rt.exchange(url, HttpMethod.POST,entity,String.class);
+        RestTemplate rt = new RestTemplate();
+        ResponseEntity<String> response =  rt.exchange(url, HttpMethod.POST,entity,String.class);
 
-      System.out.println(response);
-      System.out.println(response.getBody());
+        System.out.println(response);
+        System.out.println(response.getBody());
 
 
 
         return null;
     }
 
-    // 카카오 계정과 함께 로그아웃(카카오 서버에 저장된 사용자 액세스 토큰과 리프레시 토큰을 모두 만료)
-    // 개발 문서 : https://developers.kakao.com/docs/latest/ko/kakaologin/rest-api#logout
-
+    //로그아웃(토큰 만료)
     @GetMapping("/logout")
-    public String logoutKakao(HttpSession session){
-
+    public String logout() {
         System.out.println("GET /th/kakao/logout");
+
         //URL
         String url = "https://kapi.kakao.com/v1/user/logout";
         //Header
         HttpHeaders headers = new HttpHeaders();
-        headers.add("Content-Type", "application/x-www-form-urlencoded");
+        headers.add("Content-Type", "application/x-www-form-urlencoded;charset=utf-8");
         headers.add("Authorization", "Bearer "+kakaoTokenResponse.getAccess_token());
 
         //Parameter
-
-        MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
-        params.add("target_id_type","user_id");
-        System.out.println("targetId : " + kakaoProfile.getId());
-        params.add("target_id",kakaoProfile.getId()+"");
-
-
         //header + parameter
-        HttpEntity<MultiValueMap<String, String>> entity = new HttpEntity<>(params,headers);
+        HttpEntity<MultiValueMap<String, String>> entity = new HttpEntity<>(headers);
 
         //Request_Case1
         RestTemplate rt = new RestTemplate();
@@ -202,43 +189,17 @@ public class C02KakaoLoginController {
         System.out.println(response);
         System.out.println(response.getBody());
 
-        //세션 확인
-        String access_Token = (String)session.getAttribute("access_Token");
-        System.out.println("Session's accessToken : " + access_Token);
-
-
         return "redirect:/th/kakao/logoutWithKakao";
     }
 
-    // 카카오 계정과 함께 로그아웃(웹브라우저의 카카오정보 제거)
-    // 기술문서 : https://developers.kakao.com/docs/latest/ko/kakaologin/rest-api#logout-of-service-and-kakaoaccount
-
     @GetMapping("/logoutWithKakao")
-    public String logoutKakaoWithKakao() throws Exception {
-
+    public @ResponseBody  void logoutWithKakao(HttpServletResponse response) throws IOException {
         System.out.println("GET /th/kakao/logoutWithKakao");
-
         //URL
-        String url = "https://kauth.kakao.com/oauth/logout?client_id="+ CLIENT_ID +"&logout_redirect_uri="+LOGOUT_REDIRECT_URI;
-
-
-        //Request_Case1
-        RestTemplate rt = new RestTemplate();
-        ResponseEntity<String> response =  rt.exchange(url, HttpMethod.GET,null,String.class);
-
-        System.out.println(response);
-        System.out.println(response.getBody());
-
-
-        //초기화
-        this.kakaoProfile = null;
-        this.kakaoTokenResponse = null;
-        return "redirect:/th/kakao/login";
-
+        String url = "https://kauth.kakao.com/oauth/logout?client_id="+CLIENT_ID+"&logout_redirect_uri="+LOGOUT_REDIRECT_URI;
+        response.sendRedirect(url);
     }
 
-
-    //APP 연결 끊기
     @GetMapping("/disConnect")
     public String disconnectKakao(){
 
@@ -246,6 +207,7 @@ public class C02KakaoLoginController {
 
         //URL
         String url = "https://kapi.kakao.com/v1/user/unlink";
+
         //Header
         HttpHeaders headers = new HttpHeaders();
         headers.add("Content-Type", "application/x-www-form-urlencoded");
@@ -291,7 +253,7 @@ class KakaoTokenResponse {
 @Data
 class KakaoProfile {
     @JsonProperty("id")
-    private Long id;
+    private long id;
 
     @JsonProperty("connected_at")
     private String connected_at;
