@@ -25,7 +25,7 @@ import java.io.IOException;
 @RequestMapping("/th/kakao")
 public class C02KakaoLoginController {
 
-    private final String CLIENT_ID = "APP_REST_API_KEY";
+    private final String CLIENT_ID = "746b917a629e6c3271acfaa6542552d5";
     private final String REDIRECT_URI = "http://localhost:8080/th/kakao/callback";
 
     private final String LOGOUT_REDIRECT_URI = "http://localhost:8080/th/kakao/login";

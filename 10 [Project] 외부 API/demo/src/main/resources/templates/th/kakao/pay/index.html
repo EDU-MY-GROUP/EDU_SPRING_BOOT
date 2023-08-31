@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<h1>KAKAO PAY TEST</h1>
+
+<a href="javascript:void(0)" class="req_btn">카카오 PC 결제 테스트</a>
+
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.5.0/axios.min.js" integrity="sha512-aoTNnqZcT8B4AmeCFmiSnDlc4Nj/KPaZyB5G7JnOnUEkdNpCZs1LCankiYi01sLTyWy+m2P+W4XM+BuQ3Q4/Dg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script>
+		//Post MEMO
+		const post_btn_el = document.querySelector(".req_btn");
+		post_btn_el.addEventListener('click',function(){
+			console.log("req_btn clicked..");
+
+			axios.get("http://localhost:8080/th/kakao/pay/req")
+			.then(response=>{
+				console.log("pay request Success!! ",response);
+				console.log(response.data);
+                console.log(response.data.next_redirect_pc_url);
+                //PC열기
+                window.open(response.data.next_redirect_pc_url,'payment','top=10, left=10, width=500, height=700, status=no, menubar=no, toolbar=no, resizable=no');
+			})
+			.catch(error=>{
+				console.log("memo add fail... ",error);
+			});
+		})
+
+
+</script>
+
+</body>
+</html>
