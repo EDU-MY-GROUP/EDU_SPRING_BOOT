@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style>
+        img{
+            margin : 10px;
+        }
+
+    </style>
+</head>
+<body>
+<h1>Karlo Test</h1>
+생성 이미지키워드 입력 : <input type="text" name="prompt"  class="prompt" />  <button onclick="request()">요청</button>
+<hr>
+<div class="display">
+
+</div>
+
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.5.0/axios.min.js" integrity="sha512-aoTNnqZcT8B4AmeCFmiSnDlc4Nj/KPaZyB5G7JnOnUEkdNpCZs1LCankiYi01sLTyWy+m2P+W4XM+BuQ3Q4/Dg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script>
+
+
+        const display_el = document.querySelector('.display');
+        const request = ()=>{
+
+            const prompt_el = document.querySelector('.prompt');
+
+            axios.get('http://localhost:8080/th/kakao/karlo/request/'+prompt_el.value)
+             .then(response=>{
+                 console.log("request Success!");
+                 console.log(response);
+                 console.log(response.data);
+                 console.log(response.data.images[0]);
+                 console.log(response.data.images[0].image);
+                 const img_el = document.createElement("img");
+                 img_el.setAttribute('src',response.data.images[0].image);
+                 img_el.setAttribute('width','500px');
+                 img_el.setAttribute('height','500px');
+                 display_el.appendChild(img_el);
+
+             })
+             .catch(error=>{});
+
+        }
+
+
+
+
+
+
+</script>
+</body>
+</html>

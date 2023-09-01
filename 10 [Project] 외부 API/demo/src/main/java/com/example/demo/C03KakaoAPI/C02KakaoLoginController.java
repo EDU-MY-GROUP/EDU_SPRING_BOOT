@@ -2,7 +2,6 @@ package com.example.demo.C03KakaoAPI;
 
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.google.gson.JsonObject;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -25,7 +24,7 @@ import java.io.IOException;
 @RequestMapping("/th/kakao")
 public class C02KakaoLoginController {
 
-    private final String CLIENT_ID = "746b917a629e6c3271acfaa6542552d5";
+    private final String CLIENT_ID = "APP_REST_API_KEY";
     private final String REDIRECT_URI = "http://localhost:8080/th/kakao/callback";
 
     private final String LOGOUT_REDIRECT_URI = "http://localhost:8080/th/kakao/login";
@@ -118,9 +117,9 @@ public class C02KakaoLoginController {
         this.kakaoProfile = response;
         return response;
     }
-
-
-
+    
+    
+    
     // 나에게 메시지 보내기 기능 구현
     //01 scope=talk_message 권한 받기
     @GetMapping("/getCodeMsg")
@@ -128,7 +127,7 @@ public class C02KakaoLoginController {
         String url = "https://kauth.kakao.com/oauth/authorize?response_type=code&client_id="+CLIENT_ID+"&redirect_uri="+REDIRECT_URI+"&scope=talk_message";
         response.sendRedirect(url);
     }
-
+    
     @GetMapping("/message/me/{message}")
     public Object sendMessageMe(@PathVariable("message") String message) {
 
@@ -147,6 +146,7 @@ public class C02KakaoLoginController {
         template_object.put("button_title","바로확인");
 
 
+
         MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
         params.add("template_object",template_object.toString());
 
@@ -155,11 +155,11 @@ public class C02KakaoLoginController {
         HttpEntity<MultiValueMap<String, String>> entity = new HttpEntity<>(params,headers);
 
         //Request_Case1
-        RestTemplate rt = new RestTemplate();
-        ResponseEntity<String> response =  rt.exchange(url, HttpMethod.POST,entity,String.class);
+      RestTemplate rt = new RestTemplate();
+      ResponseEntity<String> response =  rt.exchange(url, HttpMethod.POST,entity,String.class);
 
-        System.out.println(response);
-        System.out.println(response.getBody());
+      System.out.println(response);
+      System.out.println(response.getBody());
 
 
 
@@ -182,14 +182,14 @@ public class C02KakaoLoginController {
         //header + parameter
         HttpEntity<MultiValueMap<String, String>> entity = new HttpEntity<>(headers);
 
-        //Request_Case1
-        RestTemplate rt = new RestTemplate();
-        ResponseEntity<String> response =  rt.exchange(url, HttpMethod.POST,entity,String.class);
+       //Request_Case1
+      RestTemplate rt = new RestTemplate();
+      ResponseEntity<String> response =  rt.exchange(url, HttpMethod.POST,entity,String.class);
 
-        System.out.println(response);
-        System.out.println(response.getBody());
+      System.out.println(response);
+      System.out.println(response.getBody());
 
-        return "redirect:/th/kakao/logoutWithKakao";
+      return "redirect:/th/kakao/logoutWithKakao";
     }
 
     @GetMapping("/logoutWithKakao")

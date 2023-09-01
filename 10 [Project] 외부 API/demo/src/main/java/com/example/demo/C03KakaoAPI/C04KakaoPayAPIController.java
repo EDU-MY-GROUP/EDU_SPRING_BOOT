@@ -1,12 +1,9 @@
 package com.example.demo.C03KakaoAPI;
 
-
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
@@ -18,32 +15,30 @@ import org.springframework.web.client.RestTemplate;
 @Controller
 @Slf4j
 @RequestMapping("/th/kakao/pay")
-public class C04KakaoPayAPI {
+public class C04KakaoPayAPIController {
 
-
-    private final String ADMIN_KEY = "ADMIN KEY INSERT";
+    private final String ADMIN_KEY = "ADMIN_KEY";
 
     @GetMapping("/index")
     public void payIndex(){
-        System.out.println("GET /th/kakao/index");
+        log.info("GET /th/kakao/pay/index");
     }
+    @GetMapping("/request")
+    public @ResponseBody PaymentResponse  pay(){
 
-    @GetMapping("/req")
-    public @ResponseBody PaymentResponse pay(){
-        System.out.println("GET /th/kakao/req");
         //URL
         String url = "https://kapi.kakao.com/v1/payment/ready";
+
         //Header
         HttpHeaders headers = new HttpHeaders();
-        headers.add("Content-Type", "application/x-www-form-urlencoded;charset=utf-8");
         headers.add("Authorization", "KakaoAK "+ADMIN_KEY);
+        headers.add("Content-Type", "application/x-www-form-urlencoded;charset=utf-8");
 
-        //Parameter
         MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
         params.add("cid","TC0ONETIME");
         params.add("partner_order_id","partner_order_id");
         params.add("partner_user_id","partner_user_id");
-        params.add("item_name","쵸코파이");
+        params.add("item_name","초코파이");
         params.add("quantity","1");
         params.add("total_amount","2200");
         params.add("vat_amount","200");
@@ -51,17 +46,16 @@ public class C04KakaoPayAPI {
         params.add("approval_url","http://localhost:8080/th/kakao/pay/success");
         params.add("fail_url","http://localhost:8080/th/kakao/pay/fail");
         params.add("cancel_url","http://localhost:8080/th/kakao/pay/cancel");
-        params.add("vat_amount","200");
 
         //header + parameter
         HttpEntity<MultiValueMap<String, String>> entity = new HttpEntity<>(params,headers);
 
         //Request_Case1
-//          RestTemplate rt = new RestTemplate();
-//          ResponseEntity<String> response =  rt.exchange(url, HttpMethod.POST,entity,String.class);
+//        RestTemplate rt = new RestTemplate();
+//        ResponseEntity<String> response =  rt.exchange(url, HttpMethod.POST,entity,String.class);
 //
-//          System.out.println(response);
-//          System.out.println(response.getBody());
+//        System.out.println(response);
+//        System.out.println(response.getBody());
 
         //Request_Case2
         RestTemplate rt = new RestTemplate();
@@ -70,32 +64,25 @@ public class C04KakaoPayAPI {
 
         return response;
 
-
     }
-
-
-    //https://localhost:8080/th/kakao/paySuccess
     @GetMapping("/success")
-    public void paySuccess(String pg_token){
-        System.out.println("GET /th/kakao/success " + pg_token);
-    }
-    @GetMapping("/fail")
-    public void payFail(String value){
-        System.out.println("GET /th/kakao/fail " + value);
+    public @ResponseBody String success(){
+        log.info("GET /th/kakao/pay/success");
+        return "결제 성공!";
     }
     @GetMapping("/cancel")
-    public void payCancel(String value){
-        System.out.println("GET /th/kakao/cancel " + value);
+    public @ResponseBody String cancel(){
+        log.info("GET /th/kakao/pay/cancel");
+        return "결제 취소!";
+    }
+    @GetMapping("/fail")
+    public @ResponseBody String fail(){
+        log.info("GET /th/kakao/pay/fail");
+        return "결제 실패!";
     }
 
 }
-
-
-
-//-------------------------------------------------------------------
-
-
-
+//---------------------------------------------------------------
 @Data
 class PaymentResponse {
     private String tid;
@@ -106,7 +93,4 @@ class PaymentResponse {
     private String android_app_scheme;
     private String ios_app_scheme;
     private String created_at;
-
 }
-
-

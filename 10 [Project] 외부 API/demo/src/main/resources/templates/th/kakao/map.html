@@ -76,6 +76,22 @@
         #pagination {margin:10px auto;text-align: center;}
         #pagination a {display:inline-block;margin-right:10px;}
         #pagination .on {font-weight: bold; cursor: default;color:#777;}
+
+        .infowindow{
+            width : 300px;
+            height : 150px;
+            z-index : 1;
+            font-size : 1.2rem;
+            padding : 5px;
+            text-align:center;
+            display:flex;
+            flex-direction:column;
+            align-items:center;
+            justify-content:center;
+        }
+        .infowindow>*{
+            margin : 2px;
+        }
     </style>
 
     <link rel="stylesheet" href="../../css/map.css">
@@ -105,6 +121,10 @@
         <div id="pagination"></div>
     </div>
 </div>
+
+<!--axios-->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.5.0/axios.min.js" integrity="sha512-aoTNnqZcT8B4AmeCFmiSnDlc4Nj/KPaZyB5G7JnOnUEkdNpCZs1LCankiYi01sLTyWy+m2P+W4XM+BuQ3Q4/Dg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
 
 <script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=8d373580bb3b1ff5d4b1b9b19f1399d4&libraries=services"></script>
 <script>
@@ -196,23 +216,30 @@
             // 마커와 검색결과 항목에 mouseover 했을때
             // 해당 장소에 인포윈도우에 장소명을 표시합니다
             // mouseout 했을 때는 인포윈도우를 닫습니다
-            (function(marker, title) {
+            (function(marker, place) {
+
+                //마우스가 마커에 오버되었을때
                 kakao.maps.event.addListener(marker, 'mouseover', function() {
-                    displayInfowindow(marker, title);
+                    displayInfowindow(marker, place);
                 });
 
                 kakao.maps.event.addListener(marker, 'mouseout', function() {
-                    infowindow.close();
+                    //infowindow.close();
+                });
+                //추가
+                kakao.maps.event.addListener(marker, 'mouseclick', function() {
+                     displayInfowindow(marker, place);
                 });
 
+                //아이템에 마우스 오버되었을때
                 itemEl.onmouseover =  function () {
-                    displayInfowindow(marker, title);
+                    displayInfowindow(marker, place);
                 };
 
                 itemEl.onmouseout =  function () {
                     infowindow.close();
                 };
-            })(marker, places[i].place_name);
+            })(marker, places[i]);  //수정!!!!!!!!!!!!!!!!!!!!!!!! places[i]
 
             fragment.appendChild(itemEl);
         }
@@ -227,7 +254,6 @@
 
     // 검색결과 항목을 Element로 반환하는 함수입니다
     function getListItem(index, places) {
-
         var el = document.createElement('li'),
         itemStr = '<span class="markerbg marker_' + (index+1) + '"></span>' +
                     '<div class="info">' +
@@ -246,8 +272,29 @@
         el.innerHTML = itemStr;
         el.className = 'item';
 
+        //-----------------------------------------------------------------
+        //추가
+        //-----------------------------------------------------------------
+        el.addEventListener('click',function(){
+            console.log("clicked...!");
+            console.log(places);
+            panTo(places);
+        })
         return el;
     }
+    //--------------------------------------------------------
+    //지도이동
+    //--------------------------------------------------------
+    function panTo(places) {
+        // 이동할 위도 경도 위치를 생성합니다
+        var moveLatLon = new kakao.maps.LatLng(places.y, places.x);
+
+        // 지도 중심을 부드럽게 이동시킵니다
+        // 만약 이동할 거리가 지도 화면보다 크면 부드러운 효과 없이 이동합니다
+        map.panTo(moveLatLon);
+    }
+
+
 
     //UPDATE--------------------- 마커를 생성하고 지도 위에 마커를 표시하는 함수입니다
     function addMarker(position, idx, title) {
@@ -309,12 +356,14 @@
 
     // 검색결과 목록 또는 마커를 클릭했을 때 호출되는 함수입니다
     // 인포윈도우에 장소명을 표시합니다
-    function displayInfowindow(marker, title) {
-        var content = '<div  style="padding:10px;z-index:1;height:120px;">'
-        content += '<div>' + title + '</div>';
-        content += '<div>LINK : http://example.com</div>'
-        content += '<div>ADDR : 대구 대구 대구 </div>'
-        content += '<div>TEL : 055-055-0555 </div>'
+    function displayInfowindow(marker, places) {
+        console.log('displayInfowindow ',places);
+        var content = '<div  class="infowindow" >'
+        content += '<div>TITLE : ' + places.place_name + '</div>';
+        content += '<div>URL : <a href='+places.place_url+' target=_blank>' + places.place_url+ ' </a></div>'
+        content += '<div>CATEGORY : '+ places.category_name+' </div>'
+        content += '<div>Address : '+ places.address_name +'</div>'
+        content += '<div>TEL : '+ places.phone+'</div>'
         content += '</div>'
         infowindow.setContent(content);
         infowindow.open(map, marker);

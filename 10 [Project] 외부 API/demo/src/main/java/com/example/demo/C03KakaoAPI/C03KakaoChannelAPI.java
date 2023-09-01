@@ -19,8 +19,4 @@ public class C03KakaoChannelAPI {
     //[참고] 채널 채팅 설정
     //채널 -> 1:1채팅 -> 채팅 설정 -> 1:1채팅 사용 ON
 
-
-
-
-
 }
