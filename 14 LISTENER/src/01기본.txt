@@ -1,5 +1,5 @@
 # --------------------------------
-#기본 서블릿 이벤트 가져와서 테스트
+#기본 서블릿 이벤트 가져와서 테스트 - x
 # --------------------------------
 
 # --------------------------------
@@ -15,9 +15,26 @@ ContextLoaderListner 설정 : https://timetolazy.tistory.com/69
 # EVENT LISTNER 추가하기
 # --------------------------------
 # EVENT  : Bean 과 Bean사이에서의 데이터 전달 목적
+# Publisher : 이벤트 등록
+# Listener : 이벤트 발생시 처리
+
+01 MemoEvent 생성
+- lombok 적용안됨 직접 toString 생성 , 생성자 생성
+
+02 MemoService 설정
+
+	@Autowired
+	private  ApplicationEventPublisher publisher;
+
+	public void addMemo(MemoDto dto) {
+		//log.info("MemoService's addMemo Call! ");
+		//이벤트 추가!!!!!!!!!!!!!!!!!!
+		publisher.publishEvent(new MemoEvent(this,dto));
+		mapper.insert(dto);
+	}
 
 
+03 MemoAddEventListener 추가
 
-
-#이벤트 리스너 이거 참고해서 다시 만들기
-# ㄴhttps://sabarada.tistory.com/184
+# [참고]
+# https://wisdom-and-record.tistory.com/133

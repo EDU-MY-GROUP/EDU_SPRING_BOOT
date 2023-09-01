@@ -9,7 +9,7 @@ import org.springframework.web.context.support.RequestHandledEvent;
 // RequestContextEvent..
 //
 
-public class RequestHandledEventListener implements ApplicationListener<RequestHandledEvent>{
+public class C02RequestHandledEventListener implements ApplicationListener<RequestHandledEvent>{
 
 	@Override
 	public void onApplicationEvent(RequestHandledEvent event) {

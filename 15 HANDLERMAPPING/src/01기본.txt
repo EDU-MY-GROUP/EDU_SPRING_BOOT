@@ -1,0 +1,4 @@
+01 handler 추가
+
+02 WebMvcConfig 에서 옮기기
+- requestMappingHandlerMapping()함수는 기존 존재하는 bean이 있기때문에 이름을 변경(myRequestMappingHandlerMapping)

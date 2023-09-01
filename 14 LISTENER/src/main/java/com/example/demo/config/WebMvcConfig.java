@@ -10,8 +10,8 @@ package com.example.demo.config;
 
 
 import com.example.demo.interceptor.MemoInterceptor;
-import com.example.demo.listener.CustomContextRefreshedListener;
-import com.example.demo.listener.RequestHandledEventListener;
+import com.example.demo.listener.C01CustomContextRefreshedListener;
+import com.example.demo.listener.C02RequestHandledEventListener;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.multipart.MultipartResolver;
@@ -61,15 +61,15 @@ public class WebMvcConfig implements WebMvcConfigurer {
 
 	//Listner Added
 	@Bean
-	public CustomContextRefreshedListener customContextRefreshedListener()
+	public C01CustomContextRefreshedListener customContextRefreshedListener()
 	{
-		return new CustomContextRefreshedListener();
+		return new C01CustomContextRefreshedListener();
 	}
 
 	@Bean
-	public RequestHandledEventListener requestHandledEventListener() {
+	public C02RequestHandledEventListener requestHandledEventListener() {
 		//
-		return new RequestHandledEventListener();
+		return new C02RequestHandledEventListener();
 	}
 	
 	

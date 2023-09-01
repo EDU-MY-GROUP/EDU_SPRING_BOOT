@@ -9,7 +9,7 @@ import org.springframework.context.event.ContextRefreshedEvent;
 // RequestContextEvent..
 //
 
-public class CustomContextRefreshedListener implements ApplicationListener<ContextRefreshedEvent>{
+public class C01CustomContextRefreshedListener implements ApplicationListener<ContextRefreshedEvent>{
 
 	@Override
 	public void onApplicationEvent(ContextRefreshedEvent event) {
