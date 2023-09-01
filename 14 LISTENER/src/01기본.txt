@@ -1,6 +1,23 @@
+# --------------------------------
 #기본 서블릿 이벤트 가져와서 테스트
+# --------------------------------
 
-#
+# --------------------------------
+# STS
+# --------------------------------
+# CustomContextRefreshedListener 확인
+ContextLoaderListner 설정 : https://timetolazy.tistory.com/69
+
+# RequestHandledEventListener 확인
+
+
+# --------------------------------
+# EVENT LISTNER 추가하기
+# --------------------------------
+# EVENT  : Bean 과 Bean사이에서의 데이터 전달 목적
+
+
+
 
 #이벤트 리스너 이거 참고해서 다시 만들기
 # ㄴhttps://sabarada.tistory.com/184

@@ -13,6 +13,8 @@ public class CustomContextRefreshedListener implements ApplicationListener<Conte
 
 	@Override
 	public void onApplicationEvent(ContextRefreshedEvent event) {
+
+		//test!!!
 		System.out.println("CustomContextRefreshedListener's onApplicationEvent " +event.getSource());	
 	}
 	

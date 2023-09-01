@@ -60,6 +60,10 @@ dependencies {
 	//AOP
 	implementation 'org.springframework.boot:spring-boot-starter-aop'
 
+	//DEV_TOOLS
+	implementation 'org.springframework.boot:spring-boot-devtools'
+
+
 
 
 
