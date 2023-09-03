@@ -2,12 +2,13 @@ package com.example.demo.config;
 
 
 import com.example.demo.config.auth.PrincipalDetailsService;
+import com.example.demo.config.auth.PrincipalOAuth2DetailsService;
 import com.example.demo.config.auth.exceptionhandler.CustomAccessDeniedHandler;
 import com.example.demo.config.auth.exceptionhandler.CustomAuthenticationEntryPoint;
 import com.example.demo.config.auth.loginHandler.CustomAuthenticationFailureHandler;
 import com.example.demo.config.auth.loginHandler.CustomLoginSuccessHandler;
-import com.example.demo.config.auth.logoutHandler.CustomLogoutHandler;
 import com.example.demo.config.auth.logoutHandler.CustomLogoutSuccessHandler;
+import com.example.demo.config.auth.logoutHandler.OAuthLogoutHandler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -32,6 +33,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Autowired
     private DataSource dataSource;
 
+
+    @Autowired
+    private PrincipalOAuth2DetailsService principalOAuth2DetailsService;
     // 웹 요청 처리
     @Override
     protected void configure(HttpSecurity http) throws Exception {
@@ -58,8 +62,11 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .logout()
                 .logoutUrl("/logout")
                 .permitAll()
-                .addLogoutHandler(new CustomLogoutHandler())							//세션초기화
+                //OAUTH 로그아웃으로 변경
+                .addLogoutHandler(new OAuthLogoutHandler())
+                //.addLogoutHandler(new CustomLogoutHandler())							//세션초기화
                 .logoutSuccessHandler(new CustomLogoutSuccessHandler())				//기본위치로 페이지이동
+
 
                 .and()
                 //예외처리
@@ -75,7 +82,14 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .tokenValiditySeconds(3600)
                 .alwaysRemember(false)		//체크박스 체크해야 Remember-me 동작
                 .tokenRepository(tokenRepository())
-                .userDetailsService(principalDetailsService);
+                .userDetailsService(principalOAuth2DetailsService)
+                .and()
+
+
+                //OAUTH2 인증
+                .oauth2Login()
+                .userInfoEndpoint()
+                .userService(principalOAuth2DetailsService);
 
     }
 
