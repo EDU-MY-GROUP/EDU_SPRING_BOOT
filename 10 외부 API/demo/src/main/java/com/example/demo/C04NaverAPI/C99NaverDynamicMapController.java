@@ -1,4 +1,4 @@
-package com.example.demo.C04Naver;
+package com.example.demo.C04NaverAPI;
 
 
 import lombok.extern.slf4j.Slf4j;

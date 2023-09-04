@@ -1,4 +1,4 @@
-package com.example.demo.C04Naver;
+package com.example.demo.C04NaverAPI;
 
 
 import com.fasterxml.jackson.core.JsonProcessingException;

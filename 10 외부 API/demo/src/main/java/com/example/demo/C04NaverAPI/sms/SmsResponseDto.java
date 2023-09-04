@@ -1,4 +1,4 @@
-package com.example.demo.C04Naver.dto;
+package com.example.demo.C04NaverAPI.sms;
 
 import lombok.*;
 

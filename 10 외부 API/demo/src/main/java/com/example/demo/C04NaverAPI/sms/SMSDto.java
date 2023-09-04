@@ -1,4 +1,4 @@
-package com.example.demo.C04Naver.dto;
+package com.example.demo.C04NaverAPI.sms;
 
 import lombok.*;
 
@@ -7,7 +7,7 @@ import lombok.*;
 @Setter
 @Getter
 @Builder
-public class MessageDto {
+public class SMSDto {
     String to;
     String content;
 }
