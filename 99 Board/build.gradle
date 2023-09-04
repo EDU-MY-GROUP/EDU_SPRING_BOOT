@@ -32,6 +32,12 @@ dependencies {
 	//JSP
 	implementation 'org.apache.tomcat.embed:tomcat-embed-jasper' // 추가
 	implementation 'javax.servlet:jstl' // 추가
+
+	//
+
+	//
+
+	//
 }
 
 tasks.named('test') {

@@ -23,7 +23,7 @@ import java.util.Optional;
 
 
 @Service
-public class PrincipalOAuth2DetailsService  extends DefaultOAuth2UserService{
+public class PrincipalOAuth2DetailsService  extends DefaultOAuth2UserService implements UserDetailsService {
 
 
     private BCryptPasswordEncoder bCryptPasswordEncoder;
@@ -85,7 +85,7 @@ public class PrincipalOAuth2DetailsService  extends DefaultOAuth2UserService{
         Optional<User> userEntity = userRepository.findById(username);
         System.out.println("userEntity : " + userEntity);
         User user = null;
-        if(userEntity.isEmpty()){
+        if(!userEntity.isPresent()){
             user = User.builder()
                     .username(username)
                     .password(password)
@@ -109,6 +109,14 @@ public class PrincipalOAuth2DetailsService  extends DefaultOAuth2UserService{
         return principalDetails ;
     }
 
+
+    @Override
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        Optional<User> user =  userRepository.findById(username);
+        if(!user.isPresent())
+            return null;
+        return new PrincipalDetails(user.get());
+    }
 
 
 

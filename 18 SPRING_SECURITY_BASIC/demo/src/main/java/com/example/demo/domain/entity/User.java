@@ -19,24 +19,6 @@ import java.sql.Timestamp;
 @Data
 @Builder
 public class User {
-
-
-    //---------------------
-    // OAUTH
-    //---------------------
-    private String provider;
-    private String providerId;
-    @Builder
-    public User(String username, String password,Role role,String provider, String providerId) {
-        this.username = username;
-        this.password = password;
-        this.role = role;
-        this.provider = provider;
-        this.providerId = providerId;
-    }
-    //---------------------
-    //기존
-    //---------------------
     @Id
     private String username; //이름
     private String password; //비밀번호

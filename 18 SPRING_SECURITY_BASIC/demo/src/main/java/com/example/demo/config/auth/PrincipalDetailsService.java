@@ -37,8 +37,7 @@ public class PrincipalDetailsService implements UserDetailsService {
 		if(user.isEmpty())
 			return null;
 		return new PrincipalDetails(user.get());
-		
-	 
+
 	
 	}
 

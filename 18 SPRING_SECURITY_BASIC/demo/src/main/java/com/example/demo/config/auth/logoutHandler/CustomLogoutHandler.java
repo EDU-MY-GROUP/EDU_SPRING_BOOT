@@ -15,10 +15,6 @@ public class CustomLogoutHandler implements LogoutHandler{
 			HttpSession session = request.getSession(false);
 			if(session!=null)
 				session.invalidate();
-
-
-
-
 	}
 		
 
