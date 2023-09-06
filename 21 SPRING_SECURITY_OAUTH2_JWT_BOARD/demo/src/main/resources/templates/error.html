@@ -1,12 +1,153 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+
+    <!-- BS5 -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+
+    <!-- axios -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.4.0/axios.min.js" integrity="sha512-uMtXmF28A2Ab/JJO2t/vYhlaa/3ahUOgj1Zf27M5rOo8/+fcTUVH0/E0ll68njmjrLqOBjXM3V9NiPFL5ywWPQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+
+
+    <style>
+        *{}
+        a{
+            text-decoration: none;
+            color:gray;
+        }
+        body{
+
+
+        }
+
+        .wrapper{
+
+        }
+
+        .wrapper::after{
+            content:'';
+            background-color: lightgray;
+            position:fixed;
+            left:0px;top:0px;
+            width : 100vw;
+            height:100vh;
+            opacity: 0.5;
+            z-index:1;
+
+
+        }
+
+        .wrapper>header{
+
+        }
+        .wrapper>header>.top-header{
+
+        }
+        .wrapper>header>nav{
+            position:relative;
+            z-index:2;
+        }
+
+        .wrapper>main{}
+        .wrapper>main>section{}
+
+
+
+
+
+        .wrapper>main>section .login{
+          text-decoration: none;
+          text-align:right;
+          color:gray;
+
+        }
+        .wrapper>main>section .id_login_block{
+
+            position:relative;
+            z-index:2;
+            margin-top:200px;
+
+        }
+
+        .wrapper>main>section>.id_login_block>.header
+        {
+            display:flex;
+            justify-content: center;
+            align-items: center;
+            margin-bottom:10px;
+
+        }
+
+        .wrapper>main>section>.id_login_block>.body
+        {
+            display:flex;
+            justify-content: center;
+            align-items: center;
+
+        }
+        .wrapper>main>section>.id_login_block>.body form{
+            width : 350px;
+        }
+        .wrapper>main>section>.id_login_block>.body form>*{
+            margin : 5px;
+        }
+
+        .wrapper>main>section   .join_req {
+            text-align:right;
+            font-size:0.8rem;
+
+        }
+        .wrapper>main>section  .etc_req{
+            text-align:center;
+            font-size:0.9rem;
+        }
+        .wrapper>footer{}
+
+
+
+    </style>
 </head>
 <body>
-<h1>ERROR</h1>
 
-<div th:text="${msg}"></div>
+
+<div class="wrapper">
+    <header>
+        <div class="top--header"></div>
+
+        <!-- NAV -->
+        <nav class="navbar navbar-expand-lg navbar-light bg-success p-3 mb-1"  >
+
+
+
+    </header>
+    <main>
+
+        <section>
+            <!-- ID 로그인 -->
+            <div class="id_login_block">
+                <div class="header">
+                    <h3>ERROR</h3>
+                </div>
+                <div class="body">
+
+                </div>
+
+            </div>
+        </section>
+
+
+    </main>
+    <footer>
+
+
+    </footer>
+
+</div>
+
 </body>
 </html>

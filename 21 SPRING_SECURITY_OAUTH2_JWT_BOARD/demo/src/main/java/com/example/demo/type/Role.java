@@ -6,8 +6,9 @@ import lombok.ToString;
 
 
 public enum Role {
-    ROLE_USER,  //ROLE.ROLE_USER  : 0
-    ROLE_ADMIN  //ROLE.ROLE_ADMIN : 1
+    ROLE_USER,      //ROLE.ROLE_USER  : 0
+    ROLE_MEMBER,    //ROLE.ROLE_USER  : 1
+    ROLE_ADMIN      //ROLE.ROLE_ADMIN : 2
 
 
 

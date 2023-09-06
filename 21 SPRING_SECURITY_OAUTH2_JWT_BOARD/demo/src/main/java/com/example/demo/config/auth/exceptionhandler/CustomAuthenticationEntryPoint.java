@@ -20,7 +20,7 @@ public class CustomAuthenticationEntryPoint implements AuthenticationEntryPoint{
 		System.out.println("인증실패! : " + authException.getCause() );
 	
 		request.getSession().setAttribute("msg", "[SERVER] 인증이 필요합니다.");
-		request.getRequestDispatcher("/login").forward(request, response);
+		request.getRequestDispatcher("/user/login").forward(request, response);
 	}
 
 }

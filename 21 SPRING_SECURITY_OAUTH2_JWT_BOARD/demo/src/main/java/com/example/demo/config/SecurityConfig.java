@@ -18,6 +18,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -51,6 +52,11 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     private JwtTokenProvider jwtTokenProvider;
 
 
+    //Web Static Resource 지정
+    @Override
+    public void configure(WebSecurity web) throws Exception {
+        web.ignoring().antMatchers("/static/js/**","/static/css/**","/static/images/**");
+    }
 
     // 웹 요청 처리
     @Override
@@ -60,10 +66,11 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
         http
                 .authorizeRequests()
-                .antMatchers("/","/login","/join").permitAll()
-                .antMatchers("/user").hasRole("USER")		//ROLE_USER
-                .antMatchers("/member").hasRole("MEMBER")	//ROLE_MEMBER
-                .antMatchers("/admin").hasRole("ADMIN")		//ROLE_ADMIN
+                .antMatchers("/css/**","/images/**","/js/**").permitAll()
+                .antMatchers("/","/user/join","/user/login").permitAll()
+                .antMatchers("/mypage").hasAnyRole("USER","MEMBER","ADMIN")		//ROLE_USER
+//                .antMatchers("/member").hasRole("MEMBER")	//ROLE_MEMBER
+//                .antMatchers("/admin").hasRole("ADMIN")		//ROLE_ADMIN
                 .anyRequest().authenticated()				//나머지 URL은 모두 인증작업이 완료된 이후 접근가능
                 .and()
 
@@ -178,5 +185,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
+
+
+
+
 
 }

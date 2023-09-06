@@ -61,10 +61,10 @@
  
         .wrapper>main>section .join_block{
 
-          margin-top:100px;
-          position:relative;
-          z-index:2;
-       
+            margin-top:100px;
+            position:relative;
+            z-index:2;
+
          
         }
 
@@ -82,7 +82,9 @@
             align-items: center;
            
         }
-       
+       .wrapper>main>section .join_block>.body form{
+            width : 350px;
+       }
         .wrapper>main>section .join_block>.body form>*{
             margin : 5px;
             width : 100%;
@@ -164,12 +166,12 @@
                             </div>
                             <div class="m-2">
                                 <div>
-                                    <button class="btn btn-success w-100">회원가입</button>
+                                    <a class="btn btn-success w-100" href="#">회원가입</a>
                                 </div>
                             </div>
                             <div class="m-2">
                                 <div>
-                                    <button class="btn btn-secondary w-100">이전으로</button>
+                                    <a class="btn btn-secondary w-100" href="javascript:history.go(-1)">이전으로</a>
                                 </div>
                             </div>
                         </form>

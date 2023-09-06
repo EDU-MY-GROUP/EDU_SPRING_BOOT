@@ -16,38 +16,99 @@
 
     <style>
         *{}
-        body{}
-        .wrapper{
-         
+        a{
+            text-decoration: none;
+            color:gray;
+        }
+        body{
+            
+          
         }
 
+        .wrapper{
+          
+        }
+
+        .wrapper::after{
+            content:'';
+            background-color: lightgray;
+            position:fixed;
+            left:0px;top:0px;
+            width : 100vw;
+            height:100vh;
+            opacity: 0.5;
+            z-index:1;
+        
+
+        }
+  
         .wrapper>header{
           
         }
-        .wrapper>header>.top-header{}
+        .wrapper>header>.top-header{
+
+        }
         .wrapper>header>nav{
-          
+            position:relative;
+            z-index:2;
         }
         
         .wrapper>main{}
         .wrapper>main>section{}
+        
+  
 
-        .wrapper>main>section .login--div{
+  
+
+        .wrapper>main>section .login{
+          text-decoration: none;
+          text-align:right;
+          color:gray;
           
-            height : 90vh;
+        }
+        .wrapper>main>section .id_login_block{
+
+            position:relative;
+            z-index:2;
+            margin-top:200px;
+  
+        }
+
+        .wrapper>main>section>.id_login_block>.header
+        {
             display:flex;
             justify-content: center;
-            align-items: start;
+            align-items: center;
+            margin-bottom:10px;
+           
         }
-        .wrapper>main>section .login--div form{
-            margin-top:200px;
-            width : 250px;
+
+        .wrapper>main>section>.id_login_block>.body
+        {
+            display:flex;
+            justify-content: center;
+            align-items: center;
+           
         }
-        .wrapper>main>section .login--div form>*{
+        .wrapper>main>section>.id_login_block>.body form{
+            width : 350px;
+        }
+        .wrapper>main>section>.id_login_block>.body form>*{
             margin : 5px;
+        }
+
+        .wrapper>main>section   .join_req {
+            text-align:right;
+            font-size:0.8rem;
+
+        }
+        .wrapper>main>section  .etc_req{
+            text-align:center;
+            font-size:0.9rem;
         }
         .wrapper>footer{}
         
+
         
     </style>
 </head>
@@ -60,49 +121,53 @@
             
             <!-- NAV -->    
             <nav class="navbar navbar-expand-lg navbar-light bg-success p-3 mb-1"  >
-                <div class="container-fluid " >
-                  <a class="navbar-brand text-white" href="#">HOME</a>
-                  <button class="navbar-toggler  text-white" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation" >
-                    <span class="navbar-toggler-icon"></span>
-                  </button>
-                  <div class="collapse navbar-collapse" id="navbarNavDropdown">
-                    <ul class="navbar-nav">
-                      <li class="nav-item">
-                        <a class="nav-link  text-white" href="#">게시판</a>
-                      </li>
-                      <li class="nav-item">
-                        <a class="nav-link  text-white"   href="#">이미지 게시판</a>
-                      </li>
-                    </ul>
-                  </div>
-                </div>
-
-                <form class="d-flex">
-                    <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
-                    <button class="btn btn-outline-light" type="submit">Search</button>
-                </form>
-
-              </nav>
+                
 
 
         </header>
         <main>
-            <section>
-      
-            </section>
-            <section class="bg-light">
 
-                <div class="login--div">
-                    <form action="">
-                        <input type="text" name="username" class="form-control" placeholder="ENTER USERNAME"> 
-                        <input type="password" name="password" class="form-control" placeholder="ENTER PASSWORD">
-                        <a href="javascript:void(0)" class="btn btn-primary w-100">Login</a>
-                    </form>
+            <section>       
+               <!-- ID 로그인 -->
+                <div class="id_login_block">
+                    <div class="header">
+                        <h3>LOGIN</h3>
+                    </div>
+                    <div class="body">    
+                       
+                        <form name="joinform" action="/login" method="post" onsubmit="return false">
+                            <div class="m-2">
+                            
+                            <input name="username" placeholder="INSERT USERNAME" class="form-control"> 
+                            </div>
+                            <div class="m-2">
+                            
+                            <input name="password" type="password"  placeholder="INSERT PASSWORD" class="form-control">
+                            </div>
+                            <div class="m-2 form-check" >   
+                                <input type="checkbox" class="form-check-input" id="rememberMe" name="remember-me"/>
+                                <label class="form-check-label" for="rememberMe">로그인 상태를 유지</label>          
+                            </div>
+                            <div>
+                                <button class="btn btn-success w-100">로그인</button>
+                            </div>
+                            <div class="m-2 join_req" >
+                            <a href="javascript:void(0)"  >회원가입</a>
+                            </div>
+                            <div class="m-2 etc_req" >
+                                <a href="javascript:void(0)"  >아이디 찾기</a>
+                                &nbsp;&nbsp;
+                                |
+                                &nbsp;&nbsp;
+                                <a href="javascript:void(0)"  >패스워드 찾기</a>     
+                            </div>
+                        </form>
+                    </div>
+
                 </div>
-
-                
             </section>
-            <section></section>
+
+            
         </main>
         <footer>
 
@@ -111,5 +176,19 @@
 
     </div>
     
+<script>
+ 		const isValid = ()=>{
+ 			const form = document.joinform;
+ 			if(form.username.value.trim()==""){
+ 				alert("USERNAME을 입력하세요.");
+ 				return;
+ 			}
+ 			if(form.password.value.trim()==""){
+ 				alert("PASSWORD을 입력하세요.");
+ 				return;
+ 			}
+ 			form.submit();
+ 		}
+ </script>
 </body>
 </html>
