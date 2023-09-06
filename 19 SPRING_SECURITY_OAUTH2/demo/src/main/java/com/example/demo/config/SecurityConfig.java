@@ -88,7 +88,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
                 //OAUTH2 인증
                 .oauth2Login()
-                .userInfoEndpoint()
+                .userInfoEndpoint()     //OAuth2 로그인 성공 후 사용자 정보를 가져올 때 설정을 담당
                 .userService(principalOAuth2DetailsService);
 
     }

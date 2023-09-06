@@ -1,8 +1,6 @@
 package com.example.demo.config.auth.jwt;
 
 
-import com.example.demo.domain.dto.TokenInfo;
-
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
 import lombok.extern.slf4j.Slf4j;
@@ -40,8 +38,8 @@ public class JwtTokenProvider {
         String authorities = authentication.getAuthorities().stream()
                 .map(GrantedAuthority::getAuthority)
                 .collect(Collectors.joining(","));
-
         long now = (new Date()).getTime();
+
         // Access Token 생성
         Date accessTokenExpiresIn = new Date(now + 60*1000); // 60초후 만료
         String accessToken = Jwts.builder()

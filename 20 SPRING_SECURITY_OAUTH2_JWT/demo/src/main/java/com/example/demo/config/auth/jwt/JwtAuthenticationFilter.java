@@ -1,9 +1,7 @@
 package com.example.demo.config.auth.jwt;
 
 import com.example.demo.config.auth.PrincipalDetails;
-import com.example.demo.domain.entity.User;
 
-import com.example.demo.domain.dto.TokenInfo;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -24,12 +22,14 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 
 
     private final JwtTokenProvider jwtTokenProvider;
-    private final AuthenticationManager authenticationManager;
+    private final AuthenticationManager authenticationManager;      // 사용자의 인증을 확인하고, 사용자가 제공한 자격 증명(예: 사용자 이름과 비밀번호, JWT 토큰 등)이 올바른지 검증하는 인터페이스
 
     public JwtAuthenticationFilter(AuthenticationManager authenticationManager,JwtTokenProvider jwtTokenProvider) {
+
         super(authenticationManager);
         this.authenticationManager = authenticationManager;
         this.jwtTokenProvider = jwtTokenProvider;
+        System.out.println("[JWT 인증필터] JwtAuthenticationFilter 생성자 authenticationManager " + authenticationManager);
     }
 
     /**
@@ -48,7 +48,7 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
                 request.getParameter("password"),
                 new ArrayList<>()
         );
-        System.out.println("JwtAuthenticationFilter.attemptAuthentication...authenticationToken : " + authenticationToken);
+        System.out.println("[JWT 인증필터] JwtAuthenticationFilter.attemptAuthentication...authenticationToken : " + authenticationToken);
 
 
         //Token 정보를 TokenInfo(Table) 에 저장한다.
@@ -81,7 +81,7 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
         cookie.setPath("/");
         response.addCookie(cookie);
 
-        System.out.println("JwtAuthenticationFilter.successfulAuthentication...TokenInfo : " + tokenInfo);
+        System.out.println("[JWT 인증필터] JwtAuthenticationFilter.successfulAuthentication...TokenInfo : " + tokenInfo);
         response.sendRedirect("/");
     }
 

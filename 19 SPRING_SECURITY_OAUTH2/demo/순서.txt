@@ -24,9 +24,10 @@
 
 09 PrincipalDetails 에 extends OAuthUser
 
-10 User Entity OAuth 관련 추가
+10 로그아웃 처리
+    OAuthLogoutHandler
+    CustomLogoutSuccessHandler
 
-11
 
 
 

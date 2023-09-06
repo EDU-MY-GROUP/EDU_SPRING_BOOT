@@ -1,5 +1,7 @@
 package com.example.demo.config.auth;
 
+import com.example.demo.config.auth.jwt.JwtProperties;
+import com.example.demo.config.auth.jwt.TokenInfo;
 import com.example.demo.config.auth.provider.GoogleUserInfo;
 import com.example.demo.config.auth.provider.KakaoUserInfo;
 import com.example.demo.config.auth.provider.NaverUserInfo;
@@ -18,6 +20,7 @@ import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 
+import javax.servlet.http.Cookie;
 import java.util.Map;
 import java.util.Optional;
 
@@ -106,6 +109,14 @@ public class PrincipalOAuth2DetailsService  extends DefaultOAuth2UserService imp
         //05 Authtication객체에 저장 (Security Context에 저장되어 관리)-----------------------------------------------------
         PrincipalDetails principalDetails = new PrincipalDetails(user,oauth2User.getAttributes());
         principalDetails.setAccessToken(userRequest.getAccessToken().getTokenValue());
+        //----------------------------------------------------
+        //JWT TOKEN
+        //----------------------------------------------------
+
+
+
+
+
         return principalDetails ;
     }
 

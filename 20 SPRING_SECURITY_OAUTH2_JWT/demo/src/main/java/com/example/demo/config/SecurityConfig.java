@@ -16,6 +16,7 @@ import com.example.demo.domain.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -58,6 +59,10 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
         http.csrf().disable();
 
+
+
+
+
         http
                 .authorizeRequests()
                 .antMatchers("/","/login","/join").permitAll()
@@ -72,6 +77,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .loginPage("/login")
                 .successHandler(new CustomLoginSuccessHandler())//ROLE_USER -> user페이지 / ROLE_MEMBER -> member페이지
                 .failureHandler(new CustomAuthenticationFailureHandler())
+
 
                 .and()
                 //로그아웃
@@ -109,16 +115,17 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
                 //OAUTH2 인증
                 .oauth2Login()
+
                 .userInfoEndpoint()
                 .userService(principalOAuth2DetailsService);
 
 
-                // JWT TOKEN
-                http
+        // JWT TOKEN
+        http
                 .addFilterBefore
                         (
-                                new JwtAuthenticationFilter(authenticationManager(),jwtTokenProvider),
-                                UsernamePasswordAuthenticationFilter.class
+                                new JwtAuthenticationFilter(authenticationManager(),jwtTokenProvider),  //JWT 인증 토큰 필터
+                                UsernamePasswordAuthenticationFilter.class      //ID/PW 인증 시도 필터
                         )
                 .addFilterBefore
                         (
@@ -127,10 +134,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                         );
 
 
-                // SESSION FALSE
-                http.sessionManagement()
-                        .sessionCreationPolicy(SessionCreationPolicy.STATELESS);
-
+        // SESSION FALSE
+        http.sessionManagement()
+                .sessionCreationPolicy(SessionCreationPolicy.STATELESS);
 
 
 
