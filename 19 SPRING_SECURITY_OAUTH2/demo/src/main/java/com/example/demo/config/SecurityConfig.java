@@ -1,12 +1,16 @@
 package com.example.demo.config;
 
 
+
+//security-context.xml 설정 내용
+
+import com.example.demo.config.auth.PrincipalDetailsOAuth2Service;
 import com.example.demo.config.auth.PrincipalDetailsService;
-import com.example.demo.config.auth.PrincipalOAuth2DetailsService;
 import com.example.demo.config.auth.exceptionhandler.CustomAccessDeniedHandler;
 import com.example.demo.config.auth.exceptionhandler.CustomAuthenticationEntryPoint;
 import com.example.demo.config.auth.loginHandler.CustomAuthenticationFailureHandler;
 import com.example.demo.config.auth.loginHandler.CustomLoginSuccessHandler;
+import com.example.demo.config.auth.logoutHandler.CustomLogoutHandler;
 import com.example.demo.config.auth.logoutHandler.CustomLogoutSuccessHandler;
 import com.example.demo.config.auth.logoutHandler.OAuthLogoutHandler;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,18 +29,22 @@ import javax.sql.DataSource;
 
 @Configuration
 @EnableWebSecurity
-public class SecurityConfig extends WebSecurityConfigurerAdapter {
+public class SecurityConfig  extends WebSecurityConfigurerAdapter {
 
-	@Autowired
-	private PrincipalDetailsService principalDetailsService;
+//	@Autowired
+//	private PasswordEncoder passwordEncoder;
 
     @Autowired
     private DataSource dataSource;
-
+    @Autowired
+    private PrincipalDetailsService principalDetailsService;
 
     @Autowired
-    private PrincipalOAuth2DetailsService principalOAuth2DetailsService;
+    private PrincipalDetailsOAuth2Service principalDetailsOAuth2Service;
+
+    //----------------------------------------------------------------
     // 웹 요청 처리
+    //----------------------------------------------------------------
     @Override
     protected void configure(HttpSecurity http) throws Exception {
 
@@ -44,64 +52,55 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
         http
                 .authorizeRequests()
-                .antMatchers("/","/login","/join").permitAll()
-                .antMatchers("/user").hasRole("USER")		//ROLE_USER
-                .antMatchers("/member").hasRole("MEMBER")	//ROLE_MEMBER
-                .antMatchers("/admin").hasRole("ADMIN")		//ROLE_ADMIN
-                .anyRequest().authenticated()				//나머지 URL은 모두 인증작업이 완료된 이후 접근가능
+                .antMatchers("/","/public","/login","/join").permitAll()
+                .antMatchers("/user").hasRole("USER")				//ROLE_USER
+                .antMatchers("/member").hasRole("MEMBER")			//ROLE_MEMBER
+                .antMatchers("/admin").hasRole("ADMIN")				//ROLE_ADMIN
+                .anyRequest().authenticated()									//나머지 URL은 모두 인증작업이 완료된 이후 접근가능
                 .and()
 
                 //로그인
                 .formLogin()
                 .loginPage("/login")
-                .successHandler(new CustomLoginSuccessHandler())//ROLE_USER -> user페이지 / ROLE_MEMBER -> member페이지
+                .successHandler(new CustomLoginSuccessHandler())					//ROLE_USER -> user페이지 / ROLE_MEMBER -> member페이지
                 .failureHandler(new CustomAuthenticationFailureHandler())
 
                 .and()
-                //로그아웃
+                 //로그아웃
                 .logout()
                 .logoutUrl("/logout")
                 .permitAll()
-                //OAUTH 로그아웃으로 변경
                 .addLogoutHandler(new OAuthLogoutHandler())
-                //.addLogoutHandler(new CustomLogoutHandler())							//세션초기화
+                //.addLogoutHandler(new CustomLogoutHandler())						//세션초기화
                 .logoutSuccessHandler(new CustomLogoutSuccessHandler())				//기본위치로 페이지이동
-
 
                 .and()
                 //예외처리
                 .exceptionHandling()
-                .authenticationEntryPoint(new CustomAuthenticationEntryPoint())		                             //인증이 필요한 자원에 접근 예외처리
-                .accessDeniedHandler(new CustomAccessDeniedHandler())											//권한 실패 예외처리
+                .authenticationEntryPoint(new CustomAuthenticationEntryPoint())		//인증이 필요한 자원에 접근 예외처리
+                .accessDeniedHandler(new CustomAccessDeniedHandler())				//권한 실패 예외처리
 
+                //REMEMBER ME
                 .and()
-                //REMEMBER-ME ADDED
                 .rememberMe()
-                .key("rememberMeKey")
                 .rememberMeParameter("remember-me")
-                .tokenValiditySeconds(3600)
-                .alwaysRemember(false)		//체크박스 체크해야 Remember-me 동작
+                .tokenValiditySeconds(60*60)
+                .alwaysRemember(false)
                 .tokenRepository(tokenRepository())
-                .userDetailsService(principalOAuth2DetailsService)
+                .userDetailsService(principalDetailsOAuth2Service)
+
                 .and()
-
-
-                //OAUTH2 인증
+                //OAUTH2
                 .oauth2Login()
-                .userInfoEndpoint()     //OAuth2 로그인 성공 후 사용자 정보를 가져올 때 설정을 담당
-                .userService(principalOAuth2DetailsService);
+                .userInfoEndpoint()
+                .userService(principalDetailsOAuth2Service);
+
 
     }
 
-    //REMEMBER-ME ADDED
-    @Bean
-    public PersistentTokenRepository tokenRepository() {
-        JdbcTokenRepositoryImpl repo = new JdbcTokenRepositoryImpl();
-        repo.setDataSource(dataSource);
-        return repo;
-    }
-
-
+    //----------------------------------------------------------------
+    // 인증처리 함수
+    //----------------------------------------------------------------
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
 //		auth
@@ -120,10 +119,15 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 //				.password(passwordEncoder().encode("1234"))
 //				.roles("ADMIN");
 
-        auth.userDetailsService(principalDetailsService)
+        auth.userDetailsService(principalDetailsOAuth2Service)
                 .passwordEncoder(passwordEncoder());
 
     }
+
+
+    //----------------------------------------------------------------
+    //BEANS
+    //----------------------------------------------------------------
 
     // BCryptPasswordEncoder Bean 등록
     // 패스워드 검증에 사용
@@ -131,5 +135,19 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
+
+    //REMEMBER ME BEAN 추가
+
+    @Bean
+    public PersistentTokenRepository tokenRepository() {
+        JdbcTokenRepositoryImpl repo = new JdbcTokenRepositoryImpl();
+        repo.setDataSource(dataSource);
+        //repo.setCreateTableOnStartup(true);
+        return repo;
+    }
+
+
+
+
 
 }

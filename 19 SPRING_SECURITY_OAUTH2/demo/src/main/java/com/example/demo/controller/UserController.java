@@ -39,7 +39,7 @@ public class UserController {
         User user = User.builder()
                 .username(dto.getUsername())
                 .password( passwordEncoder.encode(dto.getPassword()))
-                .role(Role.ROLE_USER)
+                .role(Role.ROLE_USER.toString())
                 .build();
 
 

@@ -2,7 +2,6 @@ package com.example.demo.config.auth;
 
 
 import com.example.demo.domain.dto.UserDto;
-import com.example.demo.domain.entity.User;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -16,47 +15,40 @@ import java.util.Collection;
 import java.util.Map;
 
 @Data
+@AllArgsConstructor
 @NoArgsConstructor
 
-public class PrincipalDetails implements UserDetails, OAuth2User {
+public class PrincipalDetails implements UserDetails , OAuth2User {
 
-	//OAuth2 추가---------------------------------------
-	private Map<String,Object> attributes;
+	private UserDto user;
+
+	//OAUTH2 ----------------------------------------------------------------
+	private Map<String, Object> attributes;
 	private String accessToken;
+	@Override
+	public Map<String, Object> getAttributes() {
+		return attributes;
+	}
 
-	public PrincipalDetails(User user,Map<String,Object> attributes) {
-		this.user = user;
-		this.attributes = attributes;
-	}
-	public PrincipalDetails(User user) {
-		this.user = user;
-		this.attributes = null;
-	}
 	@Override
 	public String getName() {
 		return null;
 	}
-	@Override
-	public Map<String,Object> getAttributes() {
-		return attributes;
-	}
-	//---------------------------------------
+	//OAUTH2 ----------------------------------------------------------------
 
-
-	private User user;
 
 	@Override
 	public Collection<? extends GrantedAuthority> getAuthorities() {
 		Collection<GrantedAuthority> collection = new ArrayList();
-		
+
 		collection.add(new GrantedAuthority(){
 			@Override
 			public String getAuthority() {
-				return user.getRole().toString();
+				return user.getRole();
 			}
-	
+
 		} );
-		
+
 		return collection;
 	}
 

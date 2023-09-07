@@ -24,19 +24,19 @@ public class PrincipalDetailsService implements UserDetailsService {
 
 		Optional<User> user =  userRepository.findById(username);
 
-
-//		UserDto dto = new UserDto();
-//		dto.setUsername(user.getUsername());
-//		dto.setPassword(user.getPassword());
-//		dto.setRole(user.getRole());
-//		if(dto==null)
-//			return null;
-//
-//		return new PrincipalDetails(dto);
-
-		if(!user.isPresent())
+		if(user.isEmpty())
 			return null;
-		return new PrincipalDetails(user.get());
+
+		UserDto dto = new UserDto();
+		dto.setUsername(user.get().getUsername());
+		dto.setPassword(user.get().getPassword());
+		dto.setEmail(user.get().getEmail());
+		dto.setRole(user.get().getRole());
+
+		PrincipalDetails principalDetails = new PrincipalDetails();
+		principalDetails.setUser(dto);
+
+		return principalDetails;
 		
 	 
 	
