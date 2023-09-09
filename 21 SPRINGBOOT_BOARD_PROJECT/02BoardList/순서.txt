@@ -1,0 +1,112 @@
+//-----------------------
+// Persistent Layer
+//-----------------------
+01 Entity
+
+    build.gradle
+        //DATABASE
+        implementation 'com.mysql:mysql-connector-j:8.1.0'
+        implementation 'org.springframework.boot:spring-boot-starter-jdbc'
+
+        //ORM_JPA
+        implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+
+
+    application.properties
+        코드 확인
+
+    config files
+        DataSourceConfig
+        MultipartConfig
+        RootConfig
+        TxConfig
+        WebMvcConfig
+
+
+02 Dto
+        BoardDto
+
+03 Entity
+        Board
+
+04 Repository
+        BoardRepository extends JpaRepository
+
+
+05 @Test Post 1000
+
+
+
+//-----------------------
+//Presentation Layer 's Board List
+//-----------------------
+01 Board List
+    Dto ValidationCheck
+        1 build.gradle
+            	//02CONTROLLER_VALIDATION
+            	implementation 'org.hibernate.validator:hibernate-validator'
+            	implementation 'javax.validation:validation-api'
+        2 BoardDto Validation Annotation 추가
+
+        3 BoardController list's Validation
+
+
+    Controller's /board/list
+        1 파라미터 받기
+        2 유효성 체크
+        3 서비스 실행
+        4 뷰전달
+
+    view에서 확인
+     <!-- BOARD LIST ITEMS -->
+     <th:block >
+        <tr th:each="boardDto : ${boardList}">
+             <td th:text="${boardDto.no}"></td>
+             <td th:text="${boardDto.title}"></td>
+             <td th:text="${boardDto.username}"></td>
+             <td th:text="${boardDto.regdate}"></td>
+             <td th:text="${boardDto.count}"></td>
+         </tr>
+     </th:block>
+
+     확인 http://localhost:8080/board/list
+
+
+//-----------------------
+//Presentation Layer 's Paging
+//-----------------------
+Criteria    :
+PageDto     :
+
+        01 Creteria , PageDto 가져오기
+        02 BoardController 에 설정
+        03 View에서 설정
+        04 확인
+
+
+
+
+
+BoardService 만들기
+
+
+
+BoardController /board/list 만들기
+
+
+
+
+
+
+
+
+
+
+
+
+
+//-----------------------
+// Business Layer
+//-----------------------
+05 Service
+
