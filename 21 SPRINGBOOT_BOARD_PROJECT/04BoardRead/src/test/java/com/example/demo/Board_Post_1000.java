@@ -7,18 +7,17 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
 @SpringBootTest
-public class Board_Post_100 {
+public class Board_Post_1000 {
 
     @Autowired
     private BoardRepository boardRepository;;
 
     @Test
-    public void Post_100() throws Exception {
+    public void Post_1000() throws Exception {
         for(Long i = 1L; i<=1000; i++){
 
             Board board = Board.builder()
@@ -30,7 +29,7 @@ public class Board_Post_100 {
                     .filesize(null)
                     .regdate(LocalDateTime.now())
                     .title("제목"+i)
-                    .username("user"+i)
+                    .username("user"+i+"@naver.com")
                     .build();
             boardRepository.save(board);
         }

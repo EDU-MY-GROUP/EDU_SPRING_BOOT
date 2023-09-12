@@ -10,13 +10,13 @@ import com.example.demo.config.auth.jwt.JwtAuthorizationFilter;
 import com.example.demo.config.auth.jwt.JwtTokenProvider;
 import com.example.demo.config.auth.loginHandler.CustomAuthenticationFailureHandler;
 import com.example.demo.config.auth.loginHandler.CustomLoginSuccessHandler;
+import com.example.demo.config.auth.loginHandler.OAuthLoginSuccessHandler;
 import com.example.demo.config.auth.logoutHandler.CustomLogoutSuccessHandler;
 import com.example.demo.config.auth.logoutHandler.OAuthLogoutHandler;
 import com.example.demo.domain.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -115,7 +115,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
                 //OAUTH2 인증
                 .oauth2Login()
-
+                //JWT 추가
+                .successHandler(new OAuthLoginSuccessHandler())
                 .userInfoEndpoint()
                 .userService(principalOAuth2DetailsService);
 
