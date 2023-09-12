@@ -9,6 +9,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.example.demo.config.auth.PrincipalDetails;
+import com.example.demo.config.auth.jwt.JwtAuthenticationFilter;
 import com.example.demo.config.auth.jwt.JwtProperties;
 import com.example.demo.config.auth.jwt.JwtTokenProvider;
 import com.example.demo.config.auth.jwt.TokenInfo;
@@ -17,21 +18,34 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 
 public class CustomLoginSuccessHandler implements  AuthenticationSuccessHandler{
-	private JwtTokenProvider jwtTokenProvider = new JwtTokenProvider();
 
+	private JwtTokenProvider jwtTokenProvider = new JwtTokenProvider();
 	@Override
 	public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
-			Authentication authentication) throws IOException, ServletException {
-		
+		Authentication authentication) throws IOException, ServletException {
+
+		//----------------------------------------------------------------
+		//JWT
+		//----------------------------------------------------------------
+		PrincipalDetails principalDetails = (PrincipalDetails) authentication.getPrincipal();
+//      String token = JwtUtils.createToken(principalDetails);
+
+		TokenInfo tokenInfo = jwtTokenProvider.generateToken(authentication);
+		// 쿠키 생성
+		Cookie cookie = new Cookie(JwtProperties.COOKIE_NAME, tokenInfo.getAccessToken());
+		cookie.setMaxAge(JwtProperties.EXPIRATION_TIME); // 쿠키의 만료시간 설정
+		cookie.setPath("/");
+		response.addCookie(cookie);
+
+		System.out.println("[JWT LOGIN SUCCESS HANDLER]...TokenInfo!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! : " + tokenInfo);
+
+		//----------------------------------------------------------------
+		//JWT
+		//----------------------------------------------------------------
+
 		System.out.println("CustomLoginSuccessHandler's onAuthenticationSuccess! ");
-
-
-
-
 		Collection<? extends GrantedAuthority> collection =   authentication.getAuthorities();
-		
-		
-			collection.forEach((role)->{	
+		collection.forEach((role)->{
 				try {	
 					System.out.println("role : " + role.getAuthority());
 					String role_str = role.getAuthority();
@@ -55,10 +69,8 @@ public class CustomLoginSuccessHandler implements  AuthenticationSuccessHandler{
 				}
 			
 			} );
-
-
-
-
+		
+		
 		
 	}
 

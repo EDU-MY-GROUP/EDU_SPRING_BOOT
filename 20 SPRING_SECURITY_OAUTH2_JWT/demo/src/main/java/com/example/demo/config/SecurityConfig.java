@@ -64,6 +64,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
 
         http
+
                 .authorizeRequests()
                 .antMatchers("/","/login","/join").permitAll()
                 .antMatchers("/user").hasRole("USER")		//ROLE_USER
@@ -116,28 +117,36 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 //OAUTH2 인증
                 .oauth2Login()
                 //JWT 추가
-                .successHandler(new OAuthLoginSuccessHandler())
+//                .successHandler(new OAuthLoginSuccessHandler())
                 .userInfoEndpoint()
                 .userService(principalOAuth2DetailsService);
 
 
-        // JWT TOKEN
-        http
-                .addFilterBefore
-                        (
-                                new JwtAuthenticationFilter(authenticationManager(),jwtTokenProvider),  //JWT 인증 토큰 필터
-                                UsernamePasswordAuthenticationFilter.class      //ID/PW 인증 시도 필터
-                        )
-                .addFilterBefore
-                        (
-                                new JwtAuthorizationFilter(userRepository,jwtTokenProvider),
-                                BasicAuthenticationFilter.class
-                        );
 
 
-        // SESSION FALSE
-        http.sessionManagement()
-                .sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+
+
+
+
+
+
+//            // JWT TOKEN
+//            http
+//                .addFilterBefore
+//                        (
+//                                new JwtAuthenticationFilter(authenticationManager(),jwtTokenProvider),  //JWT 인증 토큰 필터
+//                                UsernamePasswordAuthenticationFilter.class      //ID/PW 인증 시도 필터
+//                        )
+//                .addFilterBefore
+//                        (
+//                                new JwtAuthorizationFilter(userRepository,jwtTokenProvider),
+//                                BasicAuthenticationFilter.class
+//                        );
+
+
+//        // SESSION FALSE
+//        http.sessionManagement()
+//                .sessionCreationPolicy(SessionCreationPolicy.STATELESS);
 
 
 

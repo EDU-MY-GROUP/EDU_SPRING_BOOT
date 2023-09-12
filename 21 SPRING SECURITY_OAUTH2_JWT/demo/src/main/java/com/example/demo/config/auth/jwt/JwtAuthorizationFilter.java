@@ -58,7 +58,7 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
                     SecurityContextHolder.getContext().setAuthentication(authentication);
                     System.out.println("[JWTAUTHORIZATIONFILTER] : " + authentication);
                 }
-            } catch (ExpiredJwtException e)
+            } catch (ExpiredJwtException e)     //토큰만료시 예외처리(쿠키 제거)
             {
 
                 System.out.println("[JWTAUTHORIZATIONFILTER] : ...ExpiredJwtException ...."+e.getMessage());

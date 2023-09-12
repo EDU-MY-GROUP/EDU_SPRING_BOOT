@@ -1,6 +1,7 @@
 package com.example.demo.config.auth;
 
 import com.example.demo.config.auth.jwt.JwtProperties;
+import com.example.demo.config.auth.jwt.JwtTokenProvider;
 import com.example.demo.config.auth.jwt.TokenInfo;
 import com.example.demo.config.auth.provider.GoogleUserInfo;
 import com.example.demo.config.auth.provider.KakaoUserInfo;
@@ -27,6 +28,7 @@ import java.util.Optional;
 
 @Service
 public class PrincipalOAuth2DetailsService  extends DefaultOAuth2UserService implements UserDetailsService{
+
 
 
     private BCryptPasswordEncoder bCryptPasswordEncoder;
@@ -109,6 +111,8 @@ public class PrincipalOAuth2DetailsService  extends DefaultOAuth2UserService imp
         //05 Authtication객체에 저장 (Security Context에 저장되어 관리)-----------------------------------------------------
         PrincipalDetails principalDetails = new PrincipalDetails(user,oauth2User.getAttributes());
         principalDetails.setAccessToken(userRequest.getAccessToken().getTokenValue());
+
+
         //----------------------------------------------------
         //JWT TOKEN
         //----------------------------------------------------
@@ -119,6 +123,8 @@ public class PrincipalOAuth2DetailsService  extends DefaultOAuth2UserService imp
 
         return principalDetails ;
     }
+
+
 
 
 

@@ -17,24 +17,12 @@ import java.io.IOException;
 
 public class OAuthLoginSuccessHandler implements AuthenticationSuccessHandler {
 
-    private JwtTokenProvider jwtTokenProvider = new JwtTokenProvider();
 
 
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
 
-        PrincipalDetails principalDetails = (PrincipalDetails) authentication.getPrincipal();
-//        String token = JwtUtils.createToken(principalDetails);
 
-        TokenInfo tokenInfo = jwtTokenProvider.generateToken(authentication);
-        // 쿠키 생성
-        Cookie cookie = new Cookie(JwtProperties.COOKIE_NAME, tokenInfo.getAccessToken());
-        cookie.setMaxAge(JwtProperties.EXPIRATION_TIME); // 쿠키의 만료시간 설정
-        cookie.setPath("/");
-        response.addCookie(cookie);
-
-        System.out.println("[JWT 인증필터] JwtAuthenticationFilter.successfulAuthentication...TokenInfo : " + tokenInfo);
-        response.sendRedirect("/");
 
     }
 }
