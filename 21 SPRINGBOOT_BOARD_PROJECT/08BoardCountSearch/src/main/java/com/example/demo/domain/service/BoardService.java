@@ -38,6 +38,8 @@ public class BoardService {
     @Transactional(rollbackFor = Exception.class)
     public Map<String,Object> GetBoardList(Criteria criteria) {
 
+
+
         Map<String,Object> returns = new HashMap<String,Object>();
 
 
@@ -313,8 +315,18 @@ public class BoardService {
         boardRepository.delete(board);
 
         return boardRepository.existsById(no);
-
-
-
     }
+
+
+    //----------------------------------------------------------------
+    // COUNT
+    //----------------------------------------------------------------
+    @Transactional(rollbackFor = SQLException.class)
+    public void count(Long no) {
+        Board board =  boardRepository.findById(no).get();
+        board.setCount(board.getCount()+1);
+        boardRepository.save(board);
+    }
+
+
 }
