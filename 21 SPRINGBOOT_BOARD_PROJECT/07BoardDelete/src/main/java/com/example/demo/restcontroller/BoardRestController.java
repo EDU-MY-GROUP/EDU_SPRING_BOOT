@@ -2,7 +2,9 @@ package com.example.demo.restcontroller;
 
 
 import com.example.demo.controller.BoardController;
+import com.example.demo.domain.service.BoardService;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
@@ -19,6 +21,9 @@ import java.io.UnsupportedEncodingException;
 @RequestMapping("/board")
 @Slf4j
 public class BoardRestController {
+
+    @Autowired
+    private BoardService boardService;
 
     //------------------
     //FILEDOWNLOAD
@@ -50,12 +55,29 @@ public class BoardRestController {
     //-------------------
     // 수정하기
     //-------------------
-    @PutMapping("/put")
-    public void put(){log.info("PUT /board/put");}
+    @PutMapping("/put/{no}/{filename}")
+    public String put(@PathVariable String no, @PathVariable String filename)
+    {
+        log.info("PUT /board/put " + no + " " + filename);
+        boolean isremoved = boardService.removeFile(no,filename);
+        return "success";
+    }
+
+
     //-------------------
     // 삭제하기
     //-------------------
     @DeleteMapping("/delete")
-    public void delete(){log.info("DELETE /board/delete");}
+    public String delete(Long no){
+        log.info("DELETE /board/delete no " + no);
+
+        boolean isremoved =  boardService.removeBoard(no);
+        if(isremoved)
+            return "success";
+        else
+            return "failed";
+
+    }
+
     
 }

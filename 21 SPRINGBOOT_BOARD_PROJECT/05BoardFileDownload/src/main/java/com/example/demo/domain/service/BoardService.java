@@ -111,11 +111,12 @@ public class BoardService {
                 filenames.add(filename);
                 filesizes.add(file.getSize()+"");
             }
+            board.setFilename(filenames.toString());
+            board.setFilesize(filesizes.toString());
         }
 
 
-        board.setFilename(filenames.toString());
-        board.setFilesize(filesizes.toString());
+
 
 
         board =    boardRepository.save(board);

@@ -97,7 +97,7 @@
                 <h3>BOARD READ</h3>
 
 
-                <form action="/board/update">
+                <div>
                     <input type="hidden" name="no" th:value="${boardDto.no}">
 
                     <div class="mb-3 w-50">
@@ -106,11 +106,11 @@
                     </div>
                     <div class="mb-3 w-50">
                         <label for="ex2" class="form-label">Title</label>&nbsp;&nbsp;<span class="msg" th:text="${title}"></span>
-                        <input type="text" class="form-control" id="ex2" placeholder="Title" name="title" th:value="${boardDto.title}">
+                        <input type="text" class="form-control" id="ex2" placeholder="Title" name="title" th:value="${boardDto.title}" readonly>
                     </div>
                     <div class="mb-3 w-50">
                         <label for="exampleFormControlTextarea1" class="form-label">Example textarea</label>
-                        <textarea class="form-control" id="exampleFormControlTextarea1" rows="3" th:text="${boardDto.content}"></textarea>
+                        <textarea class="form-control" id="exampleFormControlTextarea1" rows="3" th:text="${boardDto.content}" readonly></textarea>
                     </div>
 
                     <!--     파일 리스트 출력               -->
@@ -123,10 +123,6 @@
                                        <span th:text="${filenames[i]}"> </span>&nbsp;&nbsp;
                                        ( <span th:text="${filesizes[i]}"> </span><span> Byte</span> )
                                    </a>
-                                   &nbsp;&nbsp;
-                                   <a href="javascript:void(0)" style="text-decoration:none; color:black;">
-                                        <span class="material-symbols-outlined" >delete</span>
-                                   </a>
                                </div>
                            </div>
 
@@ -134,11 +130,11 @@
                        </th:block>
                     </div>
                     <div class="mb-3  w-50" >
-                        <button  class="btn btn-primary">수정하기</button>
+                        <a  class="btn btn-primary" th:href="@{/board/update(no=${boardDto.no})}">수정하기</a>
                         <a  href="javascript:history.go(-1)"  class="btn btn-primary">이전으로</a>
 
                     </div>
-                </form>
+                </div>
 
 
 
