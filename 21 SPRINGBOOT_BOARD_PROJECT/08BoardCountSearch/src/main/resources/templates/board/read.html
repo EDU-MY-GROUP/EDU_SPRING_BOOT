@@ -132,8 +132,7 @@
                     <div class="mb-3  w-50" >
                         <a  class="btn btn-primary" th:href="@{/board/update(no=${boardDto.no})}">수정하기</a>
                         <a  class="btn btn-warning delete_btn" th:data-no="${boardDto.no}" >삭제하기</a>
-                        <a  href="javascript:history.go(-1)"  class="btn btn-primary">이전으로</a>
-
+                        <a  th:href="@{/board/list(pageNo=${pageNo})}"  class="btn btn-primary">이전으로</a>
                     </div>
                 </div>
 

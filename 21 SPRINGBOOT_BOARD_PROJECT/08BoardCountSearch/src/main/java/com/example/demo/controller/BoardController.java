@@ -129,7 +129,7 @@ public class BoardController {
     //-------------------
 
     @GetMapping("/read")
-    public void read(Long no, Model model) {
+    public String read(Long no,Integer pageNo, Model model,HttpServletRequest request, HttpServletResponse response) {
         log.info("GET /board/read : " + no);
 
        //서비스 실행
@@ -181,41 +181,38 @@ public class BoardController {
            this.READ_DIRECTORY_PATH = board.getDirpath();
        }
        model.addAttribute("boardDto",dto);
-
+       model.addAttribute("pageNo",pageNo);
 
 
         //-------------------
         // COUNTUP
         //-------------------
 
-//        //쿠키 확인 후  CountUp(/board/read.do 새로고침시 조회수 반복증가를 막기위한용도)
-//        Cookie[] cookies = request.getCookies();
-//        if(cookies!=null)
-//        {
-//            for(Cookie cookie:cookies)
-//            {
-//                if(cookie.getName().equals("reading"))
-//                {
-//                    if(cookie.getValue().equals("true"))
-//                    {
-//                        //CountUp
-//                        System.out.println("COOKIE READING TRUE | COUNT UP");
-//                        boardService.count(board.getNo());
-//                        //쿠키 value 변경
-//                        cookie.setValue("false");
-//                        response.addCookie(cookie);
-//                    }
-//                }
-//            }
-//        }
+        //쿠키 확인 후  CountUp(/board/read.do 새로고침시 조회수 반복증가를 막기위한용도)
+        Cookie[] cookies = request.getCookies();
+        if(cookies!=null)
+        {
+            for(Cookie cookie:cookies)
+            {
+                if(cookie.getName().equals("reading"))
+                {
+                    if(cookie.getValue().equals("true"))
+                    {
+                        //CountUp
+                        System.out.println("COOKIE READING TRUE | COUNT UP");
+                        boardService.count(board.getNo());
+                        //쿠키 value 변경
+                        cookie.setValue("false");
+                        response.addCookie(cookie);
+                    }
+                }
+            }
+        }
+
+        return "/board/read";
 
     }
 
-    @GetMapping("/a")
-    public void aaaa(HttpServletRequest request, HttpServletResponse response){
-        System.out.println("request : " + request);
-        System.out.println("response : " + response);
-    }
 
 
 

@@ -116,7 +116,7 @@
                                 <th:block >
                                     <tr th:each="boardDto : ${boardList}">
                                         <td th:text="${boardDto.no}"></td>
-                                        <td><a th:href="@{/board/read(no=${boardDto.no})}"  th:text="${boardDto.title}">  </a> </td>
+                                        <td><a th:href="@{/board/read(no=${boardDto.no},pageNo=${pageNo})}"  th:text="${boardDto.title}">  </a> </td>
                                         <td th:text="${boardDto.username}"></td>
                                         <td th:text="${boardDto.regdate}"></td>
                                         <td th:text="${boardDto.count}"></td>
