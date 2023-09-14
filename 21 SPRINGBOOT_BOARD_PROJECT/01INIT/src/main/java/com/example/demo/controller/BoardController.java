@@ -24,4 +24,7 @@ public class BoardController {
     @GetMapping("/post")
     public void post(){log.info("GET /board/post");}
 
+    @GetMapping("/update")
+    public void update(){log.info("GET /board/update");}
+
 }
