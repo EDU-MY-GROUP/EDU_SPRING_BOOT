@@ -56,9 +56,17 @@
                     </ul>
                 </div>
             </div>
-
-            <form class="d-flex">
-                <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
+            <!--
+                SEARCH
+            -->
+            <form class="d-flex" action="/board/list">
+                <select name="type"  class="form-select me-2" style="width:120px;">
+                    <option value="none" selected></option>
+                    <option value="title">TITLE</option>
+                    <option value="username">WRITER</option>
+                    <option value="content">CONTENTS</option>
+                </select>
+                <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search" style="width:150px;" name="keyword">
                 <button class="btn btn-outline-light" type="submit">Search</button>
             </form>
 

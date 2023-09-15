@@ -43,8 +43,24 @@ public class BoardService {
         Map<String,Object> returns = new HashMap<String,Object>();
 
 
-        //전체게시물 건수 받기
-        int totalcount = (int)boardRepository.count();
+        //전체게시물 건수 받기(type,Keyword가 적용된 count로 변경
+        //int totalcount = (int)boardRepository.count();
+        //--------------------------------------------------------
+        //SEARCH
+        //--------------------------------------------------------
+        int totalcount=0;
+        if(criteria!=null&& criteria.getType()!=null) {
+            if (criteria.getType().equals("title"))
+                totalcount = boardRepository.countWhereTitleKeyword(criteria.getKeyword());
+            else if (criteria.getType().equals("username"))
+                totalcount = boardRepository.countWhereUsernameKeyword(criteria.getKeyword());
+            else if (criteria.getType().equals("content"))
+                totalcount = boardRepository.countWhereContentKeyword(criteria.getKeyword());
+        }
+        else
+            totalcount = (int)boardRepository.count();
+
+
         System.out.println("COUNT  :" + totalcount);
 
         //PageDto 만들기
@@ -53,7 +69,23 @@ public class BoardService {
         //시작 게시물 번호 구하기(수정) - OFFSET
         int offset =(criteria.getPageno()-1) * criteria.getAmount();    //1page = 0, 2page = 10
 
-        List<Board> list  =  boardRepository.findBoardAmountStart(pagedto.getCriteria().getAmount(),offset);
+        //--------------------------------------------------------
+        //SEARCH
+        //--------------------------------------------------------
+        List<Board> list = null;
+        if(criteria!=null&& criteria.getType()!=null) {
+            if (criteria.getType().equals("title")) {
+                list = boardRepository.findBoardTitleAmountStart(criteria.getKeyword(), pagedto.getCriteria().getAmount(), offset);
+                System.out.println("TITLE SEARCH!");
+                System.out.println(list);
+            } else if (criteria.getType().equals("username"))
+                list = boardRepository.findBoardUsernameAmountStart(criteria.getKeyword(), pagedto.getCriteria().getAmount(), offset);
+            else if (criteria.getType().equals("content"))
+                list = boardRepository.findBoardContentsAmountStart(criteria.getKeyword(), pagedto.getCriteria().getAmount(), offset);
+        }
+        else
+            list  =  boardRepository.findBoardAmountStart(pagedto.getCriteria().getAmount(),offset);
+
 
         returns.put("list",list);
         returns.put("pageDto",pagedto);

@@ -46,9 +46,9 @@ public class BoardController {
     //-------------------
     //-------------------
     @GetMapping("/list")
-    public String list(Integer pageNo, Model model, HttpServletResponse response)
+    public String list(Integer pageNo,String type, String keyword, Model model, HttpServletResponse response)
     {
-        log.info("GET /board/list... " + pageNo);
+        log.info("GET /board/list... " + pageNo + " " + type +" " + keyword);
 
         //----------------
         //PageDto  Start
@@ -62,6 +62,12 @@ public class BoardController {
         else {
             criteria = new Criteria(pageNo,10); //페이지이동 요청 했을때
         }
+        //--------------------
+        //Search
+        //--------------------
+        criteria.setType(type);
+        criteria.setKeyword(keyword);
+
 
         //서비스 실행
         Map<String,Object> map = boardService.GetBoardList(criteria);

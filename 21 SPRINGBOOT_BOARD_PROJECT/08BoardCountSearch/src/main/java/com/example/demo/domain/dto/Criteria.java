@@ -11,7 +11,6 @@ public class Criteria {
 	private int amount;	 			//표시할 게시물 양(10건)
 	private String type;			//	제목,작성자,게시물번호
 	private String keyword;			//	포함문자열
-	private String keyfield;		//	키필드
 
 
 	public Criteria() {
