@@ -48,7 +48,7 @@
                 <div class="collapse navbar-collapse" id="navbarNavDropdown">
                     <ul class="navbar-nav">
                         <li class="nav-item  ms-5">
-                            <a class="nav-link  text-white" href="/board/list">게시판</a>
+                            <a class="nav-link  text-white" href="#">게시판</a>
                         </li>
                         <li class="nav-item  ms-5">
                             <a class="nav-link  text-white"   href="#">이미지 게시판</a>
@@ -96,7 +96,7 @@
                 <h3>BOARD LIST</h3>
                 <div>
                     <div class="board-header">
-                        Page No (<span th:text="${pageNo}"></span> / <span th:text="${pageDto.totalpage}"></span> Page)
+                        Page No (<span style="color:red;" th:text="${pageNo}"></span> / <span th:text="${pageDto.totalpage}"></span> Page)
                     </div>
                     <div class="board-body">
                         <!-- body -->
@@ -111,18 +111,16 @@
                             </tr>
                             </thead>
                             <tbody>
-
-                                <!-- BOARD LIST ITEMS -->
-                                <th:block >
-                                    <tr th:each="boardDto : ${boardList}">
-                                        <td th:text="${boardDto.no}"></td>
-                                        <td><a th:href="@{/board/read(no=${boardDto.no})}"  th:text="${boardDto.title}">  </a> </td>
-                                        <td th:text="${boardDto.username}"></td>
-                                        <td th:text="${boardDto.regdate}"></td>
-                                        <td th:text="${boardDto.count}"></td>
-                                    </tr>
-                                </th:block>
-
+                            <!-- BOARD LIST ITEMS -->
+                            <th:block >
+                                <tr th:each="boardDto : ${boardList}">
+                                    <td th:text="${boardDto.no}"></td>
+                                    <td><a th:href="@{/board/read(no=${boardDto.no})}"  th:text="${boardDto.title}">  </a></td>
+                                    <td th:text="${boardDto.username}"></td>
+                                    <td th:text="${boardDto.regdate}"></td>
+                                    <td th:text="${boardDto.count}"></td>
+                                </tr>
+                            </th:block>
 
                             </tbody>
                         </table>
@@ -132,44 +130,43 @@
                     <div class="board-footer row position-relative">
 
                         <!--  -->
+
                         <div class="pagenation col-9">
                             <nav aria-label="Page navigation example">
                                 <ul class="pagination">
 
-
-                                    <!-- PREV -->
+                                    <!-- PREV      -->
                                     <li class="page-item" th:if="${pageDto.prev}">
-                                            <a class="page-link" th:href="@{/board/list(pageNo=${pageDto.nowBlock * pageDto.pagePerBlock - pageDto.pagePerBlock*2 + 1} )}" aria-label="Previous">
-                                                <span aria-hidden="true">&laquo;</span>
-                                            </a>
+                                        <a class="page-link" th:href="@{/board/list(pageNo=${pageDto.nowBlock * pageDto.pagePerBlock - pageDto.pagePerBlock*2 + 1} )}" aria-label="Previous">
+                                            <span aria-hidden="true">&laquo;</span>
+                                        </a>
                                     </li>
 
 
                                     <!-- PAGENATION -->
                                     <li class="page-item" th:each="i : ${#numbers.sequence(pageDto.startPage, pageDto.endPage)}"  >
-                                            <a class="page-link" th:href="@{/board/list(pageNo=${i})}" > <span th:text="${i}"></span> </a>
+                                        <a class="page-link" th:href="@{/board/list(pageNo=${i})}" > <span th:text="${i}"></span> </a>
                                     </li>
-
 
 
                                     <!-- NEXT -->
                                     <li class="page-item"  th:if="${pageDto.next}">
-
                                         <a class="page-link" th:href="@{/board/list(pageNo=${pageDto.nowBlock*pageDto.pagePerBlock+1} )}" aria-label="Next">
                                             <span aria-hidden="true">&raquo;</span>
                                         </a>
-
                                     </li>
-
-
 
                                 </ul>
                             </nav>
                         </div>
+
+
+
+
                         <!--  -->
                         <div class="button--group col-2">
                             <div class="btn-group" role="group" aria-label="Basic outlined example">
-                                <a type="button" class="btn btn-outline-primary m-2" style="width:100px;"  href="/board/post">글쓰기</a>
+                                <a th:href="@{/board/post}"   type="button" class="btn btn-outline-primary m-2" style="width:100px;">글쓰기</a>
                                 <button type="button" class="btn btn-outline-primary m-2" style="width:100px;">처음으로</button>
                             </div>
                         </div>

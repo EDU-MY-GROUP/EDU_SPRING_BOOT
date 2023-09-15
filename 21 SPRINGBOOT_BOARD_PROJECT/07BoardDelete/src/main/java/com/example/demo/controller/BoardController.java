@@ -5,7 +5,6 @@ import com.example.demo.domain.dto.BoardDto;
 import com.example.demo.domain.dto.Criteria;
 import com.example.demo.domain.dto.PageDto;
 import com.example.demo.domain.entity.Board;
-import com.example.demo.domain.repository.BoardRepository;
 import com.example.demo.domain.service.BoardService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,9 +12,9 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
-import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.multipart.MultipartRequest;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 
 import javax.validation.Valid;
 import java.io.IOException;
@@ -28,32 +27,24 @@ import java.util.stream.Collectors;
 @Slf4j
 public class BoardController {
 
-//    @Autowired
-//    private BoardRepository boardRepository;
-
-
-
     @Autowired
     private BoardService boardService;
 
-    public static String READ_DIRECTORY_PATH ;
-
+    public static String READ_BOARD_DIR_PATH;
 
     //-------------------
     //-------------------
     @GetMapping("/list")
-    public String list(Integer pageNo, Model model)
-    {
-        log.info("GET /board/list... " + pageNo);
-
+    public String list(Integer pageNo, Model model){
+        log.info("GET /board/list");
         //----------------
         //PageDto  Start
         //----------------
         Criteria criteria = null;
         if(pageNo==null) {
             //최초 /board/list 접근
-            pageNo=1;
             criteria = new Criteria();  //pageno=1 , amount=10
+            pageNo=1;
         }
         else {
             criteria = new Criteria(pageNo,10); //페이지이동 요청 했을때
@@ -76,20 +67,17 @@ public class BoardController {
         model.addAttribute("pageDto",pageDto);
 
         return "board/list";
+
     }
 
-
     //-------------------
-    // POST
     //-------------------
     @GetMapping("/post")
-    public void get_addBoard(){
-        log.info("GET /board/post");
-    }
+    public void post_get(){log.info("GET /board/post");}
 
     @PostMapping("/post")
-    public String post_addBoard(@Valid BoardDto dto, BindingResult bindingResult, Model model) throws IOException {
-        log.info("POST /board/post " + dto + " " + dto);
+    public String post_post(@Valid BoardDto dto, BindingResult bindingResult,Model model) throws IOException {
+        log.info("POST /board/post dto : " + dto);
 
         //유효성 검사
         if(bindingResult.hasFieldErrors()) {
@@ -99,85 +87,20 @@ public class BoardController {
             }
             return "/board/post";
         }
-
         //서비스 실행
-        boolean isadd = boardService.addBoard(dto);
+        boolean isadded = boardService.addBoard(dto);
 
-        if(isadd) {
-            return "redirect:/board/list";
-        }
-        return "redirect:/board/post";
-
+        return "redirect:/board/list";
 
     }
 
 
-
     //-------------------
-    // READ
     //-------------------
     @GetMapping("/read")
-    public void read(Long no,Model model) {
-        log.info("GET /board/read : " + no);
-
-        //서비스 실행
-       Board board =  boardService.getBoardOne(no);
-
-       BoardDto dto = new BoardDto();
-       dto.setNo(board.getNo());
-       dto.setTitle(board.getTitle());
-       dto.setContent(board.getContent());
-       dto.setRegdate(board.getRegdate());
-       dto.setUsername(board.getUsername());
-
-       System.out.println("FILENAMES : " + board.getFilename());
-       System.out.println("FILESIZES : " + board.getFilesize());
-
-       String filenames[] = null;
-       String filesizes[] = null;
-       if(board.getFilename()!=null){
-           //첫문자열에 [ 제거
-           filenames = board.getFilename().split(",");
-           filenames[0] = filenames[0].substring(1, filenames[0].length());
-           //마지막 문자열에 ] 제거
-           int lastIdx = filenames.length-1;
-           System.out.println("filenames[lastIdx] : " + filenames[lastIdx].substring(0,filenames[lastIdx].lastIndexOf("]")));
-           filenames[lastIdx] = filenames[lastIdx].substring(0,filenames[lastIdx].lastIndexOf("]"));
-
-           model.addAttribute("filenames", filenames);
-       }
-       if(board.getFilesize()!=null){
-            //첫문자열에 [ 제거
-           filesizes = board.getFilesize().split(",");
-           filesizes[0] = filesizes[0].substring(1, filesizes[0].length());
-           //마지막 문자열에 ] 제거
-           int lastIdx = filesizes.length-1;
-           System.out.println("filesizes[lastIdx] : " + filesizes[lastIdx].substring(0,filesizes[lastIdx].lastIndexOf("]")));
-           filesizes[lastIdx] = filesizes[lastIdx].substring(0,filesizes[lastIdx].lastIndexOf("]"));
-
-
-
-           model.addAttribute("filesizes", filesizes);
-       }
-
-
-       if(board.getDirpath()!=null){
-           //model.addAttribute("dirpath",  board.getDirpath());
-           //--------------------------------------------------------
-           // FILEDOWNLOAD 추가
-           //--------------------------------------------------------
-           this.READ_DIRECTORY_PATH = board.getDirpath();
-       }
-
-       model.addAttribute("boardDto",dto);
-    }
-
-
-
-    @GetMapping("/update")
-    public void update(Long no,Model model){
-        log.info("GET /board/update no " + no);
-
+    public void read(Long no,Model model)
+    {
+        log.info("GET /board/read no : " + no );
 
         //서비스 실행
         Board board =  boardService.getBoardOne(no);
@@ -189,14 +112,70 @@ public class BoardController {
         dto.setRegdate(board.getRegdate());
         dto.setUsername(board.getUsername());
 
-        System.out.println("FILENAMES : " + board.getFilename());
+        System.out.println("FILENAMES : " + board.getFilename());   // "[a.txt,b.txt,c.txt]"
         System.out.println("FILESIZES : " + board.getFilesize());
 
         String filenames[] = null;
         String filesizes[] = null;
         if(board.getFilename()!=null){
             //첫문자열에 [ 제거
-            filenames = board.getFilename().split(",");
+            filenames = board.getFilename().split(",");     // [a.txt , b.txt , c.txt]
+            filenames[0] = filenames[0].substring(1, filenames[0].length());
+            //마지막 문자열에 ] 제거
+            int lastIdx = filenames.length-1;
+            System.out.println("filenames[lastIdx] : " + filenames[lastIdx].substring(0,filenames[lastIdx].lastIndexOf("]")));
+            filenames[lastIdx] = filenames[lastIdx].substring(0,filenames[lastIdx].lastIndexOf("]"));
+
+
+            model.addAttribute("filenames", filenames);
+        }
+        if(board.getFilesize()!=null){
+            //첫문자열에 [ 제거
+            filesizes = board.getFilesize().split(",");
+            filesizes[0] = filesizes[0].substring(1, filesizes[0].length());
+            //마지막 문자열에 ] 제거
+            int lastIdx = filesizes.length-1;
+            System.out.println("filesizes[lastIdx] : " + filesizes[lastIdx].substring(0,filesizes[lastIdx].lastIndexOf("]")));
+            filesizes[lastIdx] = filesizes[lastIdx].substring(0,filesizes[lastIdx].lastIndexOf("]"));
+
+            model.addAttribute("filesizes", filesizes);
+        }
+        if(board.getDirpath()!=null)
+            READ_BOARD_DIR_PATH = board.getDirpath();
+
+        model.addAttribute("boardDto",dto);
+    }
+
+
+
+
+    //-------------------
+    //-------------------
+    @GetMapping("/update")
+    public void update(Long no,Model model){
+
+        log.info("GET /board/update");
+
+        //서비스 실행
+        Board board =  boardService.getBoardOne(no);
+
+        BoardDto dto = new BoardDto();
+        dto.setNo(board.getNo());
+        dto.setTitle(board.getTitle());
+        dto.setContent(board.getContent());
+        dto.setRegdate(board.getRegdate());
+        dto.setUsername(board.getUsername());
+        dto.setCount(board.getCount());
+        log.info("GET /board/update dto : " + dto);
+
+        System.out.println("FILENAMES : " + board.getFilename());   // "[a.txt,b.txt,c.txt]"
+        System.out.println("FILESIZES : " + board.getFilesize());
+
+        String filenames[] = null;
+        String filesizes[] = null;
+        if(board.getFilename()!=null){
+            //첫문자열에 [ 제거
+            filenames = board.getFilename().split(",");     // [a.txt , b.txt , c.txt]
             filenames[0] = filenames[0].substring(1, filenames[0].length());
             //마지막 문자열에 ] 제거
             int lastIdx = filenames.length-1;
@@ -214,45 +193,38 @@ public class BoardController {
             System.out.println("filesizes[lastIdx] : " + filesizes[lastIdx].substring(0,filesizes[lastIdx].lastIndexOf("]")));
             filesizes[lastIdx] = filesizes[lastIdx].substring(0,filesizes[lastIdx].lastIndexOf("]"));
 
-
-
             model.addAttribute("filesizes", filesizes);
         }
 
-
-        if(board.getDirpath()!=null){
-            //model.addAttribute("dirpath",  board.getDirpath());
-            //--------------------------------------------------------
-            // FILEDOWNLOAD 추가
-            //--------------------------------------------------------
-            this.READ_DIRECTORY_PATH = board.getDirpath();
-        }
+        if(board.getDirpath()!=null)
+            READ_BOARD_DIR_PATH = board.getDirpath();
 
         model.addAttribute("boardDto",dto);
 
     }
 
     @PostMapping("/update")
-    public String Post_update(@Valid BoardDto dto, BindingResult bindingResult, Model model) throws IOException {
-        log.info("POST /board/update dto " + dto);
-
+    public String update_post(@Valid BoardDto dto, BindingResult bindingResult,Model model) throws IOException {
+        System.out.println("POST /board/update dto : " + dto);
+        //유효성 검사
         if(bindingResult.hasFieldErrors()) {
             for( FieldError error  : bindingResult.getFieldErrors()) {
                 log.info(error.getField()+ " : " + error.getDefaultMessage());
                 model.addAttribute(error.getField(), error.getDefaultMessage());
             }
-            return "/board/read";
+            return "redirect:/board/update?no="+dto.getNo();
         }
-
         //서비스 실행
-        boolean isadd = boardService.updateBoard(dto);
+        boolean isUpdate = boardService.updateBoard(dto);
 
-        if(isadd) {
+        if(isUpdate)
             return "redirect:/board/read?no="+dto.getNo();
-        }
+
         return "redirect:/board/update?no="+dto.getNo();
 
     }
+
+
 
 
 

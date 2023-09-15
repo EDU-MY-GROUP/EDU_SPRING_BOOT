@@ -8,9 +8,7 @@ body{
 
 
 /* 전체 */
-.wrapper{
-
-}
+.wrapper{}
 
 /* 헤더 */
 .wrapper>header{}

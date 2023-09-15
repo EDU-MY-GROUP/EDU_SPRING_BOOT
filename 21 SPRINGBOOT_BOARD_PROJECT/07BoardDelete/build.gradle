@@ -25,11 +25,9 @@ dependencies {
 
 	//WEB
 	implementation 'org.springframework.boot:spring-boot-starter-web'
-
 	//LOMBOK
 	compileOnly 'org.projectlombok:lombok'
 	annotationProcessor 'org.projectlombok:lombok'
-
 	//THYMELEAF
 	implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
 
@@ -49,6 +47,7 @@ dependencies {
 	//02CONTROLLER_VALIDATION
 	implementation 'org.hibernate.validator:hibernate-validator'
 	implementation 'javax.validation:validation-api'
+
 
 
 

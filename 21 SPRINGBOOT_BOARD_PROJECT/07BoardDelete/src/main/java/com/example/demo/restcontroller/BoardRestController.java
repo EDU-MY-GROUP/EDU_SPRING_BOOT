@@ -9,7 +9,6 @@ import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
@@ -22,19 +21,18 @@ import java.io.UnsupportedEncodingException;
 @Slf4j
 public class BoardRestController {
 
+
     @Autowired
     private BoardService boardService;
 
-    //------------------
-    //FILEDOWNLOAD
-    //------------------
-
-    @GetMapping(value="/download" ,produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
-    public ResponseEntity<Resource> Download(String filename) throws UnsupportedEncodingException
-    {
+    //-------------------
+    // DOWNLOAD
+    //-------------------
+    @GetMapping("/download")
+    public ResponseEntity<Resource> downloadfile(String filename) throws UnsupportedEncodingException {
         filename = filename.trim();
         System.out.println("GET /board/download filename : " + filename);
-        String path  = BoardController.READ_DIRECTORY_PATH + File.separator + filename;
+        String path  = BoardController.READ_BOARD_DIR_PATH + File.separator + filename;
         log.info("RestController_03Download's Download Call.." + path);
         System.out.println("GET /board/download path : " + path);
         //FileSystemResource : 파일시스템의 특정 파일로부터 정보를 가져오는데 사용
@@ -47,8 +45,9 @@ public class BoardRestController {
         headers.add("Content-Disposition","attachment; filename="+new String(filename.getBytes("UTF-8"),"ISO-8859-1"));
         //리소스,파일정보가 포함된 헤더,상태정보를 전달
         return new ResponseEntity<Resource>(resource,headers, HttpStatus.OK);
-
     }
+
+
 
 
 
@@ -56,11 +55,11 @@ public class BoardRestController {
     // 수정하기
     //-------------------
     @PutMapping("/put/{no}/{filename}")
-    public String put(@PathVariable String no, @PathVariable String filename)
-    {
+    public void put(@PathVariable Long no, @PathVariable String filename){
         log.info("PUT /board/put " + no + " " + filename);
-        boolean isremoved = boardService.removeFile(no,filename);
-        return "success";
+        boolean isremoved =  boardService.removeFile(no, filename);
+
+
     }
 
 
@@ -71,13 +70,12 @@ public class BoardRestController {
     public String delete(Long no){
         log.info("DELETE /board/delete no " + no);
 
-        boolean isremoved =  boardService.removeBoard(no);
+        boolean isremoved =  !boardService.removeBoard(no);
         if(isremoved)
             return "success";
         else
             return "failed";
 
     }
-
     
 }
