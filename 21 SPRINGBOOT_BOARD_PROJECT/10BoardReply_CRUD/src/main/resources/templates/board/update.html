@@ -102,6 +102,7 @@
                     <input type="hidden" name="no" th:value="${boardDto.no}">
                     <input type="hidden" name="count" th:value="${boardDto.count}">
 
+
                     <div class="mb-3 w-50">
                         <label for="exampleFormControlInput1" class="form-label">Email address</label>
                         <input type="text" name="username" class="form-control" id="exampleFormControlInput1" placeholder="name@example.com" th:value="${boardDto.username}" readonly>
@@ -117,7 +118,7 @@
 
                     <!--     파일 리스트 출력               -->
                     <div class="mb-3  w-50" style="border : 1px solid lightgray;border-radius:5px;padding:3px;">
-                       <th:block  th:if="${filenames[0]!=''}" >
+                       <th:block  th:if="${filenames!=null}" >
                            <!-- 문자열을 쉼표(,)로 분할하고 각각의 항목을 출력합니다. -->
 
                                <div th:each="i : ${#numbers.sequence(0, filenames.length-1)}"       style="display:flex;align-items;center;">

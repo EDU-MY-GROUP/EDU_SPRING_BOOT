@@ -8,6 +8,7 @@ import com.example.demo.domain.entity.Board;
 import com.example.demo.domain.repository.BoardRepository;
 import com.example.demo.domain.service.BoardService;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.catalina.core.ApplicationContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -17,6 +18,9 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartRequest;
 
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import java.io.IOException;
 import java.util.List;
@@ -42,9 +46,9 @@ public class BoardController {
     //-------------------
     //-------------------
     @GetMapping("/list")
-    public String list(Integer pageNo, Model model)
+    public String list(Integer pageNo,String type, String keyword, Model model, HttpServletResponse response)
     {
-        log.info("GET /board/list... " + pageNo);
+        log.info("GET /board/list... " + pageNo + " " + type +" " + keyword);
 
         //----------------
         //PageDto  Start
@@ -58,6 +62,12 @@ public class BoardController {
         else {
             criteria = new Criteria(pageNo,10); //페이지이동 요청 했을때
         }
+        //--------------------
+        //Search
+        //--------------------
+        criteria.setType(type);
+        criteria.setKeyword(keyword);
+
 
         //서비스 실행
         Map<String,Object> map = boardService.GetBoardList(criteria);
@@ -74,6 +84,13 @@ public class BoardController {
         model.addAttribute("boardList",boardList);
         model.addAttribute("pageNo",pageNo);
         model.addAttribute("pageDto",pageDto);
+
+        //--------------------------------
+        //COUNT UP - //쿠키 생성(/board/read.do 새로고침시 조회수 반복증가를 막기위한용도)
+        //--------------------------------
+        Cookie init = new Cookie("reading","true");
+        response.addCookie(init);
+        //--------------------------------
 
         return "board/list";
     }
@@ -116,11 +133,12 @@ public class BoardController {
     //-------------------
     // READ
     //-------------------
+
     @GetMapping("/read")
-    public void read(Long no,Model model) {
+    public String read(Long no,Integer pageNo, Model model,HttpServletRequest request, HttpServletResponse response) {
         log.info("GET /board/read : " + no);
 
-        //서비스 실행
+       //서비스 실행
        Board board =  boardService.getBoardOne(no);
 
        BoardDto dto = new BoardDto();
@@ -129,7 +147,7 @@ public class BoardController {
        dto.setContent(board.getContent());
        dto.setRegdate(board.getRegdate());
        dto.setUsername(board.getUsername());
-
+       dto.setCount(board.getCount());
 
        System.out.println("FILENAMES : " + board.getFilename());
        System.out.println("FILESIZES : " + board.getFilesize());
@@ -169,9 +187,40 @@ public class BoardController {
            //--------------------------------------------------------
            this.READ_DIRECTORY_PATH = board.getDirpath();
        }
-
        model.addAttribute("boardDto",dto);
+       model.addAttribute("pageNo",pageNo);
+
+
+        //-------------------
+        // COUNTUP
+        //-------------------
+
+        //쿠키 확인 후  CountUp(/board/read.do 새로고침시 조회수 반복증가를 막기위한용도)
+        Cookie[] cookies = request.getCookies();
+        if(cookies!=null)
+        {
+            for(Cookie cookie:cookies)
+            {
+                if(cookie.getName().equals("reading"))
+                {
+                    if(cookie.getValue().equals("true"))
+                    {
+                        //CountUp
+                        System.out.println("COOKIE READING TRUE | COUNT UP");
+                        boardService.count(board.getNo());
+                        //쿠키 value 변경
+                        cookie.setValue("false");
+                        response.addCookie(cookie);
+                    }
+                }
+            }
+        }
+
+        return "/board/read";
+
     }
+
+
 
 
 
@@ -189,6 +238,8 @@ public class BoardController {
         dto.setContent(board.getContent());
         dto.setRegdate(board.getRegdate());
         dto.setUsername(board.getUsername());
+        dto.setCount(board.getCount());
+
 
         System.out.println("FILENAMES : " + board.getFilename());
         System.out.println("FILESIZES : " + board.getFilesize());
@@ -254,6 +305,9 @@ public class BoardController {
         return "redirect:/board/update?no="+dto.getNo();
 
     }
+
+
+
 
 
 }

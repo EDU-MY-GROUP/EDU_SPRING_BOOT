@@ -147,6 +147,7 @@ public class BoardController {
        dto.setContent(board.getContent());
        dto.setRegdate(board.getRegdate());
        dto.setUsername(board.getUsername());
+       dto.setCount(board.getCount());
 
        System.out.println("FILENAMES : " + board.getFilename());
        System.out.println("FILESIZES : " + board.getFilesize());
@@ -237,6 +238,7 @@ public class BoardController {
         dto.setContent(board.getContent());
         dto.setRegdate(board.getRegdate());
         dto.setUsername(board.getUsername());
+        dto.setCount(board.getCount());
 
         System.out.println("FILENAMES : " + board.getFilename());
         System.out.println("FILESIZES : " + board.getFilesize());
