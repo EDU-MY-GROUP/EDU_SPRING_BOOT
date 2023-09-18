@@ -11,23 +11,16 @@ import javax.persistence.Id;
 
 @Entity
 @NoArgsConstructor
-@Data
+@AllArgsConstructor
 @Builder
+@Data
 public class User {
     //---------------------
     // OAUTH
     //---------------------
     private String provider;
     private String providerId;
-    @Builder
-    public User(String username, String password,String role,String provider, String providerId,String email) {
-        this.username = username;
-        this.password = password;
-        this.role = role;
-        this.provider = provider;
-        this.providerId = providerId;
-        this.email = email;
-    }
+
     //---------------------
     //기존
     //---------------------
@@ -36,6 +29,13 @@ public class User {
     private String password; //비밀번호
     private String email;
     private String role; //권한번호
+    private String profileImage;    //프로필 이미지 경로
+    private String phone;
+    private String zipcode;
+    private String addr1;
+    private String addr2;
+
+
 
 
 

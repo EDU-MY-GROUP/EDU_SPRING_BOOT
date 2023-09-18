@@ -3,6 +3,7 @@ package com.example.demo.controller;
 import com.example.demo.domain.dto.UserDto;
 import com.example.demo.domain.entity.User;
 import com.example.demo.domain.repository.UserRepository;
+import com.example.demo.domain.service.UserService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
@@ -16,11 +17,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @Slf4j
 @RequestMapping("/user")
 public class UserController {
-    @Autowired
-    private PasswordEncoder passwordEncoder;
+
+
 
     @Autowired
-    private UserRepository userRepository;
+    private UserService userSerivice;
 
 
     @GetMapping("/mypage")
@@ -65,15 +66,8 @@ public class UserController {
         //02
 
         //03
+        userSerivice.addUser(dto);
 
-        User user = User.builder()
-                .username(dto.getUsername())
-                .password( passwordEncoder.encode(dto.getPassword()))
-                .role("ROLE_USER")
-                .build();
-
-
-        userRepository.save(user);
 
         //04
         return "redirect:login?msg=Join_Success!";

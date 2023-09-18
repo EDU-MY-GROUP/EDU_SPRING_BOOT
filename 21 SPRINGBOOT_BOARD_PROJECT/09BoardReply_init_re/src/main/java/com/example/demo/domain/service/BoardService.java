@@ -5,9 +5,14 @@ import com.example.demo.controller.BoardController;
 import com.example.demo.domain.dto.BoardDto;
 import com.example.demo.domain.dto.Criteria;
 import com.example.demo.domain.dto.PageDto;
+import com.example.demo.domain.dto.ReplyDto;
 import com.example.demo.domain.entity.Board;
+import com.example.demo.domain.entity.Reply;
 import com.example.demo.domain.repository.BoardRepository;
+import com.example.demo.domain.repository.ReplyRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -18,6 +23,7 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import javax.swing.text.html.Option;
 import java.io.File;
 import java.io.IOException;
 import java.sql.SQLException;
@@ -32,6 +38,9 @@ public class BoardService {
 
     @Autowired
     private BoardRepository boardRepository;
+
+    @Autowired
+    private ReplyRepository replyRepository;
 
 
     //모든 게시물 가져오기
@@ -56,8 +65,6 @@ public class BoardService {
                 totalcount = boardRepository.countWhereUsernameKeyword(criteria.getKeyword());
             else if (criteria.getType().equals("content"))
                 totalcount = boardRepository.countWhereContentKeyword(criteria.getKeyword());
-            else
-                totalcount = (int)boardRepository.count();
         }
         else
             totalcount = (int)boardRepository.count();
@@ -86,8 +93,6 @@ public class BoardService {
                 list = boardRepository.findBoardContentsAmountStart(criteria.getKeyword(), pagedto.getCriteria().getAmount(), offset);
             else if (criteria.getType().equals("none"))
                 list = boardRepository.findBoardAmountStart(pagedto.getCriteria().getAmount(), offset);
-            else
-                list  =  boardRepository.findBoardAmountStart(pagedto.getCriteria().getAmount(),offset);
         }
         else
             list  =  boardRepository.findBoardAmountStart(pagedto.getCriteria().getAmount(),offset);
@@ -172,6 +177,7 @@ public class BoardService {
 
 
     @Transactional(rollbackFor = Exception.class)
+
     public Board getBoardOne(Long no) {
 
         Optional<Board> board =    boardRepository.findById(no);
@@ -183,7 +189,9 @@ public class BoardService {
 
 
 
-
+    //----------------------------------------------------------------
+    //수정하기코드!
+    //----------------------------------------------------------------
     @Transactional(rollbackFor = SQLException.class)
     public boolean updateBoard(BoardDto dto) throws IOException {
 
@@ -211,10 +219,19 @@ public class BoardService {
 
         if(dto.getFiles().length >= 1 && dto.getFiles()[0].getSize()!=0L)
         {
-            //Upload Dir 미존재시 생성
-
-            //board에 경로 추가
+            //--------------------------------
+            //Upload Dir 미존재시 생성[추가]
+            //--------------------------------
+            if(BoardController.READ_DIRECTORY_PATH==null){
+                String path = uploadDir+ File.separator+dto.getUsername()+File.separator+ UUID.randomUUID();
+                File dir = new File(path);
+                if(!dir.exists()) {
+                    dir.mkdirs();
+                }
+                BoardController.READ_DIRECTORY_PATH = path;
+            }
             board.setDirpath(BoardController.READ_DIRECTORY_PATH.toString());
+            //--------------------------------
 
 
             for(MultipartFile file  : dto.getFiles())
@@ -239,29 +256,38 @@ public class BoardService {
             //--------------------
             //기존 파일 정보와 병합
             //--------------------
+            //----------------------------------------------------------------
+            //코드 수정
+            //----------------------------------------------------------------
+            if(oldBoard.getFilename()!=null) {
+                String oldFilenames = oldBoard.getFilename();
+                String oldFilesizes = oldBoard.getFilesize();
+                String[] old_fn_arr = oldFilenames.split(",");
+                String[] old_fs_arr = oldFilesizes.split(",");
 
-            String oldFilenames =   oldBoard.getFilename();
-            String oldFilesizes =   oldBoard.getFilesize();
-            String [] old_fn_arr = oldFilenames.split(",");
-            String [] old_fs_arr = oldFilesizes.split(",");
+                //첫문자열에 '[' 마지막 ']' 제거
+                old_fn_arr[0] = old_fn_arr[0].substring(1, old_fn_arr[0].length());
+                int lastIdx = old_fn_arr.length - 1;
+                old_fn_arr[lastIdx] = old_fn_arr[lastIdx].substring(0, old_fn_arr[lastIdx].lastIndexOf("]"));
 
-            //첫문자열에 '[' 마지막 ']' 제거
-            old_fn_arr[0] = old_fn_arr[0].substring(1, old_fn_arr[0].length());
-            int lastIdx = old_fn_arr.length-1;
-            old_fn_arr[lastIdx] = old_fn_arr[lastIdx].substring(0,old_fn_arr[lastIdx].lastIndexOf("]"));
-
-            old_fs_arr[0] = old_fs_arr[0].substring(1, old_fs_arr[0].length());
-            int lastIdx2 = old_fs_arr.length-1;
-            old_fs_arr[lastIdx2] = old_fs_arr[lastIdx2].substring(0,old_fs_arr[lastIdx2].lastIndexOf("]"));
+                old_fs_arr[0] = old_fs_arr[0].substring(1, old_fs_arr[0].length());
+                int lastIdx2 = old_fs_arr.length - 1;
+                old_fs_arr[lastIdx2] = old_fs_arr[lastIdx2].substring(0, old_fs_arr[lastIdx2].lastIndexOf("]"));
 
 
-            String newFilenames [] = Stream.concat(Arrays.stream(old_fn_arr),Arrays.stream(filenames.toArray())).toArray(String[]::new);
-            String newFilesizes [] = Stream.concat(Arrays.stream(old_fs_arr),Arrays.stream(filesizes.toArray())).toArray(String[]::new);
-            System.out.println("newFilenames : " + (Arrays.toString(newFilenames)));
-            System.out.println("newFilesizes : " + (Arrays.toString(newFilesizes)));
+                String newFilenames[] = Stream.concat(Arrays.stream(old_fn_arr), Arrays.stream(filenames.toArray())).toArray(String[]::new);
+                String newFilesizes[] = Stream.concat(Arrays.stream(old_fs_arr), Arrays.stream(filesizes.toArray())).toArray(String[]::new);
+                System.out.println("newFilenames : " + (Arrays.toString(newFilenames)));
+                System.out.println("newFilesizes : " + (Arrays.toString(newFilesizes)));
 
-            board.setFilename(Arrays.toString(newFilenames));
-            board.setFilesize(Arrays.toString(newFilesizes));
+                board.setFilename(Arrays.toString(newFilenames));
+                board.setFilesize(Arrays.toString(newFilesizes));
+            }
+            else {
+                board.setFilename(filenames.toString());
+                board.setFilesize(filesizes.toString());
+            }
+
 
         }
         else {
@@ -366,4 +392,79 @@ public class BoardService {
     }
 
 
+    //----------------------------------------------------------------
+    // REPLY ADD
+    //----------------------------------------------------------------
+    public void addReply(Long bno,String contents, String username) {
+        Reply reply = new Reply();
+        Board board = new Board();
+        board.setNo(bno);
+
+        reply.setBoard(board);
+        reply.setContent(contents);
+        reply.setUsername(username);
+        reply.setRegdate(LocalDateTime.now());
+        reply.setLikecount(0L);
+        reply.setUnlikecount(0L);
+
+        replyRepository.save(reply);
+    }
+
+    //----------------------------------------------------------------
+    // REPLY LIST
+    //----------------------------------------------------------------
+    public List<ReplyDto> getReplyList(Long bno) {
+        List<Reply> replyList =  replyRepository.GetReplyByBnoDesc(bno);
+
+        List<ReplyDto> returnReply  = new ArrayList();
+        ReplyDto dto = null;
+
+        if(!replyList.isEmpty()) {
+            for(int i=0;i<replyList.size();i++) {
+
+                dto = new ReplyDto();
+                dto.setBno(replyList.get(i).getBoard().getNo());
+                dto.setRno(replyList.get(i).getRno());
+                dto.setUsername(replyList.get(i).getUsername());
+                dto.setContent(replyList.get(i).getContent());
+                dto.setLikecount(replyList.get(i).getLikecount());
+                dto.setUnlikecount(replyList.get(i).getUnlikecount());
+                dto.setRegdate(replyList.get(i).getRegdate());
+
+                returnReply.add(dto);
+
+            }
+            return returnReply;
+        }
+
+        return null;
+
+    }
+
+
+    //----------------------------------------------------------------
+    // REPLY COUNT By BNO
+    //----------------------------------------------------------------
+
+    public Long getReplyCount(Long bno) {
+        return replyRepository.GetReplyCountByBnoDesc(bno);
+
+    }
+
+
+    public void deleteReply(Long rno) {
+            replyRepository.deleteById(rno);
+    }
+
+    public void thumbsUp(Long rno) {
+        Reply reply =  replyRepository.findById(rno).get();
+        reply.setLikecount(reply.getLikecount()+1L);
+        replyRepository.save(reply);
+    }
+
+    public void thumbsDown(Long rno) {
+        Reply reply =  replyRepository.findById(rno).get();
+        reply.setUnlikecount(reply.getUnlikecount()+1L);
+        replyRepository.save(reply);
+    }
 }

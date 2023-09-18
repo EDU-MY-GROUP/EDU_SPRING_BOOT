@@ -60,7 +60,6 @@
                 SEARCH
             -->
             <form class="d-flex" action="/board/list">
-                <input type="hidden" name="pageNo" value="1" />
                 <select name="type"  class="form-select me-2" style="width:120px;">
                     <option value="title" selected>TITLE</option>
                     <option value="username">WRITER</option>
@@ -145,7 +144,7 @@
                                 <ul class="pagination">
 
 
-                                    <!-- PREV -->
+                                        <!-- PREV -->
                                     <li class="page-item" th:if="${pageDto.prev}">
                                             <a class="page-link" th:href="@{/board/list(pageNo=${pageDto.nowBlock * pageDto.pagePerBlock - pageDto.pagePerBlock*2 + 1},type=${pageDto.criteria.type},keyword=${pageDto.criteria.keyword} )}" aria-label="Previous">
                                                 <span aria-hidden="true">&laquo;</span>
@@ -168,6 +167,7 @@
                                         </a>
 
                                     </li>
+
 
 
                                 </ul>

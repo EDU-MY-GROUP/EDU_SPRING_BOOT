@@ -65,7 +65,6 @@ public class BoardController {
         //--------------------
         //Search
         //--------------------
-
         criteria.setType(type);
         criteria.setKeyword(keyword);
 
@@ -221,10 +220,6 @@ public class BoardController {
 
     }
 
-
-
-
-
     @GetMapping("/update")
     public void update(Long no,Model model){
         log.info("GET /board/update no " + no);
@@ -240,6 +235,7 @@ public class BoardController {
         dto.setRegdate(board.getRegdate());
         dto.setUsername(board.getUsername());
         dto.setCount(board.getCount());
+
 
         System.out.println("FILENAMES : " + board.getFilename());
         System.out.println("FILESIZES : " + board.getFilesize());
@@ -308,6 +304,17 @@ public class BoardController {
 
 
 
+    //--------------------------------
+    // /Board/reply/delete
+    //--------------------------------
+
+    //--------------------------------
+    // /board/reply/thumbsup
+    //--------------------------------
+
+    //--------------------------------
+    // /board/reply/thumbsdown
+    //--------------------------------
 
 
 }

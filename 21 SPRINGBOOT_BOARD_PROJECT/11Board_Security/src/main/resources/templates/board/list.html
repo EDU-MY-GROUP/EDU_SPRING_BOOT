@@ -187,9 +187,10 @@
                                 <ul class="pagination">
 
 
+
                                     <!-- PREV -->
                                     <li class="page-item" th:if="${pageDto.prev}">
-                                            <a class="page-link" th:href="@{/board/list(pageNo=${pageDto.nowBlock * pageDto.pagePerBlock - pageDto.pagePerBlock*2 + 1} )}" aria-label="Previous">
+                                            <a class="page-link" th:href="@{/board/list(pageNo=${pageDto.nowBlock * pageDto.pagePerBlock - pageDto.pagePerBlock*2 + 1},type=${pageDto.criteria.type},keyword=${pageDto.criteria.keyword} )}" aria-label="Previous">
                                                 <span aria-hidden="true">&laquo;</span>
                                             </a>
                                     </li>
@@ -197,7 +198,7 @@
 
                                     <!-- PAGENATION -->
                                     <li class="page-item" th:each="i : ${#numbers.sequence(pageDto.startPage, pageDto.endPage)}"  >
-                                            <a class="page-link" th:href="@{/board/list(pageNo=${i})}" > <span th:text="${i}"></span> </a>
+                                            <a class="page-link" th:href="@{/board/list(pageNo=${i},type=${pageDto.criteria.type},keyword=${pageDto.criteria.keyword} )}" > <span th:text="${i}"></span> </a>
                                     </li>
 
 
@@ -205,7 +206,7 @@
                                     <!-- NEXT -->
                                     <li class="page-item"  th:if="${pageDto.next}">
 
-                                        <a class="page-link" th:href="@{/board/list(pageNo=${pageDto.nowBlock*pageDto.pagePerBlock+1} )}" aria-label="Next">
+                                        <a class="page-link" th:href="@{/board/list(pageNo=${pageDto.nowBlock*pageDto.pagePerBlock+1},type=${pageDto.criteria.type},keyword=${pageDto.criteria.keyword} )}" aria-label="Next">
                                             <span aria-hidden="true">&raquo;</span>
                                         </a>
 

@@ -91,6 +91,10 @@ public class PrincipalDetailsOAuth2Service extends DefaultOAuth2UserService   im
                     .role(role)
                     .provider(provider)
                     .providerId(providerId)
+                    .phone(null)
+                    .zipcode(null)
+                    .addr1(null)
+                    .addr2(null)
                     .build();
             userRepository.save(user);
             System.out.println("[OAUTH] "+provider +" 최초 로그인 요청!");

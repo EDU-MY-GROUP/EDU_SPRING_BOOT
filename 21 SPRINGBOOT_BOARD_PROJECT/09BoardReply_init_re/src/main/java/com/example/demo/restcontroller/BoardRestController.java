@@ -2,7 +2,9 @@ package com.example.demo.restcontroller;
 
 
 import com.example.demo.controller.BoardController;
+import com.example.demo.domain.dto.ReplyDto;
 import com.example.demo.domain.entity.Board;
+import com.example.demo.domain.entity.Reply;
 import com.example.demo.domain.service.BoardService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,6 +24,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.File;
 import java.io.UnsupportedEncodingException;
 import java.sql.SQLException;
+import java.util.List;
 
 @RestController
 @RequestMapping("/board")
@@ -85,29 +88,31 @@ public class BoardRestController {
 
     }
 
-    //-------------------
-    //COUNT
-    //-------------------
-    @GetMapping("/count")
-    public void count(HttpServletRequest request, HttpServletResponse response)
-    {
-
-
-    }
-
-    //-------------------
-    //댓글추가
-    //-------------------
-    @GetMapping("/reply/add")       //   /board/reply/add
-    public void addReply(Long bno,String contents, String username)
-    {
-        log.info("GET /board/reply/add.. bno,contents,username : "+bno+","+contents+","+username);
-
-    }
-
-
-
 
 
     
+    //-------------------
+    //댓글추가
+    //-------------------
+    @GetMapping("/reply/add")
+    public void addReply(Long bno,String contents , String username){
+        log.info("GET /board/reply/add " + bno + " " + contents + " " + username);
+        boardService.addReply(bno,contents, username);
+    }
+
+
+    //-------------------
+    //댓글 조회
+    //-------------------
+
+    //-------------------
+    //댓글 카운트
+    //-------------------
+
+
+
+
+
+
+
 }
