@@ -451,9 +451,8 @@ public class BoardService {
 
     }
 
-
     public void deleteReply(Long rno) {
-            replyRepository.deleteById(rno);
+        replyRepository.deleteById(rno);
     }
 
     public void thumbsUp(Long rno) {

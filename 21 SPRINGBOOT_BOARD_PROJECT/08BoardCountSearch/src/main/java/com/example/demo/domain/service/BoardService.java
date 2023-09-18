@@ -5,8 +5,11 @@ import com.example.demo.controller.BoardController;
 import com.example.demo.domain.dto.BoardDto;
 import com.example.demo.domain.dto.Criteria;
 import com.example.demo.domain.dto.PageDto;
+import com.example.demo.domain.dto.ReplyDto;
 import com.example.demo.domain.entity.Board;
+import com.example.demo.domain.entity.Reply;
 import com.example.demo.domain.repository.BoardRepository;
+import com.example.demo.domain.repository.ReplyRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -32,6 +35,9 @@ public class BoardService {
 
     @Autowired
     private BoardRepository boardRepository;
+
+    @Autowired
+    private ReplyRepository replyRepository;
 
 
     //모든 게시물 가져오기
@@ -364,6 +370,87 @@ public class BoardService {
         board.setCount(board.getCount()+1);
         boardRepository.save(board);
     }
+
+
+    //----------------------------------------------------------------
+    // ADD REPLY
+    //----------------------------------------------------------------
+    public void addReply(Long bno, String contents, String username) {
+        Reply reply = new Reply();
+        Board board = new Board();
+        board.setNo(bno);
+
+        reply.setRno(null);
+        reply.setBoard(board);
+        reply.setUsername(username);
+        reply.setContent(contents);
+        reply.setRegdate(LocalDateTime.now());
+        reply.setLikecount(0L);
+        reply.setUnlikecount(0L);
+
+        reply = replyRepository.save(reply);
+
+    }
+
+
+    //----------------------------------------------------------------
+    // REPLY LIST
+    //----------------------------------------------------------------
+    public List<ReplyDto> getReplyList(Long bno) {
+        List<Reply> replyList =  replyRepository.GetReplyByBnoDesc(bno);
+
+        List<ReplyDto> returnReply  = new ArrayList();
+        ReplyDto dto = null;
+
+        if(!replyList.isEmpty()) {
+            for(int i=0;i<replyList.size();i++) {
+
+                dto = new ReplyDto();
+                dto.setBno(replyList.get(i).getBoard().getNo());
+                dto.setRno(replyList.get(i).getRno());
+                dto.setUsername(replyList.get(i).getUsername());
+                dto.setContent(replyList.get(i).getContent());
+                dto.setLikecount(replyList.get(i).getLikecount());
+                dto.setUnlikecount(replyList.get(i).getUnlikecount());
+                dto.setRegdate(replyList.get(i).getRegdate());
+
+                returnReply.add(dto);
+
+            }
+            return returnReply;
+        }
+
+        return null;
+
+    }
+
+    //----------------------------------------------------------------
+    // REPLY COUNT By BNO
+    //----------------------------------------------------------------
+
+    public Long getReplyCount(Long bno) {
+        return replyRepository.GetReplyCountByBnoDesc(bno);
+
+    }
+
+
+    public void deleteReply(Long rno) {
+        replyRepository.deleteById(rno);
+    }
+
+    public void thumbsUp(Long rno) {
+        Reply reply =  replyRepository.findById(rno).get();
+        reply.setLikecount(reply.getLikecount()+1L);
+        replyRepository.save(reply);
+    }
+
+    public void thumbsDown(Long rno) {
+        Reply reply =  replyRepository.findById(rno).get();
+        reply.setUnlikecount(reply.getUnlikecount()+1L);
+        replyRepository.save(reply);
+    }
+
+
 
 
 }

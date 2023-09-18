@@ -47,7 +47,7 @@
             <div class="top--header"></div>
 
             <!-- NAV -->
-            <nav class="navbar navbar-expand-lg navbar-light bg-success p-3 mb-1"  >
+            <nav class="navbar navbar-expand-lg navbar-light bg-success p-3 mb-1  header--nav"  >
                 <div class="container-fluid " >
                     <a class="navbar-brand text-white" href="/">HOME</a>
                     <button class="navbar-toggler  text-white ms-5" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation" >
@@ -66,18 +66,21 @@
                 </div>
 
                 <!--
-                   로그아웃
-                -->
+                     로그아웃
+                  -->
+                <style>
+                    .header--nav a{text-decoration:none;color:white;}
+                </style>
                 <!--인증된 경우 -->
                 <div  class="d-flex me-2" sec:authorize="isAuthenticated()"  style="display:flex;align-items:center;justify-content:right;font-size:0.8rem;width:800px;">
                     <div style="width:300px;text-align:right;">
                         <span sec:authentication="principal.username" class="text-light"></span> <span class="text-light">님 </span>
                     </div>
                     &nbsp;&nbsp;
-                    <div>
+                    <div style="display:flex;align-items:center;justify-content:right;width:100px;">
                         <a href="/user/mypage">나의 정보</a>
                     </div>
-                    <form class="d-flex" action="/logout"  onSubmit="return false">
+                    <form class="d-flex " action="/logout"  onSubmit="return false">
                         <button  class="btn text-light"  style="width:120px; font-size:0.8rem;" onclick="logoutAndRedirect()">로그아웃</button>
                     </form>
                 </div>
