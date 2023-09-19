@@ -352,8 +352,15 @@ public class BoardService {
 
         }
 
-       readBoard.setFilename(newFn.toString());
-       readBoard.setFilesize(newFn.toString());
+       if(newFn.size()!=0)
+           readBoard.setFilename(newFn.toString());
+       else
+           readBoard.setFilename(null);
+        if(newFs.size()!=0)
+            readBoard.setFilesize(newFs.toString());
+        else
+            readBoard.setFilename(null);
+
        readBoard = boardRepository.save(readBoard);
 
 
