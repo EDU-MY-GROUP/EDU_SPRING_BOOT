@@ -87,7 +87,6 @@ public class PrincipalDetailsOAuth2Service extends DefaultOAuth2UserService   im
             User user = User.builder()
                     .username(username)
                     .password(password)
-                    .email(email)
                     .role(role)
                     .provider(provider)
                     .providerId(providerId)
@@ -141,4 +140,9 @@ public class PrincipalDetailsOAuth2Service extends DefaultOAuth2UserService   im
 
         return principalDetails;
     }
+
+
+
+
+
 }

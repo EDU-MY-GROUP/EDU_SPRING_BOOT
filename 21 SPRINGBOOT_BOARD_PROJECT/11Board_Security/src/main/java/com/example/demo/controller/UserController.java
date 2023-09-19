@@ -1,5 +1,6 @@
 package com.example.demo.controller;
 
+import com.example.demo.config.auth.PrincipalDetails;
 import com.example.demo.domain.dto.UserDto;
 import com.example.demo.domain.entity.User;
 import com.example.demo.domain.repository.UserRepository;
@@ -17,6 +18,8 @@ import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 import java.util.Properties;
 
@@ -42,6 +45,7 @@ public class UserController {
         System.out.println("detail : " + authentication.getDetails());
         System.out.println("credential : " + authentication.getCredentials());
 
+
     }
 
 
@@ -66,7 +70,7 @@ public class UserController {
     }
 
     @PostMapping("/join")
-    public String join_post(@Valid UserDto dto, BindingResult bindingResult, Model model) {
+    public String join_post(@Valid UserDto dto, BindingResult bindingResult, Model model,HttpServletRequest request) {
         log.info("POST /join "+dto);
 
         //01
@@ -80,10 +84,21 @@ public class UserController {
             return "/user/join";
         }
 
+        HttpSession session = request.getSession();
+        boolean isEmailAuth = (boolean)session.getAttribute("isEmailAuth");
+
+
         //03
-        boolean isjoin =  userService.joinMember(dto,model);
-        if(!isjoin){
-            return "/user/join";
+
+        if(isEmailAuth) //인증된 이메일 계정인지 확인
+        {
+            boolean isjoin = userService.joinMember(dto, model);
+            if (!isjoin) {
+                return "/user/join";
+            }
+        }else{
+            model.addAttribute("username","이메일 인증 실패");
+
         }
 
 
@@ -97,10 +112,10 @@ public class UserController {
     //-------------------
     //메일인증
     //-------------------
-    private String emailPassword;
+
     private boolean isIsEmailAuth;
     @GetMapping(value = "/auth/email/{username}" )
-    public @ResponseBody void email_auth(@PathVariable String username){
+    public @ResponseBody void email_auth(@PathVariable String username , HttpServletRequest request){
         System.out.println("GET /user/auth/email " + username);
 
         //메일설정
@@ -108,7 +123,7 @@ public class UserController {
         mailSender.setHost("smtp.gmail.com");
         mailSender.setPort(587);
         mailSender.setUsername("jwg135790@gmail.com");
-        mailSender.setPassword("GOOGLE APPLICATION PASSWORD");
+        mailSender.setPassword("qysh uudz wbpo vbud");
 
         Properties props = new Properties();
         props.put("mail.smtp.auth","true");
@@ -127,16 +142,42 @@ public class UserController {
         //발송
         mailSender.send(message);
 
-        //참조변수에 넣기
-        this.emailPassword = tmpPassword;
+        //세션에 저장
+        HttpSession session = request.getSession();
+        session.setAttribute("tmp_auth_value",tmpPassword);
+
     }
 
     @GetMapping("/auth/confirm/{code}")
-    public String email_auth_confirm(@PathVariable String code){
-        if(emailPassword.equals(code))
-            return "success";
-        else
-            return "fail";
+    public @ResponseBody String email_auth_confirm(@PathVariable  String code,Model model,HttpServletRequest request){
+        HttpSession  session = request.getSession();
+        String tmp_auth_value= (String)session.getAttribute("tmp_auth_value");
+        if(tmp_auth_value!=null)
+        {
+            if(tmp_auth_value.equals(code)) {
+                session.setAttribute("isEmailAuth", true);
+                //model.addAttribute("username","인증성공");
+                return "success";
+            }
+            else {
+                session.setAttribute("isEmailAuth", true);
+                //model.addAttribute("username","인증실패");
+                return "fail";
+            }
+
+        }
+        return "fail";
+
+
+    }
+
+
+
+    @GetMapping("/myAuthNumber")
+    public @ResponseBody void get_my_number(HttpServletRequest request) {
+        HttpSession  session = request.getSession();
+        String tmp_auth_value= (String)session.getAttribute("tmp_auth_value");
+        log.info("GET /user/myAuthNumber : " + tmp_auth_value);
     }
 
 

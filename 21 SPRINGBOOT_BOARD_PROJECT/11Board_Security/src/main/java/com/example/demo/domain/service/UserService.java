@@ -45,13 +45,27 @@ public class UserService {
     @Transactional(rollbackFor = Exception.class)
     public boolean joinMember(UserDto dto, Model model)
     {
+
+        //패스워드 Re패스워드 확인
         if(!dto.getPassword().equals(dto.getRepassword()))
         {
             model.addAttribute("repassword","패스워드가 일치하지 않습니다");
             return false;
         }
+
+
         dto.setRole("ROLE_USER");
         dto.setPassword(passwordEncoder.encode(dto.getPassword()) );
+
+        User user = User.builder()
+                        .username(dto.getUsername())
+                        .password(dto.getPassword())
+                        .role(dto.getRole())
+                        .phone(dto.getPhone())
+                        .addr1(dto.getAddr1())
+                        .addr2(dto.getAddr2())
+                        .build();
+        user = userRepository.save(user);
 
         return true;
     }

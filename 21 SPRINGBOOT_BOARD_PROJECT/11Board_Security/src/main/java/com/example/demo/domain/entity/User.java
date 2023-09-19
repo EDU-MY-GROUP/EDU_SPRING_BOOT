@@ -27,9 +27,7 @@ public class User {
     @Id
     private String username; //이름
     private String password; //비밀번호
-    private String email;
     private String role; //권한번호
-    private String profileImage;    //프로필 이미지 경로
     private String phone;
     private String zipcode;
     private String addr1;

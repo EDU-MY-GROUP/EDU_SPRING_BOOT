@@ -8,6 +8,7 @@ package com.example.demo.config;
 import com.example.demo.config.auth.PrincipalDetailsOAuth2Service;
 import com.example.demo.config.auth.exceptionhandler.CustomAccessDeniedHandler;
 import com.example.demo.config.auth.exceptionhandler.CustomAuthenticationEntryPoint;
+
 import com.example.demo.config.auth.loginHandler.CustomAuthenticationFailureHandler;
 import com.example.demo.config.auth.loginHandler.CustomLoginSuccessHandler;
 import com.example.demo.config.auth.loginHandler.OAuthSuccessHandler;
@@ -17,15 +18,17 @@ import com.example.demo.domain.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.authentication.rememberme.JdbcTokenRepositoryImpl;
 import org.springframework.security.web.authentication.rememberme.PersistentTokenRepository;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-
+import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 
 
 import javax.sql.DataSource;
@@ -51,6 +54,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
 
 
+
 	//----------------------------------------------------------------
 	// 웹 요청 처리
 	//----------------------------------------------------------------
@@ -65,7 +69,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 				.antMatchers("/","/user/**").permitAll()
 				.antMatchers("/user/mypage").hasAnyRole("USER","MEMBER","ADMIN")		//ROLE_USER
 				.antMatchers("/board/list").permitAll()
-				.antMatchers("/board/read","/board/post","/board/delete").hasAnyRole("USER","ADMIN")
+				.antMatchers("/board/read","/board/post","/board/delete","/board/update").hasAnyRole("USER","ADMIN")
 
 
 
@@ -116,6 +120,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 				.successHandler(new OAuthSuccessHandler())
 				.userInfoEndpoint()
 				.userService(principalDetailsOAuth2Service);
+
 
 
 //        // SESSION FALSE

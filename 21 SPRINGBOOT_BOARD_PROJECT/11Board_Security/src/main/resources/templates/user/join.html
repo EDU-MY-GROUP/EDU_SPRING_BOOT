@@ -95,11 +95,11 @@
                 <div class="body">
                     <form  class="joinform"  name="joinform" action="/user/join" method="post" onsubmit="return false">
                         <div>
-                            <label>이메일계정</label>&nbsp;<span class="msg"  style="font-size:0.7rem;color:red;"  th:text="${username}"></span>
+                            <label>이메일계정</label>&nbsp;<span class="username_msg"  style="font-size:0.7rem;color:red;"  th:text="${username}"></span>
 
                             <div style="display:flex;">
-                                <input name="username" class="form-control" placeholder="이메일 계정 입력">
-                                <button type="button" class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#exampleModal" style="width:80px;margin-left:5px;">인증</button>
+                                <input name="username" class="form-control username" placeholder="이메일 계정 입력">
+                                <button type="button" class="btn btn-secondary email_auth_btn" data-bs-toggle="modal" data-bs-target="#exampleModal" style="width:80px;margin-left:5px;">인증</button>
                             </div>
                         </div>
                         <div>
@@ -118,7 +118,7 @@
                             <label>우편번호 검색</label>
                             <div style="display:flex;">
                                 <input name="zipcode" class="form-control"  placeholder="우편번호 입력">
-                                <button class="btn btn-secondary" style="width:80px;margin-left:5px;">검색</button>
+                                <button class="btn btn-secondary search_addr_btn" style="width:80px;margin-left:5px;">검색</button>
                             </div>
                         </div>
                         <div>
@@ -139,20 +139,7 @@
                 </div>
             </div>
 
-            <script>
-                const isValid = ()=>{
-                    const form = document.joinform;
-//                    if(form.username.value.trim()==""){
-//                        alert("USERNAME을 입력하세요.");
-//                        return;
-//                    }
-//                    if(form.password.value.trim()==""){
-//                        alert("PASSWORD을 입력하세요.");
-//                        return;
-//                    }
-                    form.submit();
-                }
-            </script>
+
         </section>
 
         <section></section>
@@ -175,12 +162,12 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <form action="/email/confirm" method="get" onsubmit="return false;" style="display:flex;justify-content:space-between;">
+                <form action="/user/auth/confirm" method="get"  style="display:flex;justify-content:space-between;" onsubmit="return false;">
                     <div style="width:100%;">
-                        <input type="text" name="code" class="form-control"/>
+                        <input type="text" name="code" class="form-control code"/>
                     </div>
                     <div style="width:80px;margin-left:5px;text-align:right;" >
-                        <button class="btn btn-primary email_auth_btn">전송</button>
+                        <button class="btn btn-primary email_auth_btn_2">전송</button>
                     </div>
                 </form>
             </div>
@@ -189,7 +176,7 @@
                     <span class="timer">00:50 초</span>
                 </div>
                 <button type="button" class="btn btn-primary">재요청</button>
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">닫기</button>
+                <button type="button" class="btn btn-secondary modal_exit" data-bs-dismiss="modal">닫기</button>
             </div>
         </div>
     </div>
@@ -207,30 +194,101 @@
 <script>
     const isValid = ()=>{
         const form = document.joinform;
-        if(form.username.value.trim()==""){
-            alert("USERNAME을 입력하세요.");
-            return;
-        }
-        if(form.password.value.trim()==""){
-            alert("PASSWORD을 입력하세요.");
-            return;
-        }
+        /*
+            if(form.username.value.trim()==""){
+                alert("USERNAME을 입력하세요.");
+                return;
+            }
+            if(form.password.value.trim()==""){
+                alert("PASSWORD을 입력하세요.");
+                return;
+            }
+        */
         form.submit();
     }
 
 //----------------------------------------------------------------
 //EMAIL 인증
 //----------------------------------------------------------------
-const email_auth_btn = document.querySelector('.email_auth_btn');
-const email = document.querySelector('.username');
-email_auth_btn.addEventListener('click',function(){
-   //alert("TEST");
+    const email_auth_btn = document.querySelector('.email_auth_btn');
+    const email = document.querySelector('.username');
+    email_auth_btn.addEventListener('click',function(){
+       //alert("TEST");
 
-   axios.get('/user/auth/email/'+email.value)
-   .then(response=>{console.log(response);})
-   .catch(error=>{});
-});
+       axios.get('/user/auth/email/'+email.value)
+       .then(response=>{console.log(response);})
+       .catch(error=>{});
+    });
+
+
+    const email_auth_btn_2 = document.querySelector('.email_auth_btn_2');
+    email_auth_btn_2.addEventListener('click',function(){
+    const code = document.querySelector('.code').value;
+
+        axios.get('/user/auth/confirm/'+code)
+        .then(
+              response=>{
+                    console.log(response);
+                    const resultStr = response.data;
+
+                    const username_msg_el =document.querySelector('.username_msg');
+                    if(resultStr === 'success'){
+                        username_msg_el.innerHTML="이메일 인증 성공!";
+                        username_msg_el.style.color="blue";
+                    }else{
+                        username_msg_el.innerHTML="이메일 인증 실패!";
+                        username_msg_el.style.color="red";
+                    }
+                    //모달 제거
+                    const modal_exit_btn = document.querySelector('.modal_exit');
+                    modal_exit_btn.click();
+
+
+              }
+
+        )
+        .catch(error=>{});
+    })
+
 </script>
+
+<script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
+<script>
+//----------------------------------------------------------------
+//DAUM 주소 검색 API
+//----------------------------------------------------------------
+    const search_addr_btn_el = document.querySelector('.search_addr_btn');
+    search_addr_btn_el.addEventListener('click',function(){
+
+       //다음 검색 API
+        new daum.Postcode({
+                    oncomplete: function(data) {
+
+                        let form = document.joinform;
+                        var addr='';
+
+                        //사용자가 도로명 주소 선택
+                        if(data.userSelectedType==='R')
+                        {
+                            addr=data.roadAddress;
+                        }
+                        else //사용자가 지번 주소 선택 'J'
+                        {
+                            addr=data.jibunAddress;
+                        }
+                        form.zipcode.value=data.zonecode;
+                        form.addr1.value=addr;
+
+                   }
+
+             }).open();
+    });
+
+
+
+
+</script>
+
 
 </body>
 </html>

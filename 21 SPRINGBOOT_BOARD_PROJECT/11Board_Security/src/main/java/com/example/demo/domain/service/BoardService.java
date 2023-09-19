@@ -65,6 +65,8 @@ public class BoardService {
                 totalcount = boardRepository.countWhereUsernameKeyword(criteria.getKeyword());
             else if (criteria.getType().equals("content"))
                 totalcount = boardRepository.countWhereContentKeyword(criteria.getKeyword());
+            else
+                totalcount = (int)boardRepository.count();
         }
         else
             totalcount = (int)boardRepository.count();
@@ -93,6 +95,8 @@ public class BoardService {
                 list = boardRepository.findBoardContentsAmountStart(criteria.getKeyword(), pagedto.getCriteria().getAmount(), offset);
             else if (criteria.getType().equals("none"))
                 list = boardRepository.findBoardAmountStart(pagedto.getCriteria().getAmount(), offset);
+            else
+                list  =  boardRepository.findBoardAmountStart(pagedto.getCriteria().getAmount(),offset);
         }
         else
             list  =  boardRepository.findBoardAmountStart(pagedto.getCriteria().getAmount(),offset);
