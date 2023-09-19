@@ -10,6 +10,8 @@ import com.example.demo.domain.service.BoardService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.catalina.core.ApplicationContext;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.mail.SimpleMailMessage;
+import org.springframework.mail.javamail.JavaMailSenderImpl;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -22,9 +24,11 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 import java.util.stream.Collectors;
 
 @Controller
@@ -337,5 +341,20 @@ public class BoardController {
         boardService.thumbsDown(rno);
         return "redirect:/board/read?no="+bno;
     }
+
+
+    @GetMapping("/error")
+    public void error_page(){
+
+    }
+	@ExceptionHandler(Exception.class)
+	public String error1(Exception ex,Model model) {
+		System.out.println("GlobalExceptionHandler FileNotFoundException... ex " + ex);
+		//System.out.println("GlobalExceptionHandler FileNotFoundException... ex ");
+		model.addAttribute("ex",ex);
+		return "board/error";
+	}
+
+
 
 }

@@ -36,7 +36,4 @@ public class User {
     private String addr2;
 
 
-
-
-
 }

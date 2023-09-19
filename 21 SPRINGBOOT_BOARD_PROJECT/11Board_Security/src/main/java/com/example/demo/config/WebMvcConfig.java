@@ -1,10 +1,14 @@
 package com.example.demo.config;
 
 
+import com.example.demo.domain.repository.BoardRepository;
+import com.example.demo.interceptor.BoardInterceptor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.ViewResolver;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
+import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import org.springframework.web.servlet.view.InternalResourceViewResolver;
@@ -12,7 +16,8 @@ import org.springframework.web.servlet.view.InternalResourceViewResolver;
 @Configuration
 @EnableWebMvc
 public class WebMvcConfig implements WebMvcConfigurer {
-
+	@Autowired
+	private BoardRepository boardRepository;
 	@Override
 	public void addResourceHandlers(ResourceHandlerRegistry registry) {
 		/* '/js/**'로 호출하는 자원은 '/static/js/' 폴더 아래에서 찾는다. */
@@ -26,7 +31,13 @@ public class WebMvcConfig implements WebMvcConfigurer {
 
 	}
 
+	@Override
+	public void addInterceptors(InterceptorRegistry registry) {
 
+		registry.addInterceptor(new BoardInterceptor(boardRepository))
+				.addPathPatterns("/board/update")
+				.excludePathPatterns("/resources/**");
+	}
 
 
 }
