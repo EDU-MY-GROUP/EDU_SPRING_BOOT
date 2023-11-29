@@ -13,16 +13,6 @@ public class HomeController {
     public String home(){
         return "index";
     }
-    @GetMapping("/user")
-    public void userpage(){
 
-    }
-    @GetMapping("/member")
-    public void memberpage(){
-
-    }
-    @GetMapping("/admin")
-    public void adminpage(){
-    }
 
 }

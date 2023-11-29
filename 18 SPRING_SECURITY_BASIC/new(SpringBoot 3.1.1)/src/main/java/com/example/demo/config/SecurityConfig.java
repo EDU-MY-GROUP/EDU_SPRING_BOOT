@@ -1,32 +1,21 @@
-package com.example.demo.config.auth;
+package com.example.demo.config;
 
 
-import jakarta.servlet.Filter;
-import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.example.demo.config.auth.loginHandler.CustomAuthenticationFailureHandler;
+import com.example.demo.config.auth.loginHandler.CustomLoginSuccessHandler;
+import com.example.demo.config.auth.logoutHandler.CustomLogoutHandler;
+import com.example.demo.config.auth.logoutHandler.CustomLogoutSuccessHandler;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.access.expression.SecurityExpressionHandler;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.config.annotation.SecurityBuilder;
-import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
-import org.springframework.security.config.annotation.web.WebSecurityConfigurer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 
-import org.springframework.security.config.annotation.web.configuration.WebSecurityConfiguration;
-import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
 import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
-import org.springframework.security.web.FilterInvocation;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.authentication.AuthenticationFilter;
-
-import javax.sql.DataSource;
 
 @Configuration
 @EnableWebSecurity
@@ -44,7 +33,7 @@ public class SecurityConfig {
 				)
 				//요청URL별 권한 설정
 				.authorizeHttpRequests( (authorizeRequests)->
-						authorizeRequests.requestMatchers("/","/login/**").permitAll()
+						authorizeRequests.requestMatchers("/","/login").permitAll()
 										 .requestMatchers("/user").hasRole("USER")
 										 .requestMatchers("/member").hasRole("MEMBER")
 										 .requestMatchers("/admin").hasRole("ADMIN")
@@ -54,10 +43,19 @@ public class SecurityConfig {
 				.formLogin(
 						login->{
 							login.permitAll();
-						}
-				);
-				//로그아웃
+							login.loginPage("/login");
+							login.successHandler(new CustomLoginSuccessHandler());
+							login.failureHandler(new CustomAuthenticationFailureHandler());
 
+						}
+				)
+				//로그아웃
+				.logout(logout->{
+					logout.logoutUrl("/logout");	//Post방식으로 요청해야함
+					logout.permitAll();
+					logout.addLogoutHandler(new CustomLogoutHandler());							//세션초기화
+					logout.logoutSuccessHandler(new CustomLogoutSuccessHandler());				//기본위치로 페이지이동
+				});
 		return http.build();
 	}
 
