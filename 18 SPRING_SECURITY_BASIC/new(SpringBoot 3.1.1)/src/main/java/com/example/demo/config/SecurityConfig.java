@@ -70,6 +70,7 @@ public class SecurityConfig {
 					logout.logoutSuccessHandler(new CustomLogoutSuccessHandler());				//기본위치로 페이지이동
 				})
 				//예외처리
+<<<<<<< HEAD
 				.exceptionHandling(
 						ex->{
 							ex.authenticationEntryPoint(new CustomAuthenticationEntryPoint());
@@ -87,6 +88,12 @@ public class SecurityConfig {
 						}
 				);
 
+=======
+				.exceptionHandling(ex->{
+					ex.authenticationEntryPoint(new CustomAuthenticationEntryPoint());
+					ex.accessDeniedHandler(new CustomAccessDeniedHandler());
+				});
+>>>>>>> 5c16fd128d7ccd751bad90b228909ea937a6e4b3
 		return http.build();
 	}
 

@@ -6,6 +6,10 @@ import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.web.access.AccessDeniedHandler;
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> 5c16fd128d7ccd751bad90b228909ea937a6e4b3
 import java.io.IOException;
 
 public class CustomAccessDeniedHandler implements AccessDeniedHandler{
