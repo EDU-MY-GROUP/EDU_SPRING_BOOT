@@ -13,6 +13,8 @@ import javax.persistence.EntityManagerFactory;
 @Configuration
 public class TxConfig {
 
+
+
     // Basic TransactionManager Settings
     @Autowired
     private HikariDataSource dataSource;

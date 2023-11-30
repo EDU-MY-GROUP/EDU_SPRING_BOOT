@@ -1,26 +1,39 @@
 package com.example.demo.config;
 
 
+import com.example.demo.config.auth.exceptionhandler.CustomAccessDeniedHandler;
+import com.example.demo.config.auth.exceptionhandler.CustomAuthenticationEntryPoint;
 import com.example.demo.config.auth.loginHandler.CustomAuthenticationFailureHandler;
 import com.example.demo.config.auth.loginHandler.CustomLoginSuccessHandler;
 import com.example.demo.config.auth.logoutHandler.CustomLogoutHandler;
 import com.example.demo.config.auth.logoutHandler.CustomLogoutSuccessHandler;
+import com.zaxxer.hikari.HikariConfig;
+import com.zaxxer.hikari.HikariDataSource;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.rememberme.JdbcTokenRepositoryImpl;
+import org.springframework.security.web.authentication.rememberme.PersistentTokenRepository;
 
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
 
+
+	@Autowired
+	private HikariDataSource dataSource;
 	@Bean
 	public SecurityFilterChain config(HttpSecurity http) throws Exception {
 		http
@@ -55,31 +68,59 @@ public class SecurityConfig {
 					logout.permitAll();
 					logout.addLogoutHandler(new CustomLogoutHandler());							//세션초기화
 					logout.logoutSuccessHandler(new CustomLogoutSuccessHandler());				//기본위치로 페이지이동
-				});
+				})
+				//예외처리
+				.exceptionHandling(
+						ex->{
+							ex.authenticationEntryPoint(new CustomAuthenticationEntryPoint());
+							ex.accessDeniedHandler(new CustomAccessDeniedHandler());
+						}
+				)
+				//RememberMe
+				.rememberMe(
+						rm->{
+							rm.key("rememberMeKey");		//Handler에서 제어할때 사용
+							rm.rememberMeParameter("remember-me"); //View에서 전달하는 파라미터명
+							rm.alwaysRemember(false);
+							rm.tokenValiditySeconds(3600);
+							rm.tokenRepository(tokenRepository());
+						}
+				);
+
 		return http.build();
 	}
 
+	//REMEMBER-ME ADDED
 	@Bean
-	public UserDetailsService userDetailsService(PasswordEncoder passwordEncoder) {
-		InMemoryUserDetailsManager userDetailsManager = new InMemoryUserDetailsManager();
-
-		userDetailsManager.createUser(User.withUsername("user")
-				.password(passwordEncoder.encode("1234"))
-				.roles("USER")
-				.build());
-
-		userDetailsManager.createUser(User.withUsername("member")
-				.password(passwordEncoder.encode("1234"))
-				.roles("MEMBER")
-				.build());
-
-		userDetailsManager.createUser(User.withUsername("admin")
-				.password(passwordEncoder.encode("1234"))
-				.roles("ADMIN")
-				.build());
-
-		return userDetailsManager;
+	public PersistentTokenRepository tokenRepository() {
+		JdbcTokenRepositoryImpl repo = new JdbcTokenRepositoryImpl();
+		repo.setDataSource(dataSource);
+		return repo;
 	}
+
+
+//	@Bean
+//	public UserDetailsService userDetailsService(PasswordEncoder passwordEncoder) {
+//		InMemoryUserDetailsManager userDetailsManager = new InMemoryUserDetailsManager();
+//
+//		userDetailsManager.createUser(User.withUsername("user")
+//				.password(passwordEncoder.encode("1234"))
+//				.roles("USER")
+//				.build());
+//
+//		userDetailsManager.createUser(User.withUsername("member")
+//				.password(passwordEncoder.encode("1234"))
+//				.roles("MEMBER")
+//				.build());
+//
+//		userDetailsManager.createUser(User.withUsername("admin")
+//				.password(passwordEncoder.encode("1234"))
+//
+//				.roles("ADMIN")
+//				.build());
+//
+//		return userDetailsManager;
+//	}
 
 
 	// BCryptPasswordEncoder Bean 등록 - 패스워드 검증에 사용

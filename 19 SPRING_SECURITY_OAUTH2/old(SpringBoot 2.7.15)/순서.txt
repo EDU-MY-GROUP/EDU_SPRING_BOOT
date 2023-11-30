@@ -1,0 +1,34 @@
+01  build.gradle
+	//OAUTH2
+	implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
+02  application.properties
+    코드 추가
+
+03  PrincipalOAuth2DetailsService
+    - extends DefaultOAuth2UserService
+    - loadUser 재정의
+
+04  SecurityConfig
+    .oauth2Login()
+    .userInfoEndpoint()
+    .userService(principalOAuth2DetailsService)
+
+05  서버 구동 후 기본정보 확인해보기
+
+
+06 OAuth2UserInfo   interface
+
+07 KakaoUserInfo 생성
+
+08 PrincipalOAuth2DetailsService 나머지 추가
+
+09 PrincipalDetails 에 extends OAuthUser
+
+10 로그아웃 처리
+    OAuthLogoutHandler
+    CustomLogoutSuccessHandler
+
+
+
+
+

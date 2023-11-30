@@ -1,5 +1,6 @@
 package com.example.demo.domain.entity;
 
+import com.example.demo.type.Role;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
@@ -18,5 +19,6 @@ public class User {
     @Id
     private String username;        //이름
     private String password;        //비밀번호
-    private String role;            //권한번호
+    //private String role;            //권한번호
+    private Role role;
 }
