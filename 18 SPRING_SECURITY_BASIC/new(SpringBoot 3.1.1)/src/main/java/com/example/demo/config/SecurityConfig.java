@@ -1,6 +1,8 @@
 package com.example.demo.config;
 
 
+import com.example.demo.config.auth.exceptionhandler.CustomAccessDeniedHandler;
+import com.example.demo.config.auth.exceptionhandler.CustomAuthenticationEntryPoint;
 import com.example.demo.config.auth.loginHandler.CustomAuthenticationFailureHandler;
 import com.example.demo.config.auth.loginHandler.CustomLoginSuccessHandler;
 import com.example.demo.config.auth.logoutHandler.CustomLogoutHandler;
@@ -55,6 +57,11 @@ public class SecurityConfig {
 					logout.permitAll();
 					logout.addLogoutHandler(new CustomLogoutHandler());							//세션초기화
 					logout.logoutSuccessHandler(new CustomLogoutSuccessHandler());				//기본위치로 페이지이동
+				})
+				//예외처리
+				.exceptionHandling(ex->{
+					ex.authenticationEntryPoint(new CustomAuthenticationEntryPoint());
+					ex.accessDeniedHandler(new CustomAccessDeniedHandler());
 				});
 		return http.build();
 	}
