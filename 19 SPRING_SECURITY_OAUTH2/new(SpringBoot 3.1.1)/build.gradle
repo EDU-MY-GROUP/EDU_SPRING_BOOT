@@ -54,6 +54,9 @@ dependencies {
 	// MyBatis CORE
 	implementation 'org.mybatis:mybatis:3.5.9'
 
+	//OAUTH2
+	implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
+
 }
 
 tasks.named('bootBuildImage') {

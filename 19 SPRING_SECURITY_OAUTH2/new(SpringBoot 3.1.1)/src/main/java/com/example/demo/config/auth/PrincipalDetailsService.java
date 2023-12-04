@@ -1,6 +1,7 @@
 package com.example.demo.config.auth;
 
 
+import com.example.demo.domain.dto.UserDto;
 import com.example.demo.domain.entity.User;
 import com.example.demo.domain.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,27 +17,25 @@ public class PrincipalDetailsService implements UserDetailsService {
 
 	@Autowired
 	private UserRepository userRepository;
-	
+
 
 	@Override
 	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
 
 		Optional<User> user =  userRepository.findById(username);
 
-//		UserDto dto = new UserDto();
-//		dto.setUsername(user.getUsername());
-//		dto.setPassword(user.getPassword());
-//		dto.setRole(user.getRole());
-//		if(dto==null)
-//			return null;
-//
-//		return new PrincipalDetails(dto);
-
-		if(user.isEmpty())
+		UserDto dto = new UserDto();
+		dto.setUsername(user.get().getUsername());
+		dto.setPassword(user.get().getPassword());
+		dto.setRole(user.get().getRole());
+		if(dto==null)
 			return null;
-		return new PrincipalDetails(user.get());
 
-	
+		return new PrincipalDetails(dto);
+
+		//		if(user.isEmpty())
+//			return null;
+//		return new PrincipalDetails(user.get());
+
 	}
-
 }

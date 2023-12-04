@@ -1,22 +1,48 @@
 package com.example.demo.config.auth;
 
 
+import com.example.demo.domain.dto.UserDto;
 import com.example.demo.domain.entity.User;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.oauth2.core.user.OAuth2User;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Map;
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class PrincipalDetails implements UserDetails {
+public class PrincipalDetails implements UserDetails , OAuth2User{
 
-	private User user;
+	private UserDto user;
+
+	public PrincipalDetails(UserDto dto) {
+		this.user = dto;
+	}
+
+
+
+	//OAUTH2 ----------------------------------------------------------------
+	private Map<String, Object> attributes;
+	private String accessToken;
+
+
+
+	@Override
+	public Map<String, Object> getAttributes() {
+		return attributes;
+	}
+
+	@Override
+	public String getName() {
+		return null;
+	}
+	//OAUTH2 ----------------------------------------------------------------
 
 	@Override
 	public Collection<? extends GrantedAuthority> getAuthorities() {
@@ -65,5 +91,6 @@ public class PrincipalDetails implements UserDetails {
 		// TODO Auto-generated method stub
 		return true;
 	}
+
 
 }

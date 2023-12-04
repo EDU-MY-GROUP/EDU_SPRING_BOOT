@@ -32,7 +32,7 @@ public class UserController {
 
     @GetMapping("/login")
     public void login() {
-        log.info("GET /user/login...");
+        log.info("GET /login...");
     }
 
     @GetMapping("/user")

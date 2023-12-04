@@ -21,4 +21,9 @@ public class User {
     private String password;        //비밀번호
     //private String role;            //권한번호
     private Role role;
+
+    // OAuth2 Added
+    private String provider;
+    private String providerId;
+
 }

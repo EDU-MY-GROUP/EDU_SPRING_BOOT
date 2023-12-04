@@ -85,7 +85,15 @@ public class SecurityConfig {
 							rm.tokenValiditySeconds(3600);
 							rm.tokenRepository(tokenRepository());
 						}
+				)
+				//OAuth2
+				.oauth2Login(
+						oauth2->{
+							oauth2.loginPage("/login");
+
+						}
 				);
+
 
 		return http.build();
 	}
