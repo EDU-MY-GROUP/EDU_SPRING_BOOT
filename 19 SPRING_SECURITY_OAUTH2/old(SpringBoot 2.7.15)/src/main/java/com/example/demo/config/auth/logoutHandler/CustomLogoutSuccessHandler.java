@@ -22,8 +22,10 @@ public class CustomLogoutSuccessHandler implements LogoutSuccessHandler{
 
 	private String LOGOUT_REDIRECT_URI = "http://localhost:8080/login";
 
+
 	private String naverClientId = "myCONIrrsJHFIPcgl9OQ";
 	private String naverClientSecret = "ngJQs03WkY";
+
 	@Override
 	public void onLogoutSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication)
 			throws IOException, ServletException {
@@ -47,7 +49,6 @@ public class CustomLogoutSuccessHandler implements LogoutSuccessHandler{
 			String url2 = "https://nid.naver.com/oauth2.0/authorize?response_type=code&client_id="+naverClientId+"&redirect_uri="+LOGOUT_REDIRECT_URI+"auth_type=reauthenticate&state=1";
 			response.sendRedirect(url2);
 			return ;
-
 		}
 
 

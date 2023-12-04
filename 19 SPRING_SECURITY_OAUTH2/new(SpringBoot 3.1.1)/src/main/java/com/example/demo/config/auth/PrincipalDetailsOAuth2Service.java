@@ -1,6 +1,8 @@
 package com.example.demo.config.auth;
 
+import com.example.demo.config.auth.provider.GoogleUserInfo;
 import com.example.demo.config.auth.provider.KakaoUserInfo;
+import com.example.demo.config.auth.provider.NaverUserInfo;
 import com.example.demo.config.auth.provider.OAuth2UserInfo;
 import com.example.demo.domain.dto.UserDto;
 import com.example.demo.domain.entity.User;
@@ -64,10 +66,13 @@ public class PrincipalDetailsOAuth2Service  extends DefaultOAuth2UserService {
         else if(userRequest.getClientRegistration().getRegistrationId().equals("google"))
         {
             System.out.println("[] 구글 로그인");
+            oAuth2UserInfo  = new GoogleUserInfo(oauth2User.getAttributes());
+
         }
         else if(userRequest.getClientRegistration().getRegistrationId().equals("naver"))
         {
             System.out.println("[] 네이버 로그인");
+            oAuth2UserInfo = new NaverUserInfo((Map<String, Object>) oauth2User.getAttributes().get("response"));
         }
 
         //OAuth2UserInfo 확인
