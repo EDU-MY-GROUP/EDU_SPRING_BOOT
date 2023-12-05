@@ -6,6 +6,7 @@ import jakarta.servlet.FilterChain;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -22,6 +23,8 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 
 
     private final JwtTokenProvider jwtTokenProvider;
+
+
     private final AuthenticationManager authenticationManager;      // 사용자의 인증을 확인하고, 사용자가 제공한 자격 증명(예: 사용자 이름과 비밀번호, JWT 토큰 등)이 올바른지 검증하는 인터페이스
 
     //생성자

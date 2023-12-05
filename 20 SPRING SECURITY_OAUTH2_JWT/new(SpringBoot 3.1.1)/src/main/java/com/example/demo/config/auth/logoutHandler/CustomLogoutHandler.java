@@ -44,7 +44,7 @@ public class CustomLogoutHandler implements LogoutHandler{
 			HttpSession session = request.getSession(false);
 			if(session!=null)
 				session.invalidate();
-			System.out.println("OAuthLogoutHandler's logout");
+			System.out.println("OAuthLogoutHandler's logout..authentication : " + authentication);
 			PrincipalDetails principalDetails =  (PrincipalDetails) authentication.getPrincipal();
 
 			System.out.println("OAuthLogoutHandler logout authentication  : "  + authentication);

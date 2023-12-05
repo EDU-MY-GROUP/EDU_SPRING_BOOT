@@ -1,8 +1,10 @@
 package com.example.demo.config;
 
 
+import com.example.demo.config.auth.PrincipalDetailsOAuth2Service;
 import com.example.demo.config.auth.exceptionhandler.CustomAccessDeniedHandler;
 import com.example.demo.config.auth.exceptionhandler.CustomAuthenticationEntryPoint;
+import com.example.demo.config.auth.jwt.JwtAuthenticationFilter;
 import com.example.demo.config.auth.jwt.JwtAuthorizationFilter;
 import com.example.demo.config.auth.jwt.JwtTokenProvider;
 import com.example.demo.config.auth.loginHandler.CustomAuthenticationFailureHandler;
@@ -14,11 +16,16 @@ import com.zaxxer.hikari.HikariDataSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.ProviderManager;
+import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.authentication.rememberme.JdbcTokenRepositoryImpl;
 import org.springframework.security.web.authentication.rememberme.PersistentTokenRepository;
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
@@ -39,6 +46,8 @@ public class SecurityConfig {
 	@Autowired
 	private JwtTokenProvider jwtTokenProvider;
 
+	@Autowired
+	private PrincipalDetailsOAuth2Service principalDetailsOAuth2Service;
 
 	@Bean
 	public SecurityFilterChain config(HttpSecurity http) throws Exception {
@@ -103,17 +112,42 @@ public class SecurityConfig {
 
 						}
 				)
-				//JWT
+
+				//----------------------------------------------------------------
+				//
+				//----------------------------------------------------------------
+				.sessionManagement(httpSecuritySessionManagementConfigurer ->  httpSecuritySessionManagementConfigurer
+								.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+				//----------------------------------------------------------------
+				// JWT
+				//----------------------------------------------------------------
+				.addFilterBefore(
+                                new JwtAuthenticationFilter(authenticationManager(),jwtTokenProvider),  //JWT 인증 토큰 필터
+                                UsernamePasswordAuthenticationFilter.class      //ID/PW 인증 시도 필터
+				)
 				.addFilterBefore(
 						new JwtAuthorizationFilter(userRepository,jwtTokenProvider),
 						BasicAuthenticationFilter.class
 				)
-
-		;
+				//----------------------------------------------------------------
+				;
 
 
 		return http.build();
 	}
+	//----------------------------------------------------------------
+	// JWT
+	//----------------------------------------------------------------
+	@Bean
+	public AuthenticationManager authenticationManager(){
+		DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
+		authProvider.setUserDetailsService(principalDetailsOAuth2Service);
+		authProvider.setPasswordEncoder(passwordEncoder());
+		return new ProviderManager(authProvider);
+	}
+	//----------------------------------------------------------------
+
+
 
 	//REMEMBER-ME ADDED
 	@Bean

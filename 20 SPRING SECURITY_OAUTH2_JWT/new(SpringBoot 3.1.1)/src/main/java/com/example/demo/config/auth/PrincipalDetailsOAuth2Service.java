@@ -24,7 +24,7 @@ import java.util.Map;
 import java.util.Optional;
 
 @Service
-public class PrincipalDetailsOAuth2Service  extends DefaultOAuth2UserService {
+public class PrincipalDetailsOAuth2Service  extends DefaultOAuth2UserService  implements UserDetailsService {
 
     private PasswordEncoder passwordEncoder;
     public PrincipalDetailsOAuth2Service(){
@@ -120,4 +120,24 @@ public class PrincipalDetailsOAuth2Service  extends DefaultOAuth2UserService {
 
     }
 
+    //----------------------------------------------------------------
+    // JWT
+    //----------------------------------------------------------------
+    @Override
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        Optional<User> user =  userRepository.findById(username);
+
+        UserDto dto = new UserDto();
+        dto.setUsername(user.get().getUsername());
+        dto.setPassword(user.get().getPassword());
+        dto.setRole(user.get().getRole());
+        if(dto==null)
+            return null;
+
+        return new PrincipalDetails(dto);
+
+        //		if(user.isEmpty())
+//			return null;
+//		return new PrincipalDetails(user.get());
+    }
 }
