@@ -30,17 +30,17 @@ public class CustomLoginSuccessHandler implements AuthenticationSuccessHandler {
         Collection<? extends GrantedAuthority> collection =   authentication.getAuthorities();
 
         //JWT
-        PrincipalDetails principalDetails = (PrincipalDetails) authentication.getPrincipal();
-//      String token = JwtUtils.createToken(principalDetails);
-
-        TokenInfo tokenInfo = jwtTokenProvider.generateToken(authentication);
-        // 쿠키 생성
-        Cookie cookie = new Cookie(JwtProperties.COOKIE_NAME, tokenInfo.getAccessToken());
-        cookie.setMaxAge(JwtProperties.EXPIRATION_TIME); // 쿠키의 만료시간 설정
-        cookie.setPath("/");
-        response.addCookie(cookie);
-
-        System.out.println("[JWT LOGIN SUCCESS HANDLER]...TokenInfo!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! : " + tokenInfo);
+//        PrincipalDetails principalDetails = (PrincipalDetails) authentication.getPrincipal();
+////      String token = JwtUtils.createToken(principalDetails);
+//
+//        TokenInfo tokenInfo = jwtTokenProvider.generateToken(authentication);
+//        // 쿠키 생성
+//        Cookie cookie = new Cookie(JwtProperties.COOKIE_NAME, tokenInfo.getAccessToken());
+//        cookie.setMaxAge(JwtProperties.EXPIRATION_TIME); // 쿠키의 만료시간 설정
+//        cookie.setPath("/");
+//        response.addCookie(cookie);
+//
+//        System.out.println("[JWT LOGIN SUCCESS HANDLER]...TokenInfo!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! : " + tokenInfo);
 
         collection.forEach((role)->{
             try {

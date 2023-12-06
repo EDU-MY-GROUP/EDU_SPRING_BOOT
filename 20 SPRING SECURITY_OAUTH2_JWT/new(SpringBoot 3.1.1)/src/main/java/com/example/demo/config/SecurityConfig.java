@@ -110,17 +110,21 @@ public class SecurityConfig {
 						oauth2->{
 							oauth2.loginPage("/login");
 
+
 						}
 				)
 
 				//----------------------------------------------------------------
-				//
+				// Session 비활성화
 				//----------------------------------------------------------------
 				.sessionManagement(httpSecuritySessionManagementConfigurer ->  httpSecuritySessionManagementConfigurer
-								.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+								.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+
+				)
 				//----------------------------------------------------------------
 				// JWT
 				//----------------------------------------------------------------
+
 				.addFilterBefore(
                                 new JwtAuthenticationFilter(authenticationManager(),jwtTokenProvider),  //JWT 인증 토큰 필터
                                 UsernamePasswordAuthenticationFilter.class      //ID/PW 인증 시도 필터
