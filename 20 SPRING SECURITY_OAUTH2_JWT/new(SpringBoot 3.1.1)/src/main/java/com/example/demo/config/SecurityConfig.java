@@ -9,6 +9,7 @@ import com.example.demo.config.auth.jwt.JwtAuthorizationFilter;
 import com.example.demo.config.auth.jwt.JwtTokenProvider;
 import com.example.demo.config.auth.loginHandler.CustomAuthenticationFailureHandler;
 import com.example.demo.config.auth.loginHandler.CustomLoginSuccessHandler;
+import com.example.demo.config.auth.loginHandler.Oauth2JwtLoginSuccessHandler;
 import com.example.demo.config.auth.logoutHandler.CustomLogoutHandler;
 import com.example.demo.config.auth.logoutHandler.CustomLogoutSuccessHandler;
 import com.example.demo.domain.repository.UserRepository;
@@ -109,7 +110,7 @@ public class SecurityConfig {
 				.oauth2Login(
 						oauth2->{
 							oauth2.loginPage("/login");
-
+							oauth2.successHandler(new Oauth2JwtLoginSuccessHandler(jwtTokenProvider));
 
 						}
 				)

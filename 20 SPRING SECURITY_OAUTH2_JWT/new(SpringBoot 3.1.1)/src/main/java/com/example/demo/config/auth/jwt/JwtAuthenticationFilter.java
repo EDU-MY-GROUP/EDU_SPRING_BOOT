@@ -3,10 +3,10 @@ package com.example.demo.config.auth.jwt;
 
 import com.example.demo.config.auth.PrincipalDetails;
 import jakarta.servlet.FilterChain;
+import jakarta.servlet.ServletException;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -33,7 +33,7 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
         super(authenticationManager);
         this.authenticationManager = authenticationManager;
         this.jwtTokenProvider = jwtTokenProvider;
-        System.out.println("[JWT 인증필터] JwtAuthenticationFilter 생성자 authenticationManager " + authenticationManager);
+        System.out.println("[JWTAUTHENTICATIONFILTER] Constructor " + authenticationManager);
     }
 
     /**
@@ -52,7 +52,7 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
                 request.getParameter("password"),
                 new ArrayList<>()
         );
-        System.out.println("[JWT 인증필터] JwtAuthenticationFilter.attemptAuthentication...authenticationToken : " + authenticationToken);
+        System.out.println("[JWTAUTHENTICATIONFILTER] attemptAuthentication()...authenticationToken : " + authenticationToken);
 
 
         //Token 정보를 TokenInfo(Table) 에 저장한다.
@@ -73,7 +73,7 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
             HttpServletResponse response,
             FilterChain chain,
             Authentication authResult
-    ) throws IOException, IOException {
+    ) throws IOException, IOException, ServletException {
 
         PrincipalDetails principalDetails = (PrincipalDetails) authResult.getPrincipal();
 //        String token = JwtUtils.createToken(principalDetails);
@@ -86,8 +86,9 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
         cookie.setPath("/");
         response.addCookie(cookie);
 
-        System.out.println("[JWT 인증필터] JwtAuthenticationFilter.successfulAuthentication...TokenInfo : " + tokenInfo);
-        response.sendRedirect("/");
+        System.out.println("[JWTAUTHENTICATIONFILTER] successfulAuthentication()...TokenInfo : " + tokenInfo);
+        //response.sendRedirect("/");
+        chain.doFilter(request,response);
     }
 
     @Override

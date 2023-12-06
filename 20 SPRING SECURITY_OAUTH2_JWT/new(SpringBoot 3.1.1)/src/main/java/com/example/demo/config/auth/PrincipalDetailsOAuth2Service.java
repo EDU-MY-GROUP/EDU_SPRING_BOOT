@@ -1,5 +1,7 @@
 package com.example.demo.config.auth;
 
+
+import com.example.demo.config.auth.jwt.JwtTokenProvider;
 import com.example.demo.config.auth.provider.GoogleUserInfo;
 import com.example.demo.config.auth.provider.KakaoUserInfo;
 import com.example.demo.config.auth.provider.NaverUserInfo;
@@ -24,7 +26,7 @@ import java.util.Map;
 import java.util.Optional;
 
 @Service
-public class PrincipalDetailsOAuth2Service  extends DefaultOAuth2UserService  implements UserDetailsService {
+public class PrincipalDetailsOAuth2Service  extends DefaultOAuth2UserService implements UserDetailsService {
 
     private PasswordEncoder passwordEncoder;
     public PrincipalDetailsOAuth2Service(){
@@ -34,6 +36,10 @@ public class PrincipalDetailsOAuth2Service  extends DefaultOAuth2UserService  im
     @Autowired
     private UserRepository userRepository;
 
+
+    //JWT
+    @Autowired
+    private JwtTokenProvider jwtTokenProvider;
 
     //OAUTH2 로그인 검증
     @Override
@@ -101,6 +107,7 @@ public class PrincipalDetailsOAuth2Service  extends DefaultOAuth2UserService  im
 
 
         //AccessToken 정보를 Authentication에 저장하기
+
         PrincipalDetails principalDetails = new PrincipalDetails();
         principalDetails.setAttributes(oauth2User.getAttributes());
         UserDto dto = new UserDto();
@@ -115,6 +122,9 @@ public class PrincipalDetailsOAuth2Service  extends DefaultOAuth2UserService  im
         principalDetails.setUser(dto);
         principalDetails.setAccessToken(userRequest.getAccessToken().getTokenValue());
 
+
+
+
         return principalDetails;
 
 
@@ -125,7 +135,7 @@ public class PrincipalDetailsOAuth2Service  extends DefaultOAuth2UserService  im
     //----------------------------------------------------------------
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        Optional<User> user =  userRepository.findById(username);
+        Optional<com.example.demo.domain.entity.User> user =  userRepository.findById(username);
 
         UserDto dto = new UserDto();
         dto.setUsername(user.get().getUsername());

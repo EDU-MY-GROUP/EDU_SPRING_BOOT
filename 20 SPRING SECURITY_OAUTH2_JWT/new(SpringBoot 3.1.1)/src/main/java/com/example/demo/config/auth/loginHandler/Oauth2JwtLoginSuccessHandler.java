@@ -1,10 +1,13 @@
 package com.example.demo.config.auth.loginHandler;
 
+import com.example.demo.config.auth.PrincipalDetails;
+import com.example.demo.config.auth.jwt.JwtProperties;
 import com.example.demo.config.auth.jwt.JwtTokenProvider;
+import com.example.demo.config.auth.jwt.TokenInfo;
 import jakarta.servlet.ServletException;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
@@ -12,22 +15,33 @@ import org.springframework.security.web.authentication.AuthenticationSuccessHand
 import java.io.IOException;
 import java.util.Collection;
 
-public class CustomLoginSuccessHandler implements AuthenticationSuccessHandler {
+public class Oauth2JwtLoginSuccessHandler implements AuthenticationSuccessHandler {
 
-    @Autowired
     private JwtTokenProvider jwtTokenProvider;
-
+    public Oauth2JwtLoginSuccessHandler(JwtTokenProvider jwtTokenProvider) {
+        this.jwtTokenProvider = jwtTokenProvider;
+    }
 
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
+        //----------------------------------------
+        //OAUTH2 Login JWT 생성 위한 코드
+        //----------------------------------------
+        PrincipalDetails principalDetails = (PrincipalDetails) authentication.getPrincipal();
+//        String token = JwtUtils.createToken(principalDetails);
 
-
-        System.out.println("[CUSTOMLOGINSUCCESSHANDLER] onAuthenticationSuccess! ");
-        Collection<? extends GrantedAuthority> collection =   authentication.getAuthorities();
-
+        TokenInfo tokenInfo = jwtTokenProvider.generateToken(authentication);
+        System.out.println("TOKEN : " + tokenInfo );
+        // 쿠키 생성
+        Cookie cookie = new Cookie(JwtProperties.COOKIE_NAME, tokenInfo.getAccessToken());
+        cookie.setMaxAge(JwtProperties.EXPIRATION_TIME); // 쿠키의 만료시간 설정
+        cookie.setPath("/");
+        response.addCookie(cookie);
 
         //----------------------------------------
-
+        //기존코드
+        //----------------------------------------
+        Collection<? extends GrantedAuthority> collection =   authentication.getAuthorities();
         collection.forEach((role)->{
             try {
                 System.out.println("role : " + role.getAuthority());
@@ -52,7 +66,6 @@ public class CustomLoginSuccessHandler implements AuthenticationSuccessHandler {
             }
 
         } );
-
 
     }
 }
