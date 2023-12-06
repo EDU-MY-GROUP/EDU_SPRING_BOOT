@@ -1,9 +1,15 @@
 package com.example.demo.config.auth.jwt;
 
 
+import com.example.demo.config.auth.PrincipalDetails;
+import com.example.demo.domain.dto.UserDto;
+import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
 import lombok.extern.slf4j.Slf4j;
+import net.minidev.json.JSONObject;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
@@ -12,6 +18,7 @@ import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
+import java.io.IOException;
 import java.security.Key;
 import java.util.Arrays;
 import java.util.Collection;
@@ -40,14 +47,27 @@ public class JwtTokenProvider {
                 .map(GrantedAuthority::getAuthority)
                 .collect(Collectors.joining(","));
         System.out.println("authorities : " + authorities.toString());
-        long now = (new Date()).getTime();
 
+        PrincipalDetails principalDetails = (PrincipalDetails) authentication.getPrincipal();
+        UserDto userDto = (UserDto)principalDetails.getUser();
+        System.out.println("[JWTTOKENPROVIDER] userDto : "+userDto);
+        System.out.println("[JWTTOKENPROVIDER] accessToken : "+principalDetails.getAccessToken());
+
+        long now = (new Date()).getTime();
+        System.out.println("[JWTTOKENPROVIDER] authentication : " + authentication);
         // Access Token 생성
         Date accessTokenExpiresIn = new Date(now + 60*1000); // 60초후 만료
         String accessToken = Jwts.builder()
                 .setSubject(authentication.getName())
-                .claim("username",authentication.getName()) //정보저장
-                .claim("auth", authorities)//정보저장
+                .claim("username",authentication.getName())             //정보저장
+                .claim("auth", authorities)                             //정보저장
+                .claim("principal",authentication.getPrincipal())       //정보저장
+                .claim("credentials",authentication.getCredentials())   //정보저장
+                .claim("details",authentication.getDetails())           //정보저장
+                .claim("provider",userDto.getProvider())           //정보저장
+                .claim("password",userDto.getPassword())           //정보저장
+                .claim("accesstoken",principalDetails.getAccessToken())           //정보저장
+
                 .setExpiration(accessTokenExpiresIn)
                 .signWith(key, SignatureAlgorithm.HS256)
                 .compact();
@@ -74,7 +94,8 @@ public class JwtTokenProvider {
 
 
     // JWT 토큰을 복호화하여 토큰에 들어있는 정보를 꺼내는 메서드
-    public Authentication getAuthentication(String accessToken) {
+    public Authentication getAuthentication(String accessToken) throws IOException {
+        System.out.println("[JWTTOKENPROVIDER] accessToken : " + accessToken);
         // 토큰 복호화
         Claims claims = parseClaims(accessToken);
 
@@ -88,11 +109,35 @@ public class JwtTokenProvider {
                         .collect(Collectors.toList());
 
         String username = claims.getSubject(); //username
-        // UserDetails 객체를 만들어서 Authentication 리턴
-        UserDetails principal = new User(username, "", authorities);
-        System.out.println("JwtTokenProvider.getAuthentication UsernamePasswordAuthenticationToken : " + accessToken);
+        System.out.println("[JWTTOKENPROVIDER] username  : " + username);
+
+
+        //--------------------------------------------------
+        //getPrincipal
+        //--------------------------------------------------
+        ObjectMapper mapper = new ObjectMapper();
+        System.out.println("[JWTTOKENPROVIDER] principalDetails  : " + claims.get("principal"));
+
+        String provider =  (String)claims.get("provider");
+        String password = (String)claims.get("password");
+        String auth = (String)claims.get("auth");
+        String accesstoken = (String)claims.get("accesstoken");
+        UserDto userDto = new UserDto();
+        userDto.setProvider(provider);
+        userDto.setUsername(username);
+        userDto.setPassword(password);
+        userDto.setRole(auth);
+
+        PrincipalDetails principalDetails = new PrincipalDetails();
+        principalDetails.setUser(userDto);
+        principalDetails.setAccessToken(accessToken);   //Oauth AccessToken
+        System.out.println("[JWTTOKENPROVIDER] principalDetails  : " + principalDetails);
+
+
+
         UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken =
-                new UsernamePasswordAuthenticationToken(principal, "", authorities);
+                new UsernamePasswordAuthenticationToken(principalDetails, "", authorities);
+
         return usernamePasswordAuthenticationToken;
     }
 

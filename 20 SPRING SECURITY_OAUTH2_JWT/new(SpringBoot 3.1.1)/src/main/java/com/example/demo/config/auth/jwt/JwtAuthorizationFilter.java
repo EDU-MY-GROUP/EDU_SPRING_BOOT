@@ -3,6 +3,7 @@ package com.example.demo.config.auth.jwt;
 
 import com.example.demo.domain.entity.User;
 import com.example.demo.domain.repository.UserRepository;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -11,6 +12,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
@@ -20,6 +22,7 @@ import java.util.Optional;
 /**
  * JWT를 이용한 인증
  */
+@Component
 public class JwtAuthorizationFilter extends OncePerRequestFilter {
 
     private final UserRepository memberRepository;
@@ -72,7 +75,7 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
                 response.addCookie(cookie);
 
             }catch(Exception e2){
-                System.out.println("[JWTAUTHORIZATIONFILTER] ..."+e2);
+                System.out.println("[JWTAUTHORIZATIONFILTER] ...!!!!!!!!!!!!!!!!!!!!!!!!!"+e2);
             }
         }
         chain.doFilter(request, response);
@@ -82,7 +85,7 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
      * JWT 토큰으로 User를 찾아서 UsernamePasswordAuthenticationToken를 만들어서 반환한다.
      * User가 없다면 null
      */
-    private Authentication getUsernamePasswordAuthenticationToken(String token) {
+    public Authentication getUsernamePasswordAuthenticationToken(String token) throws IOException {
 
         Authentication authentication = jwtTokenProvider.getAuthentication(token);
         Optional<User> user = memberRepository.findById(authentication.getName()); // 유저를 유저명으로 찾습니다.

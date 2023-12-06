@@ -2,14 +2,22 @@ package com.example.demo.config.auth.logoutHandler;
 
 
 import com.example.demo.config.auth.PrincipalDetails;
+import com.example.demo.config.auth.jwt.JwtAuthorizationFilter;
+import com.example.demo.config.auth.jwt.JwtProperties;
+import com.example.demo.config.auth.jwt.JwtTokenProvider;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.logout.LogoutSuccessHandler;
+import org.springframework.stereotype.Component;
 import org.thymeleaf.util.StringUtils;
 
 import java.io.IOException;
+import java.util.Arrays;
+
 
 public class CustomLogoutSuccessHandler implements LogoutSuccessHandler {
 
@@ -28,11 +36,38 @@ public class CustomLogoutSuccessHandler implements LogoutSuccessHandler {
 
 
 
-	@Override
-	public void onLogoutSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication)
-			throws IOException, ServletException {
-		System.out.println("CustomLogoutSuccessHandler's onLogoutSuccess! authentication : " + authentication);
+	//JWT
+	@Autowired
+	JwtTokenProvider jwtTokenProvider;
 
+	public CustomLogoutSuccessHandler(JwtTokenProvider jwtTokenProvider) {
+
+		this.jwtTokenProvider = jwtTokenProvider;
+	}
+
+	@Override
+	public void onLogoutSuccess(HttpServletRequest request, HttpServletResponse response, Authentication auth)
+			throws IOException, ServletException {
+
+		//JWT START----------------------------------------------------------------
+
+		String token = null;
+		try {
+			// cookie 에서 JWT token을 가져옵니다.
+			token = Arrays.stream(request.getCookies())
+					.filter(cookie -> cookie.getName().equals(JwtProperties.COOKIE_NAME)).findFirst()
+					.map(cookie -> cookie.getValue())
+					.orElse(null);
+			System.out.println("TOKEN : " + token );
+		} catch (Exception ignored) {
+
+		}
+		Authentication authentication =  jwtTokenProvider.getAuthentication(token);
+		System.out.println("CustomLogoutHandler's logout authentication : " + authentication);
+
+		//JWT END-----------------------------------------------------------
+
+		System.out.println("CustomLogoutSuccessHandler's onLogoutSuccess! authentication : " + authentication);
 
 		PrincipalDetails principalDetails =  (PrincipalDetails) authentication.getPrincipal();
 		String provider = principalDetails.getUser().getProvider();

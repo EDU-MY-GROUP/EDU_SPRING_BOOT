@@ -1,27 +1,38 @@
 package com.example.demo.config.auth.logoutHandler;
 
 import com.example.demo.config.auth.PrincipalDetails;
+import com.example.demo.config.auth.jwt.JwtProperties;
+import com.example.demo.config.auth.jwt.JwtTokenProvider;
+import com.example.demo.domain.entity.User;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+
 import org.springframework.security.web.authentication.logout.LogoutHandler;
+import org.springframework.stereotype.Component;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 import org.thymeleaf.util.StringUtils;
+
+import java.io.IOException;
+import java.util.Arrays;
+
 
 
 public class CustomLogoutHandler implements LogoutHandler{
 
 	private RestTemplate restTemplate;
-	public CustomLogoutHandler() {
-		this.restTemplate = new RestTemplate();
-	}
+
 
 	//KAKAO----------------------------------------------------------------
 	@Value("${spring.security.oauth2.client.registration.kakao.client-id}")
@@ -37,21 +48,53 @@ public class CustomLogoutHandler implements LogoutHandler{
 	private String naverClientSecret="QBZ4lfUe9D";
 	//NAVER----------------------------------------------------------------
 
+	//JWT
 
+	private JwtTokenProvider jwtTokenProvider;
+	public CustomLogoutHandler(JwtTokenProvider jwtTokenProvider) {
+		this.jwtTokenProvider = jwtTokenProvider;
+		this.restTemplate = new RestTemplate();
+
+	}
 	@Override
-	public void logout(HttpServletRequest request, HttpServletResponse response, Authentication authentication) {
-			System.out.println("CustomLogoutHandler's logout authentication : " + authentication);
+	public void logout(HttpServletRequest request, HttpServletResponse response, Authentication auth) {
 
+
+			//JWT START----------------------------------------------------------------
+
+			String token = null;
+			try {
+				// cookie 에서 JWT token을 가져옵니다.
+				token = Arrays.stream(request.getCookies())
+						.filter(cookie -> cookie.getName().equals(JwtProperties.COOKIE_NAME)).findFirst()
+						.map(cookie -> cookie.getValue())
+						.orElse(null);
+				System.out.println("[CUSTOMLOGOUTHANDLER] Access TOKEN : " + token );
+			} catch (Exception ignored) {
+
+			}
+
+			Authentication authentication = null;
+			try {
+				authentication = jwtTokenProvider.getAuthentication(token);
+			} catch (JsonProcessingException e) {
+				throw new RuntimeException(e);
+			} catch (IOException e) {
+				throw new RuntimeException(e);
+			}
+
+		System.out.println("[CUSTOMLOGOUTHANDLER] authentication : " + authentication);
+			System.out.println("[CUSTOMLOGOUTHANDLER] auth : " + auth);
+
+			//JWT END-----------------------------------------------------------
 			HttpSession session = request.getSession(false);
 			if(session!=null)
 				session.invalidate();
-			System.out.println("OAuthLogoutHandler's logout..authentication : " + authentication);
-			PrincipalDetails principalDetails =  (PrincipalDetails) authentication.getPrincipal();
 
-			System.out.println("OAuthLogoutHandler logout authentication  : "  + authentication);
-			System.out.println("OAuthLogoutHandler logout principalDetails : " +principalDetails );
-			System.out.println("OAuthLogoutHandler logout principalDetails getAttributes() : " +  principalDetails.getAttributes());
-			System.out.println("OAuthLogoutHandler logout principalDetails getProvider() : " +  principalDetails.getUser().getProvider());
+			PrincipalDetails principalDetails = (PrincipalDetails) authentication.getPrincipal();
+			System.out.println("[CUSTOMLOGOUTHANDLER] principalDetails : " + principalDetails);
+
+
 			String provider = principalDetails.getUser().getProvider();
 
 

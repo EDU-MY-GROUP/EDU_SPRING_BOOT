@@ -4,7 +4,6 @@ package com.example.demo.config;
 import com.example.demo.config.auth.PrincipalDetailsOAuth2Service;
 import com.example.demo.config.auth.exceptionhandler.CustomAccessDeniedHandler;
 import com.example.demo.config.auth.exceptionhandler.CustomAuthenticationEntryPoint;
-import com.example.demo.config.auth.jwt.JwtAuthenticationFilter;
 import com.example.demo.config.auth.jwt.JwtAuthorizationFilter;
 import com.example.demo.config.auth.jwt.JwtTokenProvider;
 import com.example.demo.config.auth.loginHandler.CustomAuthenticationFailureHandler;
@@ -73,7 +72,7 @@ public class SecurityConfig {
 						login->{
 							login.permitAll();
 							login.loginPage("/login");
-							login.successHandler(new CustomLoginSuccessHandler());
+							login.successHandler(new CustomLoginSuccessHandler(jwtTokenProvider));
 							login.failureHandler(new CustomAuthenticationFailureHandler());
 
 						}
@@ -82,11 +81,12 @@ public class SecurityConfig {
 				.logout(logout->{
 					logout.logoutUrl("/logout");	//Post방식으로 요청해야함
 					logout.permitAll();
-					logout.addLogoutHandler(new CustomLogoutHandler());							//세션초기화
-					logout.logoutSuccessHandler(new CustomLogoutSuccessHandler());				//기본위치로 페이지이동
+					logout.addLogoutHandler(new CustomLogoutHandler(jwtTokenProvider));							//세션초기화
+					logout.logoutSuccessHandler(new CustomLogoutSuccessHandler(jwtTokenProvider));				//기본위치로 페이지이동
 					//JWT
 					logout.deleteCookies("JSESSIONID","JWT-AUTHENTICATION");
 					logout.invalidateHttpSession(true);
+
 
 				})
 				//예외처리
@@ -126,14 +126,12 @@ public class SecurityConfig {
 				// JWT
 				//----------------------------------------------------------------
 
-				.addFilterBefore(
-                                new JwtAuthenticationFilter(authenticationManager(),jwtTokenProvider),  //JWT 인증 토큰 필터
-                                UsernamePasswordAuthenticationFilter.class      //ID/PW 인증 시도 필터
-				)
+
 				.addFilterBefore(
 						new JwtAuthorizationFilter(userRepository,jwtTokenProvider),
 						BasicAuthenticationFilter.class
 				)
+
 				//----------------------------------------------------------------
 				;
 
@@ -143,13 +141,14 @@ public class SecurityConfig {
 	//----------------------------------------------------------------
 	// JWT
 	//----------------------------------------------------------------
-	@Bean
-	public AuthenticationManager authenticationManager(){
-		DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
-		authProvider.setUserDetailsService(principalDetailsOAuth2Service);
-		authProvider.setPasswordEncoder(passwordEncoder());
-		return new ProviderManager(authProvider);
-	}
+//	@Bean
+//	public AuthenticationManager authenticationManager(){
+//		DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
+//		authProvider.setUserDetailsService(principalDetailsOAuth2Service);
+//		authProvider.setPasswordEncoder(passwordEncoder());
+//		return new ProviderManager(authProvider);
+//	}
+
 	//----------------------------------------------------------------
 
 

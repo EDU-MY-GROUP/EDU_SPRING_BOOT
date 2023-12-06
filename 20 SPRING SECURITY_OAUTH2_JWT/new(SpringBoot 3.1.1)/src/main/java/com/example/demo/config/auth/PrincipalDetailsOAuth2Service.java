@@ -113,7 +113,16 @@ public class PrincipalDetailsOAuth2Service  extends DefaultOAuth2UserService imp
         UserDto dto = new UserDto();
         dto.setUsername(username);
         dto.setPassword(password);
-        dto.setRole(role);
+        dto.setProvider(optional.get().getProvider());  //JWT ADDED..
+
+        if(role.ordinal()==0){
+            dto.setRole("ROLE_USER");
+        }else if(role.ordinal()==1){
+            dto.setRole("ROLE_ADMIN");
+        }else{
+            dto.setRole("ROLE_USER");
+        }
+
 
         //
         dto.setProvider(provider);
@@ -140,7 +149,17 @@ public class PrincipalDetailsOAuth2Service  extends DefaultOAuth2UserService imp
         UserDto dto = new UserDto();
         dto.setUsername(user.get().getUsername());
         dto.setPassword(user.get().getPassword());
-        dto.setRole(user.get().getRole());
+        Role role = user.get().getRole();
+
+        if(role.ordinal()==0){
+            dto.setRole(("ROLE_USER"));
+        }else if(role.ordinal()==1){
+            dto.setRole("ROLE_ADMIN");
+        }else{
+            dto.setRole("ROLE_USER");
+        }
+
+        dto.setProvider(user.get().getProvider());  //JWT ADDED..
         if(dto==null)
             return null;
 
