@@ -105,7 +105,7 @@ public class CustomLogoutHandler implements LogoutHandler{
 				//--------------------------------
 				System.out.println("카카오 로그아웃 진행!...................");
 
-				String accessToken = ((PrincipalDetails) authentication.getPrincipal()).getAccessToken();
+				String accessToken = principalDetails.getAccessToken();
 
 				//URL
 				String url = "https://kapi.kakao.com/v1/user/logout";
@@ -126,7 +126,7 @@ public class CustomLogoutHandler implements LogoutHandler{
 			}
 			else if(provider!=null&&StringUtils.contains(provider,"google")){
 
-				String accessToken = ((PrincipalDetails) authentication.getPrincipal()).getAccessToken();
+				String accessToken = principalDetails.getAccessToken();
 
 				String url ="https://accounts.google.com/o/oauth2/revoke?token="+accessToken;
 				RestTemplate restTemplate = new RestTemplate();
@@ -138,7 +138,7 @@ public class CustomLogoutHandler implements LogoutHandler{
 
 				//https://developers.naver.com/docs/login/devguide/devguide.md#5-3-1-%EB%84%A4%EC%9D%B4%EB%B2%84-%EB%A1%9C%EA%B7%B8%EC%9D%B8-%EC%97%B0%EB%8F%99-%ED%95%B4%EC%A0%9C%EA%B0%80-%ED%95%84%EC%9A%94%ED%95%9C-%EA%B2%BD%EC%9A%B0
 
-				String accessToken = ((PrincipalDetails) authentication.getPrincipal()).getAccessToken();
+				String accessToken = principalDetails.getAccessToken();
 
 				System.out.println("[LOGOUT_HANDLER] naverClientId : " + naverClientId);
 				System.out.println("[LOGOUT_HANDLER] naverClientSecret : " + naverClientSecret);

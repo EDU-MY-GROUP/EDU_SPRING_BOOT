@@ -66,7 +66,7 @@ public class JwtTokenProvider {
                 .claim("details",authentication.getDetails())           //정보저장
                 .claim("provider",userDto.getProvider())           //정보저장
                 .claim("password",userDto.getPassword())           //정보저장
-                .claim("accesstoken",principalDetails.getAccessToken())           //정보저장
+                .claim("accessToken",principalDetails.getAccessToken())           //정보저장
 
                 .setExpiration(accessTokenExpiresIn)
                 .signWith(key, SignatureAlgorithm.HS256)
@@ -121,7 +121,7 @@ public class JwtTokenProvider {
         String provider =  (String)claims.get("provider");
         String password = (String)claims.get("password");
         String auth = (String)claims.get("auth");
-        String accesstoken = (String)claims.get("accesstoken");
+        String oauthAccessToken = (String)claims.get("accessToken");
         UserDto userDto = new UserDto();
         userDto.setProvider(provider);
         userDto.setUsername(username);
@@ -130,8 +130,8 @@ public class JwtTokenProvider {
 
         PrincipalDetails principalDetails = new PrincipalDetails();
         principalDetails.setUser(userDto);
-        principalDetails.setAccessToken(accessToken);   //Oauth AccessToken
-        System.out.println("[JWTTOKENPROVIDER] principalDetails  : " + principalDetails);
+        principalDetails.setAccessToken(oauthAccessToken);   //Oauth AccessToken
+        System.out.println("[JWTTOKENPROVIDER] getAuthentication() principalDetails  : " + principalDetails);
 
 
 

@@ -125,13 +125,10 @@ public class SecurityConfig {
 				//----------------------------------------------------------------
 				// JWT
 				//----------------------------------------------------------------
-
-
 				.addFilterBefore(
 						new JwtAuthorizationFilter(userRepository,jwtTokenProvider),
 						BasicAuthenticationFilter.class
 				)
-
 				//----------------------------------------------------------------
 				;
 
