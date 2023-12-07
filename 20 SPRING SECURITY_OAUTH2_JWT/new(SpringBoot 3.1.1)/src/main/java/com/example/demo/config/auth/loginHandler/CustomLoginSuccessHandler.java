@@ -48,7 +48,6 @@ public class CustomLoginSuccessHandler implements AuthenticationSuccessHandler {
         System.out.println("[CUSTOMLOGINSUCCESSHANDLER] onAuthenticationSuccess! ");
         Collection<? extends GrantedAuthority> collection =   authentication.getAuthorities();
 
-
         //----------------------------------------
 
         collection.forEach((role)->{

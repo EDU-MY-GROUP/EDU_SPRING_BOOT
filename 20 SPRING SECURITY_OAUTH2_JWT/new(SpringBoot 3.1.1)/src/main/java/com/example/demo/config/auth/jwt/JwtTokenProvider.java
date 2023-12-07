@@ -31,16 +31,17 @@ public class JwtTokenProvider {
 
 
     //Key 저장
-    private final Key key;
+    private final Key key;                      // 클래스 내에서 사용될 JWT 토큰 생성에 사용되는 키를 나타내는 필드(Secret Key로 사용)
 
+        //생성자
         public JwtTokenProvider() {
-            byte[] keyBytes = KeyGenerator.getKeygen();
-            this.key = Keys.hmacShaKeyFor(keyBytes);
+            byte[] keyBytes = KeyGenerator.getKeygen();     //난수키값 가져오기
+            this.key = Keys.hmacShaKeyFor(keyBytes);        // 생성된 키를 사용하여 HMAC SHA(암호화알고리즘)알고리즘에 기반한 Key 객체 생성
             System.out.println("JwtTokenProvider Constructor  Key init: " + key);
 
         }
 
-    // 유저 정보를 가지고 AccessToken, RefreshToken 을 생성하는 메서드
+    // 유저 정보를 가지고 AccessToken, RefreshToken 을 생성하는 메서드(Security Authentication 이후에 처리될 내용)
     public TokenInfo generateToken(Authentication authentication) {
         // 권한 가져오기
         String authorities = authentication.getAuthorities().stream()
@@ -87,9 +88,6 @@ public class JwtTokenProvider {
                 .refreshToken(refreshToken)
                 .build();
     }
-
-
-
 
 
 
@@ -140,6 +138,8 @@ public class JwtTokenProvider {
 
         return usernamePasswordAuthenticationToken;
     }
+
+
 
     private Claims parseClaims(String accessToken) {
         try {

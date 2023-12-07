@@ -86,8 +86,6 @@ public class SecurityConfig {
 					//JWT
 					logout.deleteCookies("JSESSIONID","JWT-AUTHENTICATION");
 					logout.invalidateHttpSession(true);
-
-
 				})
 				//예외처리
 				.exceptionHandling(
@@ -135,20 +133,6 @@ public class SecurityConfig {
 
 		return http.build();
 	}
-	//----------------------------------------------------------------
-	// JWT
-	//----------------------------------------------------------------
-//	@Bean
-//	public AuthenticationManager authenticationManager(){
-//		DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
-//		authProvider.setUserDetailsService(principalDetailsOAuth2Service);
-//		authProvider.setPasswordEncoder(passwordEncoder());
-//		return new ProviderManager(authProvider);
-//	}
-
-	//----------------------------------------------------------------
-
-
 
 	//REMEMBER-ME ADDED
 	@Bean

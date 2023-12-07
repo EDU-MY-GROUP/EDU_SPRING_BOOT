@@ -25,18 +25,18 @@ import java.util.Optional;
 @Component
 public class JwtAuthorizationFilter extends OncePerRequestFilter {
 
-    private final UserRepository memberRepository;
+    private final UserRepository userRepository;
     private final JwtTokenProvider jwtTokenProvider;
 
     public JwtAuthorizationFilter(
-            UserRepository memberRepository,
+            UserRepository userRepository,
             JwtTokenProvider jwtTokenProvider
     ) {
-        this.memberRepository = memberRepository;
+        this.userRepository = userRepository;
         this.jwtTokenProvider = jwtTokenProvider;
     }
 
-    //
+    //  인증이후(ID/PW검증) 매번 페이지 요청시마다 동작시킬 필터함수
     @Override
     protected void doFilterInternal(
             HttpServletRequest request,
@@ -88,7 +88,7 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
     public Authentication getUsernamePasswordAuthenticationToken(String token) throws IOException {
 
         Authentication authentication = jwtTokenProvider.getAuthentication(token);
-        Optional<User> user = memberRepository.findById(authentication.getName()); // 유저를 유저명으로 찾습니다.
+        Optional<User> user = userRepository.findById(authentication.getName()); // 유저를 유저명으로 찾습니다.
         System.out.println("[JWTAUTHORIZATIONFILTER]  getUsernamePasswordAuthenticationToken...authentication : " +authentication );
         if(user!=null)
         {

@@ -73,7 +73,6 @@ public class CustomLogoutHandler implements LogoutHandler{
 			} catch (Exception ignored) {
 
 			}
-
 			Authentication authentication = null;
 			try {
 				authentication = jwtTokenProvider.getAuthentication(token);
@@ -82,11 +81,10 @@ public class CustomLogoutHandler implements LogoutHandler{
 			} catch (IOException e) {
 				throw new RuntimeException(e);
 			}
-
-		System.out.println("[CUSTOMLOGOUTHANDLER] authentication : " + authentication);
+			System.out.println("[CUSTOMLOGOUTHANDLER] authentication : " + authentication);
 			System.out.println("[CUSTOMLOGOUTHANDLER] auth : " + auth);
-
 			//JWT END-----------------------------------------------------------
+
 			HttpSession session = request.getSession(false);
 			if(session!=null)
 				session.invalidate();

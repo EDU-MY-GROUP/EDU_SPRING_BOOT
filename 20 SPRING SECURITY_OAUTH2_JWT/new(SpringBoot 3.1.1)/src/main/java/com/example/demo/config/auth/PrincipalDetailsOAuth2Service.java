@@ -132,10 +132,7 @@ public class PrincipalDetailsOAuth2Service  extends DefaultOAuth2UserService imp
         principalDetails.setAccessToken(userRequest.getAccessToken().getTokenValue());
 
 
-
-
         return principalDetails;
-
 
     }
 
