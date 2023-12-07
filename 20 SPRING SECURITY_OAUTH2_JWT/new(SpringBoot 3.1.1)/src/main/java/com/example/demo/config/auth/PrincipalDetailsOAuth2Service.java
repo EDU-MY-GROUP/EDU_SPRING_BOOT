@@ -113,7 +113,7 @@ public class PrincipalDetailsOAuth2Service  extends DefaultOAuth2UserService imp
         UserDto dto = new UserDto();
         dto.setUsername(username);
         dto.setPassword(password);
-        dto.setProvider(optional.get().getProvider());  //JWT ADDED..
+        dto.setProvider(provider);  //JWT ADDED..
 
         if(role.ordinal()==0){
             dto.setRole("ROLE_USER");
