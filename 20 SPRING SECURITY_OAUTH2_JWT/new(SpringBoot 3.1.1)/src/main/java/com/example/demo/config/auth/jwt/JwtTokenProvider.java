@@ -64,9 +64,10 @@ public class JwtTokenProvider {
                 .claim("auth", authorities)                             //정보저장
                 .claim("principal",authentication.getPrincipal())       //정보저장
                 .claim("credentials",authentication.getCredentials())   //정보저장
-                .claim("details",authentication.getDetails())           //정보저장
-                .claim("provider",userDto.getProvider())           //정보저장
-                .claim("password",userDto.getPassword())           //정보저장
+                .claim("details",authentication.getDetails())           //정보저장 민감정보는 넣지 않는게 좋다...
+                .claim("provider",userDto.getProvider())                //정보저장
+                .claim("password",userDto.getPassword())                //정보저장 민감정보는 넣지 않는게 좋다...
+
                 .claim("accessToken",principalDetails.getAccessToken())           //정보저장
 
                 .setExpiration(accessTokenExpiresIn)
