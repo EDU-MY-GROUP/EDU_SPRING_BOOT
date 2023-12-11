@@ -25,7 +25,7 @@ class MemoMapperTest {
 
     @Test
     public void t1(){
-        MemoDto dto = memoMapper.FindByIdXML(1);
+        MemoDto dto = memoMapper.FindByIdXML(2);
         System.out.println(dto);
     }
 

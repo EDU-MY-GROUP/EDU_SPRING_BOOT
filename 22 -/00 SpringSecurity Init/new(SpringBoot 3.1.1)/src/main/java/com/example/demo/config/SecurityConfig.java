@@ -61,7 +61,10 @@ public class SecurityConfig {
 				)
 				//요청URL별 권한 설정
 				.authorizeHttpRequests( (authorizeRequests)->
-						authorizeRequests.requestMatchers("/","/login","/join").permitAll()
+
+						authorizeRequests
+								         .requestMatchers("/css/**","/js/**","/images/**","/modules/**").permitAll()
+								   		 .requestMatchers("/login","/user/join").permitAll()
 										 .requestMatchers("/user").hasRole("USER")
 										 .requestMatchers("/member").hasRole("MEMBER")
 										 .requestMatchers("/admin").hasRole("ADMIN")

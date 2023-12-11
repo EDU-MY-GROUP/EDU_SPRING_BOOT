@@ -20,6 +20,9 @@ import javax.sql.DataSource;
 public class MybatisConfig {
 
     @Autowired
+    ApplicationContext applicationContext;
+
+    @Autowired
     private HikariDataSource dataSource;
 
 
@@ -27,6 +30,9 @@ public class MybatisConfig {
     public SqlSessionFactory sqlSessionFactory() throws Exception {
         SqlSessionFactoryBean sessionFactory = new SqlSessionFactoryBean();
         sessionFactory.setDataSource(dataSource);
+        sessionFactory.setMapperLocations(applicationContext.getResources("classpath:mappers/*.xml"));
         return sessionFactory.getObject();
     }
+
+
 }

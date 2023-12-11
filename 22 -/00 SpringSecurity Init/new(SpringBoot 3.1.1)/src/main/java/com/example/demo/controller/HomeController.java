@@ -14,5 +14,8 @@ public class HomeController {
         return "index";
     }
 
-
+    @GetMapping("/login")
+    public void login() {
+        log.info("GET /user/login...");
+    }
 }
