@@ -27,9 +27,9 @@ public class TxConfig {
     }
 
     // DataSource용 Tx
-    @Bean
-    public DataSourceTransactionManager TransactionManager() {
-        return new DataSourceTransactionManager(dataSource);
-    }
+//    @Bean
+//    public DataSourceTransactionManager TransactionManager() {
+//        return new DataSourceTransactionManager(dataSource);
+//    }
 
 }

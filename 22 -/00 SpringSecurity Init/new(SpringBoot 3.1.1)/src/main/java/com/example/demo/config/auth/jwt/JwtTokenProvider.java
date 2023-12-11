@@ -56,6 +56,7 @@ public class JwtTokenProvider {
 
         long now = (new Date()).getTime();
         System.out.println("[JWTTOKENPROVIDER] authentication : " + authentication);
+
         // Access Token 생성
         Date accessTokenExpiresIn = new Date(now + 60*1000); // 60초후 만료
         String accessToken = Jwts.builder()
@@ -69,6 +70,7 @@ public class JwtTokenProvider {
                 .claim("password",userDto.getPassword())           //정보저장
                 .claim("accessToken",principalDetails.getAccessToken())           //정보저장
 
+
                 .setExpiration(accessTokenExpiresIn)
                 .signWith(key, SignatureAlgorithm.HS256)
                 .compact();
@@ -79,8 +81,8 @@ public class JwtTokenProvider {
                 .signWith(key, SignatureAlgorithm.HS256)
                 .compact();
 
-        System.out.println("JwtTokenProvider.generateToken.accessToken : " + accessToken);
-        System.out.println("JwtTokenProvider.generateToken.refreshToken : " + refreshToken);
+        System.out.println("[JWTTOKENPROVIDER] accessToken : " + accessToken);
+        System.out.println("[JWTTOKENPROVIDER] refreshToken : " + refreshToken);
 
         return TokenInfo.builder()
                 .grantType("Bearer")
@@ -133,8 +135,12 @@ public class JwtTokenProvider {
 
 
 
+
         UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken =
-                new UsernamePasswordAuthenticationToken(principalDetails, "", authorities);
+                new UsernamePasswordAuthenticationToken(principalDetails, claims.get("credentials"), authorities);
+
+        System.out.println("[JWTTOKENPROVIDER] getAuthentication() usernamePasswordAuthenticationToken  : " + usernamePasswordAuthenticationToken);
+
 
         return usernamePasswordAuthenticationToken;
     }

@@ -7,7 +7,7 @@
 
 
     <!-- th:fragment     -->
-    <th:block th:insert="fragments/head :: headOutterLink" />
+    <th:block th:insert="~{fragments/head :: headOutterLink}" />
 
     <!-- common.css   -->
     <link rel="stylesheet" href="/css/common.css">
@@ -22,7 +22,7 @@
 <div class="wrapper">
     <header>
         <!-- th:fragment     -->
-        <div th:replace="fragments/header :: headerFragment" />
+        <div th:replace="~{fragments/header :: headerFragment}" />
     </header>
 
     <main class="container-xxl">

@@ -41,31 +41,32 @@ public class Oauth2JwtLoginSuccessHandler implements AuthenticationSuccessHandle
         //----------------------------------------
         //기존코드
         //----------------------------------------
-        Collection<? extends GrantedAuthority> collection =   authentication.getAuthorities();
-        collection.forEach((role)->{
-            try {
-                System.out.println("role : " + role.getAuthority());
-                String role_str = role.getAuthority();
-                if(role_str.equals("ROLE_USER")) {
+//        Collection<? extends GrantedAuthority> collection =   authentication.getAuthorities();
+//        collection.forEach((role)->{
+//            try {
+//                System.out.println("role : " + role.getAuthority());
+//                String role_str = role.getAuthority();
+//                if(role_str.equals("ROLE_USER")) {
+//
+//                    System.out.println("USER 페이지로 이동!");
+//                    response.sendRedirect(request.getContextPath()+"/user");
+//                    return ;
+//                }else if(role_str.equals("ROLE_MEMBER")){
+//                    System.out.println("MEMBER 페이지로 이동!");
+//                    response.sendRedirect(request.getContextPath()+"/member");
+//                    return ;
+//                }
+//                else if(role_str.equals("ROLE_ADMIN")) {
+//                    System.out.println("ADMIN 페이지로 이동!");
+//                    response.sendRedirect(request.getContextPath()+"/admin");
+//                    return ;
+//                }
+//            }catch(Exception e) {
+//                e.printStackTrace();
+//            }
+//
+//        } );
 
-                    System.out.println("USER 페이지로 이동!");
-                    response.sendRedirect(request.getContextPath()+"/user");
-                    return ;
-                }else if(role_str.equals("ROLE_MEMBER")){
-                    System.out.println("MEMBER 페이지로 이동!");
-                    response.sendRedirect(request.getContextPath()+"/member");
-                    return ;
-                }
-                else if(role_str.equals("ROLE_ADMIN")) {
-                    System.out.println("ADMIN 페이지로 이동!");
-                    response.sendRedirect(request.getContextPath()+"/admin");
-                    return ;
-                }
-            }catch(Exception e) {
-                e.printStackTrace();
-            }
-
-        } );
-
+        response.sendRedirect("/");
     }
 }

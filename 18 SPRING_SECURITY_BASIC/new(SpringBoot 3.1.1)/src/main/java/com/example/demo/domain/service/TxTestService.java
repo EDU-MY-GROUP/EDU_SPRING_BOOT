@@ -29,7 +29,7 @@ public class TxTestService {
         memoMapper.insert(new MemoDto(1,"aaaa"));
         memoMapper.insert(new MemoDto(1,"bbbb"));
     }
-    @Transactional(rollbackFor = Exception.class)
+//    @Transactional(rollbackFor = Exception.class)
     public void txRepository(){
         log.info("[TxTestService] txRepository..");
         memoRepository.save(new Memo(1,"aaaa"));

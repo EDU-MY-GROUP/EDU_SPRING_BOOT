@@ -64,6 +64,7 @@ public class SecurityConfig {
 
 						authorizeRequests
 								         .requestMatchers("/css/**","/js/**","/images/**","/modules/**").permitAll()
+								  		 .requestMatchers("/").hasAnyRole("USER","ADMIN","MEMBER")
 								   		 .requestMatchers("/login","/user/join").permitAll()
 										 .requestMatchers("/user").hasRole("USER")
 										 .requestMatchers("/member").hasRole("MEMBER")

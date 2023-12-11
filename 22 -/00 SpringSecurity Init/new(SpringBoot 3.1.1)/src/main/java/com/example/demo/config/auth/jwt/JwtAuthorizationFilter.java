@@ -53,6 +53,9 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
                     .map(cookie -> cookie.getValue())
                     .orElse(null);
             System.out.println("TOKEN : " + token );
+            
+            //readme로 읽어올것
+            
         } catch (Exception ignored) {
 
         }

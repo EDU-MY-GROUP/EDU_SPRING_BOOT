@@ -56,6 +56,8 @@ public class CustomLogoutHandler implements LogoutHandler{
 		this.restTemplate = new RestTemplate();
 
 	}
+
+
 	@Override
 	public void logout(HttpServletRequest request, HttpServletResponse response, Authentication auth) {
 
