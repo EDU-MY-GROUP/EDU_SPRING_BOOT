@@ -17,27 +17,25 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @Slf4j
 public class TxTestService {
-
     @Autowired
     private MemoMapper memoMapper;
-
-    @Transactional(rollbackFor = Exception.class,value = "dataSourceTransactionManager")
+    @Transactional(rollbackFor = Exception.class,transactionManager = "dataSourceTransactionManager")
     public void txMapper() {
         log.info("[TxTestService] txMapper..");
 
         memoMapper.insert(new MemoDto(1,"aaaa"));
         memoMapper.insert(new MemoDto(1,"bbbb"));
     }
-
     @Autowired
     private MemoRepository memoRepository;
 
-    @Transactional(rollbackFor = Exception.class, value = "jpaTransactionManager")
-    public void txRepository(){
-        log.info("[TxTestService] txRepository..");
+    @Transactional(rollbackFor = Exception.class,transactionManager = "jpaTransactionManager")
+    public void txRepository() throws Exception {
+        log.info("[TxTestServic] txRepository..");
 
         memoRepository.save(new Memo(1,"aaaa"));
-        memoRepository.save(new Memo(1,"bbbb"));
+        throw new Exception();
+        //memoRepository.save(new Memo(2,"bbbb"));
     }
 
 

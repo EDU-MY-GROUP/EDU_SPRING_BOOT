@@ -16,17 +16,16 @@ class TxTestServiceTest {
     private TxTestService txTestService;
 
     @Test
-    public void t1()throws Exception   {
+    @Transactional(transactionManager = "dataSourceTransactionManager")
+    public void t1()   {
         txTestService.txMapper();
     }
 
 
     @Test
+    @Transactional(transactionManager = "jpaTransactionManager",rollbackFor = Exception.class)
     public void t2() throws Exception {
         txTestService.txRepository();
-
     }
-
-
 
 }

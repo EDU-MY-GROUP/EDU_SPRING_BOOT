@@ -135,7 +135,10 @@ public class JwtTokenProvider {
 
 
         UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken =
-                new UsernamePasswordAuthenticationToken(principalDetails, "", authorities);
+                new UsernamePasswordAuthenticationToken(principalDetails, claims.get("credentials"), authorities);
+
+
+        usernamePasswordAuthenticationToken.setDetails(claims.get("credentials"));
 
         return usernamePasswordAuthenticationToken;
     }

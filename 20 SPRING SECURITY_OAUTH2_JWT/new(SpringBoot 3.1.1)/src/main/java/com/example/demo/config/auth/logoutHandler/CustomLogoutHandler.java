@@ -19,6 +19,8 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 
 import org.springframework.security.web.authentication.logout.LogoutHandler;
+import org.springframework.security.web.authentication.rememberme.JdbcTokenRepositoryImpl;
+import org.springframework.security.web.authentication.rememberme.PersistentTokenRepository;
 import org.springframework.stereotype.Component;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
@@ -49,13 +51,17 @@ public class CustomLogoutHandler implements LogoutHandler{
 	//NAVER----------------------------------------------------------------
 
 	//JWT
-
 	private JwtTokenProvider jwtTokenProvider;
 	public CustomLogoutHandler(JwtTokenProvider jwtTokenProvider) {
 		this.jwtTokenProvider = jwtTokenProvider;
 		this.restTemplate = new RestTemplate();
 
 	}
+
+	//REMEMBERME
+	@Autowired
+	private PersistentTokenRepository persistentTokenRepository;
+
 	@Override
 	public void logout(HttpServletRequest request, HttpServletResponse response, Authentication auth) {
 
@@ -82,9 +88,17 @@ public class CustomLogoutHandler implements LogoutHandler{
 				throw new RuntimeException(e);
 			}
 			System.out.println("[CUSTOMLOGOUTHANDLER] authentication : " + authentication);
-			System.out.println("[CUSTOMLOGOUTHANDLER] auth : " + auth);
+			System.out.println("[CUSTOMLOGOUTHANDLER] authentication Details : " + authentication.getDetails());
+
 			//JWT END-----------------------------------------------------------
 
+
+			//REMEMBER ME REMOVE START------------------------------------------
+//			//persistentTokenRepository.getTokenForSeries();
+//			persistentTokenRepository.removeUserTokens(authentication.getName());
+
+
+			//REMEMBER ME REMOVE END  ------------------------------------------
 			HttpSession session = request.getSession(false);
 			if(session!=null)
 				session.invalidate();
