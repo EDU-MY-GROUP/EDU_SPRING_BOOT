@@ -3,19 +3,18 @@ package com.example.demo.config.auth.jwt;
 
 import com.example.demo.config.auth.PrincipalDetails;
 import com.example.demo.domain.dto.UserDto;
-import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.core.JsonProcessingException;
+import com.example.demo.domain.entity.Signature;
+import com.example.demo.domain.repository.JwtRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
 import lombok.extern.slf4j.Slf4j;
-import net.minidev.json.JSONObject;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.RememberMeAuthenticationToken;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
@@ -23,6 +22,7 @@ import java.security.Key;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
+import java.util.List;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -30,15 +30,17 @@ import java.util.stream.Collectors;
 public class JwtTokenProvider {
 
 
-    //Key 저장
-    private final Key key;                      // 클래스 내에서 사용될 JWT 토큰 생성에 사용되는 키를 나타내는 필드(Secret Key로 사용)
+
+    //Signature Key 저장
+    private  Key key;                      // 클래스 내에서 사용될 JWT 토큰 생성에 사용되는 키를 나타내는 필드(Secret Key로 사용)
 
         //생성자
         public JwtTokenProvider() {
-            byte[] keyBytes = KeyGenerator.getKeygen();     //난수키값 가져오기
-            this.key = Keys.hmacShaKeyFor(keyBytes);        // 생성된 키를 사용하여 HMAC SHA(암호화알고리즘)알고리즘에 기반한 Key 객체 생성
-            System.out.println("JwtTokenProvider Constructor  Key init: " + key);
 
+
+                 byte[] keyBytes =  KeyGenerator.getKeygen();     //난수키값 가져오기
+                 this.key = Keys.hmacShaKeyFor(keyBytes);        // 생성된 키를 사용하여 HMAC SHA(암호화알고리즘)알고리즘에 기반한 Key 객체 생성
+                 System.out.println("JwtTokenProvider Constructor  Key init: " + key);
         }
 
     // 유저 정보를 가지고 AccessToken, RefreshToken 을 생성하는 메서드(Security Authentication 이후에 처리될 내용)
@@ -51,11 +53,11 @@ public class JwtTokenProvider {
 
         PrincipalDetails principalDetails = (PrincipalDetails) authentication.getPrincipal();
         UserDto userDto = (UserDto)principalDetails.getUser();
-        System.out.println("[JWTTOKENPROVIDER] userDto : "+userDto);
-        System.out.println("[JWTTOKENPROVIDER] accessToken : "+principalDetails.getAccessToken());
+        System.out.println("[JWTTOKENPROVIDER] generateToken() userDto : "+userDto);
+        System.out.println("[JWTTOKENPROVIDER] generateToken()  accessToken : "+principalDetails.getAccessToken());
 
         long now = (new Date()).getTime();
-        System.out.println("[JWTTOKENPROVIDER] authentication : " + authentication);
+        System.out.println("[JWTTOKENPROVIDER] generateToken()  authentication : " + authentication);
         // Access Token 생성
         Date accessTokenExpiresIn = new Date(now + 60*1000); // 60초후 만료
         String accessToken = Jwts.builder()
@@ -68,7 +70,7 @@ public class JwtTokenProvider {
                 .claim("provider",userDto.getProvider())                //정보저장
                 .claim("password",userDto.getPassword())                //정보저장 민감정보는 넣지 않는게 좋다...
 
-                .claim("accessToken",principalDetails.getAccessToken())           //정보저장
+                .claim("accessToken",principalDetails.getAccessToken())           //정보저장(OAUTH2??)
 
                 .setExpiration(accessTokenExpiresIn)
                 .signWith(key, SignatureAlgorithm.HS256)
@@ -80,8 +82,8 @@ public class JwtTokenProvider {
                 .signWith(key, SignatureAlgorithm.HS256)
                 .compact();
 
-        System.out.println("JwtTokenProvider.generateToken.accessToken : " + accessToken);
-        System.out.println("JwtTokenProvider.generateToken.refreshToken : " + refreshToken);
+        System.out.println("[JWTTOKENPROVIDER] generateToken() jwt accessToken : "          + accessToken);
+        System.out.println("[JWTTOKENPROVIDER] generateToken() refresh accessToken : "      + refreshToken);
 
         return TokenInfo.builder()
                 .grantType("Bearer")
@@ -133,14 +135,15 @@ public class JwtTokenProvider {
         System.out.println("[JWTTOKENPROVIDER] getAuthentication() principalDetails  : " + principalDetails);
 
 
-
+        //JWT + NO REMEMBERME
         UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken =
                 new UsernamePasswordAuthenticationToken(principalDetails, claims.get("credentials"), authorities);
 
+        //JWT + REMEMBER ME
+        RememberMeAuthenticationToken jwtAndRememberUserToken = new RememberMeAuthenticationToken("rememberMeKey", principalDetails, authorities);
 
-        usernamePasswordAuthenticationToken.setDetails(claims.get("credentials"));
 
-        return usernamePasswordAuthenticationToken;
+        return jwtAndRememberUserToken;
     }
 
 
@@ -156,10 +159,17 @@ public class JwtTokenProvider {
     // 토큰 정보를 검증하는 메서드
     public boolean validateToken(String token) {
         try {
+
+            //여기서 바로 서명을 통한 일치여부를 확인하지 않고..
+            //먼저 기존의 받은 Token을 통해서 확인하는 작업부터 시작해야한다..
+            //고려 대상
+            // 1 JWT 토큰의 만료 기간 2 서명 키의 변경여부 3
             Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token);
             return true;
         } catch (io.jsonwebtoken.security.SecurityException | MalformedJwtException e) {
             log.info("Invalid JWT Token", e);
+            //여기서 걸리는거.. 서명Key가 일치 하지 않았을때 Token값을  받는 다면 RefreshToken으로 Access-token을 새로 발급?
+            //그러면.. 서명을 저장해야되는거아닌가?
 //        }
 //        catch (ExpiredJwtException e) {
 //            log.info("Expired JWT Token", e);

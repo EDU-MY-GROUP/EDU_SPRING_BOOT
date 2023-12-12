@@ -8,6 +8,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
+import org.apache.catalina.core.ApplicationContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
@@ -21,6 +22,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.logout.LogoutHandler;
 import org.springframework.security.web.authentication.rememberme.JdbcTokenRepositoryImpl;
 import org.springframework.security.web.authentication.rememberme.PersistentTokenRepository;
+import org.springframework.security.web.authentication.rememberme.TokenBasedRememberMeServices;
 import org.springframework.stereotype.Component;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
@@ -52,14 +54,14 @@ public class CustomLogoutHandler implements LogoutHandler{
 
 	//JWT
 	private JwtTokenProvider jwtTokenProvider;
-	public CustomLogoutHandler(JwtTokenProvider jwtTokenProvider) {
+	public CustomLogoutHandler(JwtTokenProvider jwtTokenProvider,PersistentTokenRepository persistentTokenRepository) {
 		this.jwtTokenProvider = jwtTokenProvider;
 		this.restTemplate = new RestTemplate();
+		this.persistentTokenRepository = persistentTokenRepository;
 
 	}
 
-	//REMEMBERME
-	@Autowired
+	//REMEMBER ME
 	private PersistentTokenRepository persistentTokenRepository;
 
 	@Override
@@ -94,9 +96,8 @@ public class CustomLogoutHandler implements LogoutHandler{
 
 
 			//REMEMBER ME REMOVE START------------------------------------------
-//			//persistentTokenRepository.getTokenForSeries();
-//			persistentTokenRepository.removeUserTokens(authentication.getName());
-
+			System.out.println("[CUSTOMLOGOUTHANDLER] persistentTokenRepository :"+ persistentTokenRepository);
+			persistentTokenRepository.removeUserTokens(authentication.getName());
 
 			//REMEMBER ME REMOVE END  ------------------------------------------
 			HttpSession session = request.getSession(false);

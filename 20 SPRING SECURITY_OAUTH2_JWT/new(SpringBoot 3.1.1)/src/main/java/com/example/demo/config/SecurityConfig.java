@@ -22,12 +22,14 @@ import org.springframework.security.authentication.dao.DaoAuthenticationProvider
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.authentication.rememberme.JdbcTokenRepositoryImpl;
 import org.springframework.security.web.authentication.rememberme.PersistentTokenRepository;
+import org.springframework.security.web.authentication.rememberme.TokenBasedRememberMeServices;
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 
 @Configuration
@@ -81,7 +83,7 @@ public class SecurityConfig {
 				.logout(logout->{
 					logout.logoutUrl("/logout");	//Post방식으로 요청해야함
 					logout.permitAll();
-					logout.addLogoutHandler(new CustomLogoutHandler(jwtTokenProvider));							//세션초기화
+					logout.addLogoutHandler(new CustomLogoutHandler(jwtTokenProvider,tokenRepository()));							//세션초기화
 					logout.logoutSuccessHandler(new CustomLogoutSuccessHandler(jwtTokenProvider));				//기본위치로 페이지이동
 					//JWT
 					logout.deleteCookies("JSESSIONID","JWT-AUTHENTICATION");
@@ -118,7 +120,6 @@ public class SecurityConfig {
 				//----------------------------------------------------------------
 				.sessionManagement(httpSecuritySessionManagementConfigurer ->  httpSecuritySessionManagementConfigurer
 								.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-
 				)
 				//----------------------------------------------------------------
 				// JWT
@@ -143,28 +144,6 @@ public class SecurityConfig {
 	}
 
 
-//	@Bean
-//	public UserDetailsService userDetailsService(PasswordEncoder passwordEncoder) {
-//		InMemoryUserDetailsManager userDetailsManager = new InMemoryUserDetailsManager();
-//
-//		userDetailsManager.createUser(User.withUsername("user")
-//				.password(passwordEncoder.encode("1234"))
-//				.roles("USER")
-//				.build());
-//
-//		userDetailsManager.createUser(User.withUsername("member")
-//				.password(passwordEncoder.encode("1234"))
-//				.roles("MEMBER")
-//				.build());
-//
-//		userDetailsManager.createUser(User.withUsername("admin")
-//				.password(passwordEncoder.encode("1234"))
-//
-//				.roles("ADMIN")
-//				.build());
-//
-//		return userDetailsManager;
-//	}
 
 
 	// BCryptPasswordEncoder Bean 등록 - 패스워드 검증에 사용

@@ -52,6 +52,7 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
                     .filter(cookie -> cookie.getName().equals(JwtProperties.COOKIE_NAME)).findFirst()
                     .map(cookie -> cookie.getValue())
                     .orElse(null);
+
             System.out.println("TOKEN : " + token );
         } catch (Exception ignored) {
 
