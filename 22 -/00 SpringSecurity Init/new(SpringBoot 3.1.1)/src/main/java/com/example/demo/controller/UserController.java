@@ -103,5 +103,23 @@ public class UserController {
     }
 
 
+    //----------------------------------
+    //ID찾기  - 등록된 휴대전화 인증이후  연락처로 이메일전송(Naver SMS API)
+    //----------------------------------
+    @GetMapping("/findId")
+    public void findId(){
+        log.info("GET /user/findId...");
+    }
+
+
+
+    //----------------------------------
+    //PW찾기 - ID받고
+    //----------------------------------
+    @GetMapping("/findPw")
+    public void findPw(){
+        log.info("GET /user/findPw...");
+    }
+
 
 }

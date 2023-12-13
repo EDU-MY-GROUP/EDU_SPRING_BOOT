@@ -85,7 +85,7 @@ public class SecurityConfig {
 				.logout(logout->{
 					logout.logoutUrl("/logout");	//Post방식으로 요청해야함
 					logout.permitAll();
-					logout.addLogoutHandler(new CustomLogoutHandler(jwtTokenProvider));							//세션초기화
+					logout.addLogoutHandler(new CustomLogoutHandler(jwtTokenProvider,tokenRepository()));							//세션초기화
 					logout.logoutSuccessHandler(new CustomLogoutSuccessHandler(jwtTokenProvider));				//기본위치로 페이지이동
 					//JWT
 					logout.deleteCookies("JSESSIONID","JWT-AUTHENTICATION");

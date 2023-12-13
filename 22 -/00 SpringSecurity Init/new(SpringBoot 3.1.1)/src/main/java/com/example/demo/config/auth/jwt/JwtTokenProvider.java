@@ -3,23 +3,19 @@ package com.example.demo.config.auth.jwt;
 
 import com.example.demo.config.auth.PrincipalDetails;
 import com.example.demo.domain.dto.UserDto;
-import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
 import lombok.extern.slf4j.Slf4j;
-import net.minidev.json.JSONObject;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.security.Key;
+import java.sql.*;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
@@ -30,16 +26,41 @@ import java.util.stream.Collectors;
 public class JwtTokenProvider {
 
 
-    //Key 저장
-    private final Key key;                      // 클래스 내에서 사용될 JWT 토큰 생성에 사용되는 키를 나타내는 필드(Secret Key로 사용)
+    String url  = "jdbc:mysql://localhost:3306/testdb";
+    String username = "root";
+    String password  = "1234";
+    Connection conn;
+    PreparedStatement pstmt;
+    ResultSet rs;
 
-        //생성자
-        public JwtTokenProvider() {
+    //Signature Key 저장
+    private  Key key;                      // 클래스 내에서 사용될 JWT 토큰 생성에 사용되는 키를 나타내는 필드(Secret Key로 사용)
+
+    //생성자
+    public JwtTokenProvider() throws Exception {
+
+        Class.forName("com.mysql.cj.jdbc.Driver");
+        conn = DriverManager.getConnection(url,username,password);
+        pstmt = conn.prepareStatement("select * from signature");
+        rs =pstmt.executeQuery();
+
+        if(rs.next())
+        {
+
+            byte [] keyByte =  rs.getBytes("signaturekey");                 //DB로 서명Key꺼내옴
+            this.key = Keys.hmacShaKeyFor(keyByte);                                    //this.key에 저장
+            System.out.println("[JwtTokenProvider] Key : " + this.key );
+        }
+        else {
             byte[] keyBytes = KeyGenerator.getKeygen();     //난수키값 가져오기
             this.key = Keys.hmacShaKeyFor(keyBytes);        // 생성된 키를 사용하여 HMAC SHA(암호화알고리즘)알고리즘에 기반한 Key 객체 생성
-            System.out.println("JwtTokenProvider Constructor  Key init: " + key);
+            pstmt = conn.prepareStatement("insert into signature values(?,now())");
 
+            pstmt.setBytes(1, keyBytes);
+            pstmt.executeUpdate();
+            System.out.println("[JwtTokenProvider] Constructor Key init: " + key);
         }
+    }
 
     // 유저 정보를 가지고 AccessToken, RefreshToken 을 생성하는 메서드(Security Authentication 이후에 처리될 내용)
     public TokenInfo generateToken(Authentication authentication) {
@@ -51,12 +72,11 @@ public class JwtTokenProvider {
 
         PrincipalDetails principalDetails = (PrincipalDetails) authentication.getPrincipal();
         UserDto userDto = (UserDto)principalDetails.getUser();
-        System.out.println("[JWTTOKENPROVIDER] userDto : "+userDto);
-        System.out.println("[JWTTOKENPROVIDER] accessToken : "+principalDetails.getAccessToken());
+        System.out.println("[JWTTOKENPROVIDER] generateToken() userDto : "+userDto);
+        System.out.println("[JWTTOKENPROVIDER] generateToken()  accessToken : "+principalDetails.getAccessToken());
 
         long now = (new Date()).getTime();
-        System.out.println("[JWTTOKENPROVIDER] authentication : " + authentication);
-
+        System.out.println("[JWTTOKENPROVIDER] generateToken()  authentication : " + authentication);
         // Access Token 생성
         Date accessTokenExpiresIn = new Date(now + 60*1000); // 60초후 만료
         String accessToken = Jwts.builder()
@@ -65,12 +85,10 @@ public class JwtTokenProvider {
                 .claim("auth", authorities)                             //정보저장
                 .claim("principal",authentication.getPrincipal())       //정보저장
                 .claim("credentials",authentication.getCredentials())   //정보저장
-                .claim("details",authentication.getDetails())           //정보저장
-                .claim("provider",userDto.getProvider())           //정보저장
-                .claim("password",userDto.getPassword())           //정보저장
+                .claim("details",authentication.getDetails())           //정보저장 민감정보는 넣지 않는게 좋다...
+                .claim("provider",userDto.getProvider())                //정보저장
+                .claim("password",userDto.getPassword())                //정보저장 민감정보는 넣지 않는게 좋다...
                 .claim("accessToken",principalDetails.getAccessToken())           //정보저장
-
-
                 .setExpiration(accessTokenExpiresIn)
                 .signWith(key, SignatureAlgorithm.HS256)
                 .compact();
@@ -81,8 +99,8 @@ public class JwtTokenProvider {
                 .signWith(key, SignatureAlgorithm.HS256)
                 .compact();
 
-        System.out.println("[JWTTOKENPROVIDER] accessToken : " + accessToken);
-        System.out.println("[JWTTOKENPROVIDER] refreshToken : " + refreshToken);
+        System.out.println("[JWTTOKENPROVIDER] generateToken() jwt accessToken : "          + accessToken);
+        System.out.println("[JWTTOKENPROVIDER] generateToken() refresh accessToken : "      + refreshToken);
 
         return TokenInfo.builder()
                 .grantType("Bearer")
@@ -134,15 +152,14 @@ public class JwtTokenProvider {
         System.out.println("[JWTTOKENPROVIDER] getAuthentication() principalDetails  : " + principalDetails);
 
 
-
-
+        //JWT + NO REMEMBERME
         UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken =
                 new UsernamePasswordAuthenticationToken(principalDetails, claims.get("credentials"), authorities);
-
-        System.out.println("[JWTTOKENPROVIDER] getAuthentication() usernamePasswordAuthenticationToken  : " + usernamePasswordAuthenticationToken);
-
-
         return usernamePasswordAuthenticationToken;
+
+        //JWT + REMEMBER ME
+        //RememberMeAuthenticationToken jwtAndRememberUserToken = new RememberMeAuthenticationToken("rememberMeKey", principalDetails, authorities);
+        //return jwtAndRememberUserToken;
     }
 
 
@@ -158,13 +175,15 @@ public class JwtTokenProvider {
     // 토큰 정보를 검증하는 메서드
     public boolean validateToken(String token) {
         try {
+
+
             Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token);
             return true;
         } catch (io.jsonwebtoken.security.SecurityException | MalformedJwtException e) {
             log.info("Invalid JWT Token", e);
-//        }
-//        catch (ExpiredJwtException e) {
-//            log.info("Expired JWT Token", e);
+        }
+        catch (ExpiredJwtException e) {
+            log.info("Expired JWT Token", e);
 
         } catch (UnsupportedJwtException e) {
             log.info("Unsupported JWT Token", e);
