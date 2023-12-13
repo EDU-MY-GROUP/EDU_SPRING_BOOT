@@ -54,15 +54,14 @@ public class CustomLogoutHandler implements LogoutHandler{
 
 	//JWT
 	private JwtTokenProvider jwtTokenProvider;
+	//REMEMBER ME
+	private PersistentTokenRepository persistentTokenRepository;
 	public CustomLogoutHandler(JwtTokenProvider jwtTokenProvider,PersistentTokenRepository persistentTokenRepository) {
 		this.jwtTokenProvider = jwtTokenProvider;
 		this.restTemplate = new RestTemplate();
 		this.persistentTokenRepository = persistentTokenRepository;
 
 	}
-
-	//REMEMBER ME
-	private PersistentTokenRepository persistentTokenRepository;
 
 	@Override
 	public void logout(HttpServletRequest request, HttpServletResponse response, Authentication auth) {
@@ -100,6 +99,8 @@ public class CustomLogoutHandler implements LogoutHandler{
 			persistentTokenRepository.removeUserTokens(authentication.getName());
 
 			//REMEMBER ME REMOVE END  ------------------------------------------
+
+
 			HttpSession session = request.getSession(false);
 			if(session!=null)
 				session.invalidate();
