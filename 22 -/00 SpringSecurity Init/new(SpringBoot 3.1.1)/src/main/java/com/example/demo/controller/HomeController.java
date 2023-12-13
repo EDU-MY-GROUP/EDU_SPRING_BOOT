@@ -16,6 +16,6 @@ public class HomeController {
 
     @GetMapping("/login")
     public void login() {
-        log.info("GET /user/login...");
+        log.info("GET /login...");
     }
 }

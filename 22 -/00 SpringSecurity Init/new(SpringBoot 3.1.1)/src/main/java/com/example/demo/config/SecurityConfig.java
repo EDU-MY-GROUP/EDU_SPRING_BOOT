@@ -65,10 +65,8 @@ public class SecurityConfig {
 						authorizeRequests
 								         .requestMatchers("/css/**","/js/**","/images/**","/modules/**").permitAll()
 								  		 .requestMatchers("/").hasAnyRole("USER","ADMIN","MEMBER")
-								   		 .requestMatchers("/login","/user/join").permitAll()
-										 .requestMatchers("/user").hasRole("USER")
-										 .requestMatchers("/member").hasRole("MEMBER")
-										 .requestMatchers("/admin").hasRole("ADMIN")
+								   		 .requestMatchers("/login").permitAll()
+								 		 .requestMatchers("/user/join","/user/findId","/user/findPw").permitAll()
 										 .anyRequest().authenticated()
 				)
 				//로그인폼

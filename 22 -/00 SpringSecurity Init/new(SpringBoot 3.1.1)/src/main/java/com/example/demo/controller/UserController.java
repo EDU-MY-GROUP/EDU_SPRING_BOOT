@@ -52,22 +52,6 @@ public class UserController {
         model.addAttribute("authentication", authentication);
     }
 
-    @GetMapping("/member")
-    public void memberpage(){
-        Authentication authentication =  (Authentication)SecurityContextHolder.getContext().getAuthentication();
-
-        System.out.println("authentication : " + authentication);
-        System.out.println("name : " + authentication.getName());
-        System.out.println("principal : " + authentication.getPrincipal());
-        System.out.println("authorities : " + authentication.getAuthorities());
-        System.out.println("detail : " + authentication.getDetails());
-        System.out.println("credential : " + authentication.getCredentials());
-
-    }
-    @GetMapping("/admin")
-    public void adminpage(){
-    }
-
 
 
     @GetMapping("/join")
