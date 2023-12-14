@@ -29,7 +29,11 @@ public class UserService {
             model.addAttribute("repassword","패스워드가 일치하지 않습니다");
             return false;
         }
-
+        //휴대전화번호 필수입력
+        if(false)
+        {
+            ;
+        }
         //DTO -> ENTITY
         User user = new User();
         user.setUsername(dto.getUsername());
@@ -48,4 +52,9 @@ public class UserService {
 
     }
 
+    @Transactional(rollbackFor=Exception.class)
+    public boolean findIdByPhoneNumber(String phone) {
+
+        return false;
+    }
 }

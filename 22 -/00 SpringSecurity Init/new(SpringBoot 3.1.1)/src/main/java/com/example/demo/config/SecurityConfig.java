@@ -66,7 +66,7 @@ public class SecurityConfig {
 								         .requestMatchers("/css/**","/js/**","/images/**","/modules/**").permitAll()
 								  		 .requestMatchers("/").hasAnyRole("USER","ADMIN","MEMBER")
 								   		 .requestMatchers("/login").permitAll()
-								 		 .requestMatchers("/user/join","/user/findId","/user/findPw").permitAll()
+								 		 .requestMatchers("/user/join","/user/findId","/user/findPw","/user/certification").permitAll()
 										 .anyRequest().authenticated()
 				)
 				//로그인폼

@@ -53,6 +53,10 @@ public class UserController {
     }
 
 
+    @GetMapping("/certification")
+    public void certification(){
+        log.info("GET /user/certification...");
+    }
 
     @GetMapping("/join")
     public void join_get() {
@@ -63,9 +67,9 @@ public class UserController {
     public String join_post(@Valid UserDto dto, BindingResult bindingResult, Model model, HttpServletRequest request, HttpServletResponse response) {
         log.info("POST /join "+dto);
 
-        //01
+        
 
-        //02
+        //02 유효성 체크 
         if(bindingResult.hasFieldErrors()) {
             for( FieldError error  : bindingResult.getFieldErrors()) {
                 log.info(error.getField()+ " : " + error.getDefaultMessage());
@@ -75,13 +79,15 @@ public class UserController {
             return "user/join";
         }
 
-        //03
+        
+
+        //03 서비스 실행
         boolean isjoin =  userService.joinMember(dto,model,request);
         if(!isjoin){
             return "user/join";
         }
 
-        //04
+        //04 뷰이동
         return "redirect:/login?msg=Join_Success!";
 
     }
@@ -91,8 +97,11 @@ public class UserController {
     //ID찾기  - 등록된 휴대전화 인증이후  연락처로 이메일전송(Naver SMS API)
     //----------------------------------
     @GetMapping("/findId")
-    public void findId(){
+    public void findId(String phone){
         log.info("GET /user/findId...");
+
+       boolean isConfirm =  userService.findIdByPhoneNumber(phone);
+
     }
 
 

@@ -18,6 +18,8 @@
         // EMAIL 발송
         //----------------------------------------------------------------
         const email_auth_btn_el = document.querySelector('.email_auth_btn');
+        //해당 INPUT 부터 먼저 검증한 이후에 처리할것..
+
         const username = document.querySelector('.username');
         email_auth_btn_el.addEventListener('click',function(){
             //alert('TEST');

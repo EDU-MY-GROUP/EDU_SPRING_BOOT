@@ -23,6 +23,7 @@ public class UserDto {
 	@Pattern(regexp = "(?=.*[0-9])(?=.*[a-zA-Z])(?=.*\\W)(?=\\S+$).{8,16}", message = "비밀번호는 8~16자 영문 대 소문자, 숫자, 특수문자를 사용하세요.")
 	private String repassword;
 	private String role;
+	@NotBlank(message = "휴대전화번호는 반드시 입력하셔야됩니다.")
 	private String phone;
 	private String zipcode;
 	private String addr1;
