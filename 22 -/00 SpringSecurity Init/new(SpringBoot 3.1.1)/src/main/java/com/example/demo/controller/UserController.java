@@ -38,21 +38,6 @@ public class UserController {
     private UserService userService;
 
 
-
-    @GetMapping("/user")
-    public void user(Authentication authentication, Model model) {
-        log.info("GET /user...");
-        System.out.println("authentication : " + authentication);
-        System.out.println("name : " + authentication.getName());
-        System.out.println("principal : " + authentication.getPrincipal());
-        System.out.println("authorities : " + authentication.getAuthorities());
-        System.out.println("detail : " + authentication.getDetails());
-        System.out.println("credential : " + authentication.getCredentials());
-
-        model.addAttribute("authentication", authentication);
-    }
-
-
     @GetMapping("/certification")
     public void certification(){
         log.info("GET /user/certification...");
@@ -67,7 +52,6 @@ public class UserController {
     public String join_post(@Valid UserDto dto, BindingResult bindingResult, Model model, HttpServletRequest request, HttpServletResponse response) {
         log.info("POST /join "+dto);
 
-        
 
         //02 유효성 체크 
         if(bindingResult.hasFieldErrors()) {

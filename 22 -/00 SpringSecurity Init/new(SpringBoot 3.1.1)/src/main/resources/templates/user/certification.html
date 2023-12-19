@@ -79,7 +79,7 @@
                     },
                     function(response){
                         console.log(response);
-                        console.log(response.imp_uid);  //이걸 이용할 것(JWT TOKEN Claims으로 저장하자..값은 계속 바뀜(인증여부 확인한 이후 바로 /user/join으로 넘어갈 것..)
+                        console.log(response.imp_uid);  //★ 이걸 이용할 것(JWT TOKEN Claims으로 저장하자..값은 계속 바뀜)
 
                         if(response.success){
                             alert("인증성공! 회원가입페이지로 이동합니다");
