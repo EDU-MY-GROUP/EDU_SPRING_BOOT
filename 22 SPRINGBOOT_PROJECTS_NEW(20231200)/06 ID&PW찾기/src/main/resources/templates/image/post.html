@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+
+    <th:block th:insert="~{fragments/head :: headCdns}"   />
+
+    <!-- Common css   -->
+    <link href="/css/common.css"  rel="stylesheet">
+
+    <!-- Post css   -->
+    <link href="/css/image/post.css"  rel="stylesheet">
+</head>
+<body>
+
+<div class="wrapper">
+    <header>
+        <div class="top-header">
+            <span class="material-symbols-outlined">home</span>
+        </div>
+
+        <nav>
+
+        </nav>
+
+    </header>
+    <main>
+        <section>
+
+            <div class="imageBlock">
+                <div class="left">
+
+                </div>
+                <div class="right">
+                    <form>
+                        <input>
+                        <input>
+                        <input>
+                        <input>
+                    </form>
+                </div>
+            </div>
+
+        </section>
+        <section></section>
+        <section></section>
+        <section></section>
+    </main>
+    <footer>
+    </footer>
+</div>
+
+
+
+<!-- Axios JS   -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.6.2/axios.min.js" integrity="sha512-b94Z6431JyXY14iSXwgzeZurHHRNkLt9d6bAHt7BZT38eqV+GyngIi/tVye4jBKPYQ2lBdRs0glww4fmpuLRwA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<!-- JS  -->
+<script src="js/common.js"></script>
+
+<script>
+    const leftEl = document.querySelector('.imageBlock>.left');
+    leftEl.addEventListener('dragenter',function(e){
+        e.preventDefault();
+        console.log('dragenter');
+    });
+    leftEl.addEventListener('dragover',function(e){
+        e.preventDefault();
+        console.log('dragover');
+    });
+    leftEl.addEventListener('dragleave',function(e){
+        e.preventDefault();
+        console.log('dragleave');
+    });
+    leftEl.addEventListener('drop',function(e){
+        e.preventDefault();
+        console.log('drop',e);
+        console.log('drop',e.dataTransfer);
+        console.log('drop',e.dataTransfer.files[0]);
+    });
+</script>
+
+
+</body>
+</html>
