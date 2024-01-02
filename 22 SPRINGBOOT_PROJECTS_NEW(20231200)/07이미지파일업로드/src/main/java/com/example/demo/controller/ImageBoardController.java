@@ -36,7 +36,6 @@ public class ImageBoardController {
 
         log.info("POST /imageBoard/add..."+ dto+" | " + authentication);
         dto.setCreatedAt(LocalDateTime.now());
-        PrincipalDetails principal = (PrincipalDetails)authentication.getPrincipal();
         imageBoardService.addImageBoard(dto);
 
     }
