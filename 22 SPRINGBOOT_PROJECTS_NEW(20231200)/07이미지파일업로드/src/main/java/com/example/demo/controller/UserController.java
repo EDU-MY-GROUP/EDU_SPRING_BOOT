@@ -99,7 +99,7 @@ public class UserController {
         boolean isJoin =  userService.memberJoin(dto,model,request);
         //View로 속성등등 전달
         if(isJoin)
-            return "redirect:login?msg=MemberJoin Success!";
+            return "redirect:/login?msg=MemberJoin Success!";
         else
             return "user/join";
         //+a 예외처리

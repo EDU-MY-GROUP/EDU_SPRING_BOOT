@@ -16,8 +16,6 @@ body::-webkit-scrollbar{
     display:none;
 }
 .wrapper>header{
-    height : 80px;
-    border : 1px solid lightgray;
 
 }
 
