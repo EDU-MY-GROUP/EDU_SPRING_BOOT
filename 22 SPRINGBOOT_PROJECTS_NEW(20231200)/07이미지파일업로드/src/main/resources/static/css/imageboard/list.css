@@ -4,17 +4,24 @@
                             align-items:center;
                             padding : 10px 100px;
                             flex-wrap : wrap;
+
                         }
                         .board-body>.items>.card {
                             margin : 10px;
                             text-align:center;
                             padding : 5px;
+                          /*  border : 1px solid lightgray;;*/
                         }
-                        .board-body>.items>.card>*{
-                            margin : 3px;
+                        .board-body>.items>.card > .image-block{
+                            width :250px !important;
+                            height : 250px !important;
+                            text-align:center;
+                            margin : 0 auto;
                         }
-                        .board-body>.items>.card img{
-                            width : 150px;height:150px;
+                       .board-body>.items>.card > .image-block img{
+                            width : 100%;
+                            height : 100%;
+
                         }
                         .card-body .material-symbols-outlined{
                             font-size:0.8rem;
@@ -22,12 +29,64 @@
 
 /*              */
 
-                .paging-block{
-                    margin : 10px auto;
-                }
-                .pagination{
-                    display:flex;
-                    justify-content:center;
-                    align-items:center;
+.paging-block{
+    margin : 10px auto;
+}
 
-                }
+.pagination{
+    display:flex;
+    justify-content:center;
+    align-items:center;
+}
+
+.star-block{
+/*    position:relative;
+    width : 100%;
+    text-align:left;
+    height : 25px;
+    border : 1px solid gray;*/
+}
+
+
+/*rating */
+.rating__input {
+    display:none;
+        margin:0px;
+        padding : 0px;
+	/*display: block;*/ /* 라디오버튼 hide */
+}
+
+.rating__label .star-icon {
+	width: 24px;
+	height: 24px;
+	/*border : 1px solid gray;*/
+	display: block;
+	background-image: url("/images/star.png");
+	background-repeat: no-repeat;
+	background-size:cover;
+
+}
+
+.rating__label {
+	width: 12px; /* 원본 사이즈/2 */
+	overflow: hidden;
+	cursor: pointer;
+}
+.rating__label .star-icon {
+    margin:0px;
+    padding : 0px;
+	width: 12px; /* 원본 사이즈/2 */
+	height: 24px;
+	display: block;
+	position: relative;
+	left: 0;
+	background-image: url("/images/star.png");
+	background-repeat: no-repeat;
+}
+
+.rating__label--full .star-icon {
+	background-position: right;
+}
+.rating__label--half .star-icon {
+	background-position: left;
+}
