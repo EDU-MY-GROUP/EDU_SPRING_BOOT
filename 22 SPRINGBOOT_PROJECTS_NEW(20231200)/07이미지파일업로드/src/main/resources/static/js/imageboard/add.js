@@ -1,5 +1,7 @@
 		const formData = new FormData();	//폼관련 정보 저장
 
+
+
 		const uploadBox_el = document.querySelector('.upload-box');
 		//dragenter / dragover /dragleave / drop
 
@@ -26,61 +28,75 @@
 		uploadBox_el.addEventListener('drop',function(e){
 			e.preventDefault();
 			console.log("drop...");
-			console.log(e);
-			console.log(e.dataTransfer);
+//			console.log(e);
+//			console.log(e.dataTransfer);
 			console.log(e.dataTransfer.files[0]);
 
-			//유효성체크(이미지만, 하나씩만 , 용량제한 ...)
-            // 파일 유형 확인 및 이미지 파일만 처리
-            const imageFiles = Array.from(e.dataTransfer.files).filter(file => file.type.startsWith('image/'));
-            if (imageFiles.length === 0) {
-                    alert("이미지 파일만 가능합니다");
-                    return;
-            }
-            //총이미지의 개수가 5개 이상이면 return(아직..)
 
-			//미리보기
-			const file = e.dataTransfer.files[0];
-			const reader = new FileReader();
-			reader.readAsDataURL(file);
-			reader.onload = function(event) {
-				//PREVIEW BLOCK 에 저장
-				const preview = document.getElementById('preview');
-				const img = document.createElement('img')
-				img.setAttribute('src',event.target.result);
-				preview.appendChild(img);
-			};
-			//formData에 저장
-			formData.append('files',file);
+//            const file = e.dataTransfer.files[0];
+
+            //유효성 체크 filter , map
+            const imgFiles= Array.from(e.dataTransfer.files).filter(f=> f.type.startsWith('image/'));
+            if(imgFiles.length===0){
+                alert("이미지 파일만 가능합니다.")
+                return false;
+            }
+            //이미지의 개수 5개 제한
+            //이미지 하나당 사이즈 제한..
+            imgFiles.forEach(file=>{
+                if(file.size>(1024*1024*5)){
+                    alert("파일하나당 최대 사이즈는 5Mb이하여야 합니다..")
+                    return false;
+                }
+            })
+
+
+            for(var file of imgFiles ){
+                const reader = new FileReader();
+                reader.readAsDataURL(file);
+                reader.onload=function(e){
+                    const preview = document.querySelector('#preview');
+                    const imgEl =  document.createElement('img');
+    //                console.log("reader.onload",e)
+                    imgEl.setAttribute('src',e.target.result);
+                    preview.appendChild(imgEl);
+                }
+                formData.append('files',file);
+                console.log("formData",formData);
+            }
 
 		});
 
 
 		const add_product_btn_el = document.querySelector('.add_product_btn');
 		add_product_btn_el.addEventListener('click',function(){
+            const seller = document.imageform.seller.value;
+            const productname = document.imageform.productname.value;
+            const category = document.imageform.category.value;
+            const brandname = document.imageform.brandname.value;
+            const price = document.imageform.price.value;
+            const itemdetals = document.imageform.itemdetals.value;
+            const amount = document.imageform.amount.value;
+            const size = document.imageform.size.value;
 
-			const seller= document.imageform.seller.value;
-			const productname =	document.imageform.productname.value;
-			const category = document.imageform.category.value;
-			const brandname = document.imageform.brandname.value;
-			const itemdetals = document.imageform.itemdetals.value;
-			const amount = document.imageform.amount.value;
-			const size = document.imageform.size.value;
+            formData.append('seller',seller);
+            formData.append('productname',productname);
+            formData.append('category',category);
+            formData.append('brandname',brandname);
+            formData.append('itemdetals',itemdetals);
+            formData.append('amount',amount);
+            formData.append('size',size);
+            formData.append('price',price);
 
-			formData.append('seller',seller);
-			formData.append('productname',productname);
-			formData.append('category',category);
-			formData.append('brandname',brandname);
-			formData.append('itemdetals',itemdetals);
-			formData.append('amount',amount);
-			formData.append('size',size);
 
-			axios.post('/imageboard/add',formData,	{headers: {'Content-Type' : 'multipart/form-data' } }   )
-			.then(response =>{
-				alert("SUCCESS");
-				location.href="/imageboard/list";
-			})
-			.catch(error =>{alert("FAIL");})
+
+            axios.post('/imageboard/add',formData,{ headers: {'Content-Type' :'multipart/form-data' } } )
+            .then(res=>{
+                console.log(res);}
+                alert("물품등록을 완료했습니다.")
+                location.href="/imageboard/list";
+            )
+            .catch(err=>{console.log(err);})
 
 
 		})
