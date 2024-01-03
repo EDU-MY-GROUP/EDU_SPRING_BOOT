@@ -3,7 +3,10 @@ package com.example.demo.domain.service;
 
 import com.example.demo.domain.dto.ImageBoardDto;
 import com.example.demo.domain.entity.ImageBoard;
+import com.example.demo.domain.entity.ImageBoardFileInfo;
+import com.example.demo.domain.repository.ImageBoardFileInfoRepository;
 import com.example.demo.domain.repository.ImageBoardRepository;
+import com.example.demo.properties.UploadInfoProperties;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ResourceLoader;
@@ -26,75 +29,73 @@ import java.util.Optional;
 @Slf4j
 public class ImageBoardService {
 
-    private String imageBoardPath ="C:\\imageboard"; //OS에 로그인한 사용자폴더에 저장
+
+
 
     @Autowired
     private ImageBoardRepository imageBoardRepository;
 
     @Autowired
-    private ResourceLoader resourceLoader;
+    private ImageBoardFileInfoRepository imageBoardFileInfoRepository;
 
 
     @Transactional(rollbackFor = Exception.class)
-    public void addImageBoard(ImageBoardDto dto) throws IOException {
-        System.out.println("ImageBoardService's addImage....");
-
-        //DB에 Inser한다음 Id값을 받아와서 처리할것
-
-        ImageBoard imageBoard = new ImageBoard();
-
-        imageBoard.setSeller(dto.getSeller());
-        imageBoard.setProductname(dto.getProductname());
-        imageBoard.setCategory(dto.getCategory());
-        imageBoard.setBrandname(dto.getBrandname());
-        imageBoard.setItemdetals(dto.getItemdetals());
-        imageBoard.setAmount(dto.getAmount());
-        imageBoard.setSize(dto.getSize());
-        imageBoard.setCreatedAt(LocalDateTime.now());
-
+    public boolean addImageBoard(ImageBoardDto dto) throws IOException {
+        //Dto->Entity
+        ImageBoard imageBoard = ImageBoard.builder()
+                .seller(dto.getSeller())
+                .productname(dto.getProductname())
+                .brandname(dto.getBrandname())
+                .price(dto.getPrice())
+                .category(dto.getCategory())
+                .amount(dto.getAmount())
+                .size(dto.getSize())
+                .createdAt(LocalDateTime.now())
+                .itemdetals(dto.getItemdetals())
+                .build();
 
         imageBoardRepository.save(imageBoard);
-        System.out.println("저장확인 ID : " + imageBoard.getId());
 
-        //저장 폴더 지정
-        String uploadPath = imageBoardPath + File.separator + dto.getSeller()+File.separator + dto.getCategory()+File.separator+ imageBoard.getId();
+        //저장 폴더 지정()
+        String uploadPath= UploadInfoProperties.ROOTPATH+File.separator+UploadInfoProperties.UPLOADPATH+ File.separator+dto.getSeller()+File.separator+dto.getCategory()+File.separator+imageBoard.getId();
         File dir = new File(uploadPath);
-        System.out.println("SavedFolder : " + uploadPath);
-        System.out.println("SavedFolder : " + dir.getPath());
-        if(!dir.exists()) {
+        if(!dir.exists())
             dir.mkdirs();
+
+
+        for(MultipartFile file : dto.getFiles()){
+
+            System.out.println("-----------------------------");
+            System.out.println("filename : " + file.getName());
+            System.out.println("filename(origin) : " + file.getOriginalFilename());
+            System.out.println("filesize : " + file.getSize());
+            System.out.println("-----------------------------");
+
+            File fileobj = new File(dir,file.getOriginalFilename());    //파일객체생성
+
+            file.transferTo(fileobj);   //저장
+
+            //섬네일 생성
+            File thumbnailFile = new File(dir,"s_"+file.getOriginalFilename());
+            BufferedImage bo_image =  ImageIO.read(fileobj);
+            BufferedImage bt_image = new BufferedImage(250,250,BufferedImage.TYPE_3BYTE_BGR);
+            Graphics2D graphic =bt_image.createGraphics();
+            graphic.drawImage(bo_image,0,0,250,250,null);
+            ImageIO.write(bt_image,"png",thumbnailFile);
+
+            //DB에 파일경로 저장
+            ImageBoardFileInfo imageBoardFileInfo = new ImageBoardFileInfo();
+            imageBoardFileInfo.setImageBoard(imageBoard);
+            String filepath =File.separator+UploadInfoProperties.UPLOADPATH+ File.separator+dto.getSeller()+File.separator+dto.getCategory()+File.separator+imageBoard.getId();
+            imageBoardFileInfo.setDir(filepath);
+            imageBoardFileInfo.setFilename(file.getOriginalFilename());
+            imageBoardFileInfoRepository.save(imageBoardFileInfo);
+
         }
-
-        //게시물당 파일은 5장까지만
-        List<String> boardlist = new ArrayList<>();
-
-        for(MultipartFile file : dto.getFiles())
-        {
-            System.out.println("--------------------");
-            System.out.println("FILE NAME : " + file.getOriginalFilename());
-            System.out.println("FILE SIZE : " + file.getSize() + " Byte");
-            System.out.println("--------------------");
-            boardlist.add(file.getOriginalFilename());
-
-            File fileobj = new File(uploadPath,file.getOriginalFilename());
-            System.out.println("fileobj : " + fileobj.getPath());
-
-            file.transferTo(fileobj);   //파일저장
-
-            //섬네일(https://kimvampa.tistory.com/218) - 섬네일은 css로 받기
-            File thumbnailFile = new File(uploadPath, "s_" + file.getOriginalFilename());
-            BufferedImage bo_image = ImageIO.read(fileobj);
-            BufferedImage bt_image = new BufferedImage(300, 500, BufferedImage.TYPE_3BYTE_BGR);
-            Graphics2D graphic = bt_image.createGraphics();
-            graphic.drawImage(bo_image, 0, 0,300,500, null);
-
-            ImageIO.write(bt_image, "jpg", thumbnailFile);
-        }
-
-        imageBoard.setFiles(boardlist);
-        imageBoardRepository.save(imageBoard);
+        return true;
 
     }
+
     @Transactional(rollbackFor = Exception.class)
     public List<ImageBoard> getImageboardList(){
         //Desc Sorting return

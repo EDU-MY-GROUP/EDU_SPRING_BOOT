@@ -35,6 +35,4 @@ public class ImageBoard {
 
     private LocalDateTime createdAt;
 
-    @ElementCollection
-    private List<String> files;
 }
