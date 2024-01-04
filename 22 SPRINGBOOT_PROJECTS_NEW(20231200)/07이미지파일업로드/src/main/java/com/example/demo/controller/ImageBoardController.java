@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -69,10 +70,14 @@ public class ImageBoardController {
     }
 
     @GetMapping("/read")
-    public ImageBoardFileInfo read(Long id){
+    public void read(Long id,Model model){
         log.info("GET /imageboard/read...id :" + id);
 
-        return imageBoardFileInfoRepository.findById(id).get();
+
+        List<ImageBoardFileInfo> list=  imageBoardFileInfoRepository.findByImageBoardId(id);
+        list.forEach(item->System.out.println(item));
+        model.addAttribute("list",list);
+
 
     }
 

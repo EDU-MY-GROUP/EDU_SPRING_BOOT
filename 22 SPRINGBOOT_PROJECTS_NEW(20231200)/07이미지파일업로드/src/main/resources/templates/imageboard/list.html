@@ -38,8 +38,8 @@
 
 
                                         <div class="image-block">
-                                            <a th:href="@{/imageboard/read(id=${item.id})}">
-                                                <img th:src="@{${item.dir} + '/' + ${item.filename}}" class="card-img-top" alt="...">
+                                            <a th:href="@{/imageboard/read(id=${item.imageBoard.id})}">
+                                                <img th:src="@{${item.dir}+${item.filename}}" class="card-img-top" alt="...">
                                             </a>
                                         </div>
 

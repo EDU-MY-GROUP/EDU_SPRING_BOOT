@@ -41,6 +41,7 @@
 
 
 
+
 </head>
 <body>
 
@@ -60,17 +61,16 @@
 
             <div class="product_img">
                 <div class="upload-box">
-                    <img src="https://image10.coupangcdn.com/image/retail/images/6512378248376150-252f1410-2fe0-4bf5-8ca5-158354454923.jpg" />
+                    <img th:src="@{${list.get(0).dir}+${list.get(0).filename}}" />
                 </div>
             </div>
 
             <div class="preview_img_block">
 
                 <div id="preview">
-                    <img src="https://image10.coupangcdn.com/image/retail/images/6512378248376150-252f1410-2fe0-4bf5-8ca5-158354454923.jpg" />
-                    <img src="https://image10.coupangcdn.com/image/retail/images/426680547861361-1a9f80aa-f1b5-4255-8813-66d8435a7ee6.jpg" />
-                    <img src="https://image6.coupangcdn.com/image/retail/images/6512378249106407-66fd5d6d-fa89-44a0-a0ae-e88199d278a2.jpg" />
-                    <img src="https://image10.coupangcdn.com/image/retail/images/426750224724595-8d21b650-be0c-4cf6-a293-9a4dc62d2a96.jpg" />
+                    <th:block th:each="entity,i: ${list}">
+                        <img th:src="@{${entity.dir}+${entity.filename}}" />
+                    </th:block>
                 </div>
             </div>
         </section>
@@ -79,14 +79,14 @@
             <form  onsubmit="return false" name="imageform" >
                 <div class="mb-3">
                     <div>
-                        <span class="productname" style="font-size:1.5rem;font-weight:800;">베이직스 2023 베이직북S 10.1</span><br/>
+                        <span class="productname" style="font-size:1.5rem;font-weight:800;" th:text="${list.get(0).imageBoard.productname}"></span><br/>
                     </div>
                     <div>
                         <span class="rating" style="color:orange;font-size:1rem;">★★★★☆ </span><span style="font-size:0.7rem;" >233개 상품평</span>
                     </div>
                 </div>
                 <div  class="mb-3" >
-                    <span class="price" style="font-size:1.2rem;color:red;font-weight:800">398,000</span><span>원</span>
+                    <span class="price" style="font-size:1.2rem;color:red;font-weight:800" th:text="${list.get(0).imageBoard.price}"></span><span>원</span>
                 </div>
                 <div  class="mb-3" >
                     <div>

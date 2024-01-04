@@ -86,7 +86,7 @@ public class ImageBoardService {
             //DB에 파일경로 저장
             ImageBoardFileInfo imageBoardFileInfo = new ImageBoardFileInfo();
             imageBoardFileInfo.setImageBoard(imageBoard);
-            String filepath =File.separator+UploadInfoProperties.UPLOADPATH+ File.separator+dto.getSeller()+File.separator+dto.getCategory()+File.separator+imageBoard.getId();
+            String filepath =File.separator+UploadInfoProperties.UPLOADPATH+ File.separator+dto.getSeller()+File.separator+dto.getCategory()+File.separator+imageBoard.getId()+File.separator;
             imageBoardFileInfo.setDir(filepath);
             imageBoardFileInfo.setFilename(file.getOriginalFilename());
             imageBoardFileInfoRepository.save(imageBoardFileInfo);
