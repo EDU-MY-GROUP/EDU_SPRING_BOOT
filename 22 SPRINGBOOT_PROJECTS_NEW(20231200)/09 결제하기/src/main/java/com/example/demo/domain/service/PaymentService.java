@@ -82,4 +82,19 @@ public class PaymentService {
 
         return true;
     }
+
+
+
+    @Transactional(rollbackFor = Exception.class)
+    public void removePayment(String pay_id) {
+        Payment payment =   paymentRepository.findById( Long.parseLong(pay_id) ).get();
+        paymentRepository.delete(payment);
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+
+    public List<Payment> getMyPaymentList(String username) throws Exception {
+
+        return paymentRepository.findByUserUsername(username);
+    }
 }

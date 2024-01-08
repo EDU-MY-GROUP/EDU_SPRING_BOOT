@@ -3,6 +3,7 @@ package com.example.demo.controller;
 
 import com.example.demo.domain.dto.PaymentDto;
 import com.example.demo.domain.entity.Cart;
+import com.example.demo.domain.entity.Payment;
 import com.example.demo.domain.service.PaymentService;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
@@ -10,6 +11,8 @@ import net.minidev.json.JSONArray;
 import net.minidev.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.LinkedMultiValueMap;
@@ -74,6 +77,8 @@ public class PaymentController {
     }
 
 
+
+
     @GetMapping("/add")
     public @ResponseBody void add(PaymentDto params) throws UnsupportedEncodingException {
 
@@ -95,6 +100,21 @@ public class PaymentController {
 
     }
 
+
+
+    @GetMapping("list")
+    public  void list(Model model) throws Exception {
+        log.info("GET /payment/list...");
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = authentication.getName();
+
+        List<Payment> list =  paymentService.getMyPaymentList(username);
+
+        list.forEach(item->System.out.println(item));
+        model.addAttribute("list",list);
+    }
+
+
     // -----------------------------------------------------------
     // 결제 조회 관련 내용은 RESTAPI로 요청해야 한다
     // -----------------------------------------------------------
@@ -105,77 +125,83 @@ public class PaymentController {
 
 
 
-//    //
-//    //  PortOne AccessToken 받기
-//    //
-//    @GetMapping("/getAccessToken")
-//    public @ResponseBody String getAccessToken(){
-//        log.info("GET /payment/getAccessToken ");
+    //
+    //  PortOne AccessToken 받기
+    //
+    @GetMapping("/getAccessToken")
+    public @ResponseBody String getAccessToken(){
+        log.info("GET /payment/getAccessToken ");
+
+        //URL
+        String url = "https://api.iamport.kr/users/getToken";
+        //Header
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Content-Type", "application/x-www-form-urlencoded;charset=utf-8");
+        //Parameter
+        MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
+        params.add("imp_key","1546549255738924");
+        params.add("imp_secret","Zjy29fdoI6cNNwIZYMrDX4dkLCLvf6HFyFbbVCNwlRD5YzHCEQV4onWbydWFVbT1ID1Zw0Kp6POYsvKg");
+
+
+        //header + parameter
+        HttpEntity<MultiValueMap<String, String>> entity = new HttpEntity<>(params,headers);
+
+        //Request_Case1
+//      RestTemplate rt = new RestTemplate();
+//      ResponseEntity<String> response =  rt.exchange(url, HttpMethod.POST,entity,String.class);
 //
-//        //URL
-//        String url = "https://api.iamport.kr/users/getToken";
-//        //Header
-//        HttpHeaders headers = new HttpHeaders();
-//        headers.add("Content-Type", "application/x-www-form-urlencoded;charset=utf-8");
-//        //Parameter
-//        MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
-//        params.add("imp_key","1546549255738924");
-//        params.add("imp_secret","Zjy29fdoI6cNNwIZYMrDX4dkLCLvf6HFyFbbVCNwlRD5YzHCEQV4onWbydWFVbT1ID1Zw0Kp6POYsvKg");
-//
-//
-//        //header + parameter
-//        HttpEntity<MultiValueMap<String, String>> entity = new HttpEntity<>(params,headers);
-//
-//        //Request_Case1
-////      RestTemplate rt = new RestTemplate();
-////      ResponseEntity<String> response =  rt.exchange(url, HttpMethod.POST,entity,String.class);
-////
-////      System.out.println(response);
-////      System.out.println(response.getBody());
-//
-//        //Request_Case2
-//        RestTemplate rt = new RestTemplate();
-//        PortOneResponseData response =  rt.postForObject(url,entity,PortOneResponseData.class);
-//        System.out.println(response);
-//        this.portOneResponseData = response;
-//
-//        return "";
-//    }
-//
-//
+//      System.out.println(response);
+//      System.out.println(response.getBody());
+
+        //Request_Case2
+        RestTemplate rt = new RestTemplate();
+        PortOneResponseData response =  rt.postForObject(url,entity,PortOneResponseData.class);
+        System.out.println(response);
+        this.portOneResponseData = response;
+
+        return "";
+    }
 //
 //
-//    @GetMapping("/cancel/{imp_uid}")
-//    public @ResponseBody ResponseEntity<String> Cancel(@PathVariable String imp_uid){
-//        log.info("GET /payment/cancel ..." + imp_uid);
-//        getAccessToken();
-//        log.info("AccessToken : " + portOneResponseData.getResponse().getAccess_token());
-//        String accessToken = portOneResponseData.getResponse().getAccess_token();
-//        //URL
-//        String url = "https://api.iamport.kr/payments/cancel";
-//        //Header
-//        HttpHeaders headers = new HttpHeaders();
-//        headers.add("Content-Type", "application/x-www-form-urlencoded;charset=utf-8");
-//        headers.add("Authorization", "Bearer " + accessToken);
-//        //Parameter
-//        MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
-//        params.add("imp_uid",imp_uid);
-//
-//        //header + parameter
-//        HttpEntity<MultiValueMap<String, String>> entity = new HttpEntity<>(params,headers);
-//
-//        //Request_Case1
-//        RestTemplate rt = new RestTemplate();
-//        ResponseEntity<String> response =  rt.exchange(url, HttpMethod.POST,entity,String.class);
-//        System.out.println(response);
-//        System.out.println(response.getBody());
-//
-//        //Db 삭제
-//        paymentService.removePayment(imp_uid);
 //
 //
-//        return new ResponseEntity("success", HttpStatus.OK);
-//    }
+    @GetMapping("/cancel/{imp_uid}/{pay_id}")
+    public @ResponseBody ResponseEntity<String> Cancel(
+            @PathVariable String imp_uid,
+            @PathVariable String pay_id
+        )
+    {
+        log.info("GET /payment/cancel ..." + imp_uid);
+        getAccessToken();
+        log.info("AccessToken : " + portOneResponseData.getResponse().getAccess_token());
+        String accessToken = portOneResponseData.getResponse().getAccess_token();
+        //URL
+        String url = "https://api.iamport.kr/payments/cancel";
+        //Header
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Content-Type", "application/x-www-form-urlencoded;charset=utf-8");
+        headers.add("Authorization", "Bearer " + accessToken);
+        //Parameter
+        MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
+        params.add("imp_uid",imp_uid);
+
+        //header + parameter
+        HttpEntity<MultiValueMap<String, String>> entity = new HttpEntity<>(params,headers);
+
+        //Request_Case1
+        RestTemplate rt = new RestTemplate();
+        ResponseEntity<String> response =  rt.exchange(url, HttpMethod.POST,entity,String.class);
+        System.out.println(response);
+        System.out.println(response.getBody());
+
+        //Db 삭제
+        paymentService.removePayment(pay_id);
+
+
+        return new ResponseEntity("success", HttpStatus.OK);
+    }
+
+
 }
 
 //Access Token 받기 위한 클래스

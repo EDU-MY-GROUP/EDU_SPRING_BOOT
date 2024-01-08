@@ -48,8 +48,8 @@ pay_phone_btn.addEventListener('click',function(){
                         //axios로 Cart제거(비동기요청)
                         axios.get("/payment/add", params)
                         .then(response=>{
-                            alert("결제완료! 확인페이지로 이동합니다");
-                            opener.location.href="/user/my_pay_info";
+                            alert("결제완료! 결제 확인페이지로 이동합니다");
+                            opener.location.href="/payment/list";
                             window.close();
                         })
                         .catch(error=>{
